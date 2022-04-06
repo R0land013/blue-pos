@@ -9,7 +9,7 @@ if len(sys.argv) == 2:
 
 set_up()
 
-test_suite = TestLoader().discover('tests', pattern=test_file_pattern)
+test_suite = TestLoader().discover('tests', pattern=test_file_pattern, top_level_dir='.')
 runner = TextTestRunner(stream=sys.stdout, verbosity=1)
 result = runner.run(test_suite)
 
