@@ -19,7 +19,7 @@ class ItemGenerator:
     def generate_items_by_quantity(quantity: int) -> list:
         items = []
         for _ in range(quantity):
-            a_item = create_autospec(spec=Item)
+            a_item = Item()
 
             a_item.name = fake.company()
             a_item.description = fake.text()

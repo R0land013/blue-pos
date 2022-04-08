@@ -1,13 +1,16 @@
+from sqlalchemy.orm import Session
+
 from model.entity.models import Item
 
 
 class ItemRepository:
 
-    def __init__(self):
-        pass
+    def __init__(self, session: Session):
+        self.session = session
 
     def insert_item(self, item: Item):
-        raise NotImplementedError()
+        self.session.add(item)
+        self.session.commit()
 
     def delete_item(self, item: Item):
         raise NotImplementedError()
