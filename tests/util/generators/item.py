@@ -23,8 +23,14 @@ class ItemGenerator:
 
             a_item.name = fake.company()
             a_item.description = fake.text()
-            a_item.__eq__ = equals
-            a_item.__str__ = to_string
 
             items.append(a_item)
         return items
+
+    @staticmethod
+    def generate_one_item() -> Item:
+        a_item = Item()
+        a_item.name = fake.company()
+        a_item.description = fake.text()
+
+        return a_item
