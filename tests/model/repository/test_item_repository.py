@@ -54,9 +54,10 @@ class TestItemRepository(unittest.TestCase):
             session.add(fake_item)
             session.commit()
 
-        item_repository.delete_item(fake_item)
-
         with create_test_session() as session:
+            fake_item = session.scalar(select(Item))
+            item_repository.delete_item(fake_item)
+
             items = session.scalars(select(Item)).all()
             self.assertEqual(len(items), 0)
 

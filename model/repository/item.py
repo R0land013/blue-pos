@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from model.entity.models import Item
 from sqlalchemy import select
 
-from model.repository.exc.item import UniqueItemNameException
+from model.repository.exc.item import UniqueItemNameException, NonExistentItemException
 
 
 class ItemRepository:
@@ -27,7 +27,17 @@ class ItemRepository:
         )
 
     def delete_item(self, item: Item):
-        raise NotImplementedError()
+        found_item = self.__find_item_by_id(item.id)
+        if found_item is None:
+            raise NonExistentItemException(item)
+
+        self.session.delete(found_item)
+        self.session.commit()
+
+    def __find_item_by_id(self, item_id: int) -> Item:
+        return self.session.scalars(
+            select(Item).where(Item.id == item_id)
+        ).first()
 
     def update_item(self, old: Item, new: Item):
         raise NotImplementedError()
