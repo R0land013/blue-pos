@@ -67,3 +67,59 @@ class TestItemRepository(unittest.TestCase):
         item_repository = RepositoryFactory.get_item_repository(TEST_DB_URL)
 
         self.assertRaises(NonExistentItemException, item_repository.delete_item, fake_item)
+
+    def test_item_is_updated_successfully(self):
+        item_repository = RepositoryFactory.get_item_repository(TEST_DB_URL)
+        fake_item = ItemGenerator.generate_one_item()
+
+        with create_test_session() as session:
+            session.add(fake_item)
+            session.commit()
+            new_item = ItemGenerator.generate_one_item()
+            new_item.id = fake_item.id
+
+            item_repository.update_item(fake_item, new_item)
+
+            updated_item = session.scalar(select(Item))
+            self.assertEqual(updated_item, new_item)
+
+    def test_trying_to_update_nonexistent_item_raises_exception(self):
+        item_repository = RepositoryFactory.get_item_repository(TEST_DB_URL)
+        fake_item = ItemGenerator.generate_one_item()
+        fake_item.id = 1
+
+        new_item = ItemGenerator.generate_one_item()
+        new_item.id = fake_item.id
+
+        self.assertRaises(NonExistentItemException, item_repository.update_item, fake_item, new_item)
+
+    def test_trying_to_update_item_using_existent_name_raises_exception(self):
+        item_repository = RepositoryFactory.get_item_repository(TEST_DB_URL)
+        first_item, second_item = ItemGenerator.generate_items_by_quantity(2)
+
+        with create_test_session() as session:
+            session.add_all([first_item, second_item])
+            session.commit()
+
+            new_item = ItemGenerator.generate_one_item()
+            new_item.id = first_item.id
+            new_item.name = second_item.name
+
+            self.assertRaises(UniqueItemNameException, item_repository.update_item,
+                              first_item, new_item)
+
+    def test_trying_to_update_item_using_same_name_does_not_raise_exception(self):
+        item_repository = RepositoryFactory.get_item_repository(TEST_DB_URL)
+        fake_item = ItemGenerator.generate_one_item()
+
+        with create_test_session() as session:
+            session.add(fake_item)
+            session.commit()
+            new_item = ItemGenerator.generate_one_item()
+            new_item.id = fake_item.id
+            new_item.name = fake_item.name
+
+            item_repository.update_item(fake_item, new_item)
+
+            updated_item = session.scalar(select(Item))
+            self.assertEqual(updated_item, new_item)
