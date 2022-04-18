@@ -27,12 +27,16 @@ class ItemRepository:
         )
 
     def delete_item(self, item: Item):
-        found_item = self.__find_item_by_id(item.id)
-        if found_item is None:
-            raise NonExistentItemException(item)
+        found_item = self.__check_item_exists(item)
 
         self.session.delete(found_item)
         self.session.commit()
+
+    def __check_item_exists(self, item) -> Item:
+        found_item = self.__find_item_by_id(item.id)
+        if found_item is None:
+            raise NonExistentItemException(item)
+        return found_item
 
     def __find_item_by_id(self, item_id: int) -> Item:
         return self.session.scalars(
@@ -40,10 +44,7 @@ class ItemRepository:
         ).first()
 
     def update_item(self, old: Item, new: Item):
-        found_item = self.__find_item_by_id(old.id)
-        if found_item is None:
-            raise NonExistentItemException(old)
-
+        self.__check_item_exists(old)
         self.__check_name_can_be_used(old, new)
 
         self.session.execute(
