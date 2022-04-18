@@ -1,3 +1,5 @@
+from model.entity.models import Item
+
 
 class UniqueItemNameException(Exception):
 
@@ -9,3 +11,15 @@ class UniqueItemNameException(Exception):
 
     def get_item_name(self):
         return self.__name
+
+
+class NonExistentItemException(Exception):
+
+    MSG = 'The item {} does not exist.'
+
+    def __init__(self, item):
+        super().__init__(NonExistentItemException.MSG.format(item))
+        self.__item = item
+
+    def get_item(self) -> Item:
+        return self.__item

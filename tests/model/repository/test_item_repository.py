@@ -1,7 +1,7 @@
 import unittest
 from sqlalchemy import select
 from model.entity.models import Item
-from model.repository.exc.item import UniqueItemNameException
+from model.repository.exc.item import UniqueItemNameException, NonExistentItemException
 from model.repository.factory import RepositoryFactory
 from tests.util.generators.item import ItemGenerator
 from tests.util.general import TEST_DB_URL
@@ -46,3 +46,23 @@ class TestItemRepository(unittest.TestCase):
         fake_item.name = fake_item.name.upper()
 
         self.assertRaises(UniqueItemNameException, item_repository.insert_item, fake_item)
+
+    def test_item_is_deleted_successfully(self):
+        fake_item = ItemGenerator.generate_one_item()
+        item_repository = RepositoryFactory.get_item_repository(TEST_DB_URL)
+        with create_test_session() as session:
+            session.add(fake_item)
+            session.commit()
+
+        item_repository.delete_item(fake_item)
+
+        with create_test_session() as session:
+            items = session.scalars(select(Item)).all()
+            self.assertEqual(len(items), 0)
+
+    def test_trying_to_delete_nonexistent_item_raises_exception(self):
+        fake_item = ItemGenerator.generate_one_item()
+        fake_item.id = 1
+        item_repository = RepositoryFactory.get_item_repository(TEST_DB_URL)
+
+        self.assertRaises(NonExistentItemException, item_repository.delete_item, fake_item)
