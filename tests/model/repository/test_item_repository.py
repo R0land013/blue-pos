@@ -80,6 +80,7 @@ class TestItemRepository(unittest.TestCase):
 
             item_repository.update_item(fake_item, new_item)
 
+            session.expunge(fake_item)
             updated_item = session.scalar(select(Item))
             self.assertEqual(updated_item, new_item)
 
@@ -121,5 +122,6 @@ class TestItemRepository(unittest.TestCase):
 
             item_repository.update_item(fake_item, new_item)
 
+            session.expunge(fake_item)
             updated_item = session.scalar(select(Item))
             self.assertEqual(updated_item, new_item)

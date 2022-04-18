@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from model.entity.models import Item
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from model.repository.exc.item import UniqueItemNameException, NonExistentItemException
 
@@ -40,7 +40,23 @@ class ItemRepository:
         ).first()
 
     def update_item(self, old: Item, new: Item):
-        raise NotImplementedError()
+        found_item = self.__find_item_by_id(old.id)
+        if found_item is None:
+            raise NonExistentItemException(old)
+
+        self.__check_name_can_be_used(old, new)
+
+        self.session.execute(
+            update(Item)
+            .where(Item.id == old.id)
+            .values(name=new.name, description=new.description)
+        )
+        self.session.commit()
+
+    def __check_name_can_be_used(self, old: Item, new: Item):
+        found_item = self.find_item_by_name(new.name)
+        if found_item is not None and found_item.id != old.id:
+            raise UniqueItemNameException(new.name)
 
     def get_all_items(self) -> list:
         raise NotImplementedError()
