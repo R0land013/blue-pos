@@ -37,3 +37,12 @@ class TestItemRepository(unittest.TestCase):
         item_repository.insert_item(fake_item)
 
         self.assertRaises(UniqueItemNameException, item_repository.insert_item, fake_item)
+
+    def test_item_inserted_with_used_name_in_uppercase_raises_exception(self):
+        fake_item = ItemGenerator.generate_one_item()
+        item_repository = RepositoryFactory.get_item_repository(TEST_DB_URL)
+        item_repository.insert_item(fake_item)
+
+        fake_item.name = fake_item.name.upper()
+
+        self.assertRaises(UniqueItemNameException, item_repository.insert_item, fake_item)
