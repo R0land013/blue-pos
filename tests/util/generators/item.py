@@ -19,18 +19,18 @@ class ItemGenerator:
     def generate_items_by_quantity(quantity: int) -> list:
         items = []
         for _ in range(quantity):
-            a_item = Item()
+            an_item = Item()
 
-            a_item.name = fake.company()
-            a_item.description = fake.text()
+            an_item.name = fake.company()
+            an_item.description = fake.text()
 
-            items.append(a_item)
+            items.append(an_item)
         return items
 
     @staticmethod
     def generate_one_item() -> Item:
-        a_item = Item()
-        a_item.name = fake.company()
-        a_item.description = fake.text()
+        an_item = Item()
+        an_item.name = fake.company()
+        an_item.description = fake.text()
 
-        return a_item
+        return an_item

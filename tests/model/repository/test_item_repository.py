@@ -15,16 +15,16 @@ class TestItemRepository(unittest.TestCase):
 
         with create_test_session() as session:
             statement = select(Item)
-            for a_item in session.scalars(statement):
-                session.delete(a_item)
+            for an_item in session.scalars(statement):
+                session.delete(an_item)
             session.commit()
 
     def test_items_are_inserted_successfully(self):
         fake_items = ItemGenerator.generate_items_by_quantity(3)
         item_repository = RepositoryFactory.get_item_repository(TEST_DB_URL)
 
-        for a_item in fake_items:
-            item_repository.insert_item(a_item)
+        for an_item in fake_items:
+            item_repository.insert_item(an_item)
 
         with create_test_session() as session:
             inserted_items = session.scalars(select(Item)).all()
