@@ -59,4 +59,4 @@ class ItemRepository:
             raise UniqueItemNameException(new.name)
 
     def get_all_items(self) -> list:
-        raise NotImplementedError()
+        return self.__session.scalars(select(Item)).all()
