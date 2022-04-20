@@ -78,9 +78,9 @@ class TestItemRepository(unittest.TestCase):
             new_item = ItemGenerator.generate_one_item()
             new_item.id = fake_item.id
 
-            item_repository.update_item(fake_item, new_item)
+            item_repository.update_item(new_item)
 
-            session.expunge(fake_item)
+            session.expunge_all()
             updated_item = session.scalar(select(Item))
             self.assertEqual(updated_item, new_item)
 
@@ -92,7 +92,7 @@ class TestItemRepository(unittest.TestCase):
         new_item = ItemGenerator.generate_one_item()
         new_item.id = fake_item.id
 
-        self.assertRaises(NonExistentItemException, item_repository.update_item, fake_item, new_item)
+        self.assertRaises(NonExistentItemException, item_repository.update_item, new_item)
 
     def test_trying_to_update_item_using_existent_name_raises_exception(self):
         item_repository = RepositoryFactory.get_item_repository(TEST_DB_URL)
@@ -106,8 +106,7 @@ class TestItemRepository(unittest.TestCase):
             new_item.id = first_item.id
             new_item.name = second_item.name
 
-            self.assertRaises(UniqueItemNameException, item_repository.update_item,
-                              first_item, new_item)
+            self.assertRaises(UniqueItemNameException, item_repository.update_item, new_item)
 
     def test_trying_to_update_item_using_same_name_does_not_raise_exception(self):
         item_repository = RepositoryFactory.get_item_repository(TEST_DB_URL)
@@ -120,8 +119,8 @@ class TestItemRepository(unittest.TestCase):
             new_item.id = fake_item.id
             new_item.name = fake_item.name
 
-            item_repository.update_item(fake_item, new_item)
+            item_repository.update_item(new_item)
 
-            session.expunge(fake_item)
+            session.expunge_all()
             updated_item = session.scalar(select(Item))
             self.assertEqual(updated_item, new_item)

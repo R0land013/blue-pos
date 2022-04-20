@@ -43,15 +43,14 @@ class ItemRepository:
             select(Item).where(Item.id == item_id)
         ).first()
 
-    def update_item(self, old: Item, new: Item):
-        self.__check_item_exists(old)
+    def update_item(self, new: Item):
+        old = self.__check_item_exists(new)
         self.__check_name_can_be_used(old, new)
 
-        self.__session.execute(
-            update(Item)
-            .where(Item.id == old.id)
-            .values(name=new.name, description=new.description)
-        )
+        old.name = new.name
+        old.description = new.description
+
+        self.__session.flush()
         self.__session.commit()
 
     def __check_name_can_be_used(self, old: Item, new: Item):
