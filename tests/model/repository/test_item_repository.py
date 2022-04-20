@@ -124,3 +124,22 @@ class TestItemRepository(unittest.TestCase):
             session.expunge_all()
             updated_item = session.scalar(select(Item))
             self.assertEqual(updated_item, new_item)
+
+    def test_get_all_items_returns_empty_list(self):
+        item_repository = RepositoryFactory.get_item_repository(TEST_DB_URL)
+        empty_list = []
+
+        retrieved_list = item_repository.get_all_items()
+
+        self.assertEqual(retrieved_list, empty_list)
+
+    def test_get_all_items_returns_nonempty_list(self):
+        item_repository = RepositoryFactory.get_item_repository(TEST_DB_URL)
+        fake_items = ItemGenerator.generate_items_by_quantity(3)
+
+        with create_test_session() as session:
+            session.add_all(fake_items)
+            session.commit()
+
+            retrieved_items = item_repository.get_all_items()
+            self.assertEqual(fake_items, retrieved_items)
