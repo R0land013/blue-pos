@@ -1,11 +1,11 @@
-from model.entity.models import Item
+from model.entity.models import Product
 from unittest.mock import create_autospec
 from faker import Faker
 
 fake = Faker()
 
 
-def equals(self, other: Item):
+def equals(self, other: Product):
     return self.name == other.name and self.description == other.description
 
 
@@ -13,24 +13,24 @@ def to_string(self):
     return '[name: "{}", description: "{}"]'.format(self.name, self.description)
 
 
-class ItemGenerator:
+class ProductGenerator:
 
     @staticmethod
-    def generate_items_by_quantity(quantity: int) -> list:
-        items = []
+    def generate_products_by_quantity(quantity: int) -> list:
+        products = []
         for _ in range(quantity):
-            an_item = Item()
+            a_product = Product()
 
-            an_item.name = fake.company()
-            an_item.description = fake.text()
+            a_product.name = fake.company()
+            a_product.description = fake.text()
 
-            items.append(an_item)
-        return items
+            products.append(a_product)
+        return products
 
     @staticmethod
-    def generate_one_item() -> Item:
-        an_item = Item()
-        an_item.name = fake.company()
-        an_item.description = fake.text()
+    def generate_one_product() -> Product:
+        a_product = Product()
+        a_product.name = fake.company()
+        a_product.description = fake.text()
 
-        return an_item
+        return a_product

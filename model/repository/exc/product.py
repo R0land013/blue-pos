@@ -1,25 +1,25 @@
-from model.entity.models import Item
+from model.entity.models import Product
 
 
-class UniqueItemNameException(Exception):
+class UniqueProductNameException(Exception):
 
-    MSG = 'The item with name "{}" already exists.'
+    MSG = 'The product with name "{}" already exists.'
 
     def __init__(self, existing_name: str):
         self.__name = existing_name
-        super().__init__(UniqueItemNameException.MSG.format(existing_name))
+        super().__init__(UniqueProductNameException.MSG.format(existing_name))
 
-    def get_item_name(self):
+    def get_product_name(self):
         return self.__name
 
 
-class NonExistentItemException(Exception):
+class NonExistentProductException(Exception):
 
-    MSG = 'The item {} does not exist.'
+    MSG = 'The product {} does not exist.'
 
-    def __init__(self, item):
-        super().__init__(NonExistentItemException.MSG.format(item))
-        self.__item = item
+    def __init__(self, product):
+        super().__init__(NonExistentProductException.MSG.format(product))
+        self.__product = product
 
-    def get_item(self) -> Item:
-        return self.__item
+    def get_product(self) -> Product:
+        return self.__product
