@@ -2,6 +2,8 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
+from model.util.money_colum import MoneyColumn
+from money import Money
 
 Base = declarative_base()
 
@@ -21,3 +23,5 @@ class Product(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(length=80), nullable=False, unique=True)
     description = Column(String(length=300), nullable=True, default='')
+    price = Column(MoneyColumn(), nullable=False, default=Money('1.00', 'CUP'))
+    quantity = Column(Integer, nullable=False, default=0)
