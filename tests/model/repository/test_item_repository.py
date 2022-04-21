@@ -1,9 +1,9 @@
 import unittest
 from sqlalchemy import select
 from model.entity.models import Item
-from model.repository.exc.item import UniqueItemNameException, NonExistentItemException
+from model.repository.exc.product import UniqueItemNameException, NonExistentItemException
 from model.repository.factory import RepositoryFactory
-from tests.util.generators.item import ItemGenerator
+from tests.util.generators.product import ItemGenerator
 from tests.util.general import TEST_DB_URL
 from tests.util.general import create_test_session
 

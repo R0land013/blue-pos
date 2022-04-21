@@ -1,4 +1,4 @@
-from model.repository.item import ItemRepository
+from model.repository.product import ItemRepository
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from sqlalchemy.pool import NullPool

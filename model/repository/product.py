@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from model.entity.models import Item
 from sqlalchemy import select, update
 
-from model.repository.exc.item import UniqueItemNameException, NonExistentItemException
+from model.repository.exc.product import UniqueItemNameException, NonExistentItemException
 
 
 class ItemRepository:
