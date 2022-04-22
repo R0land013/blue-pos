@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session
 from model.entity.models import Product
 from sqlalchemy import select, update
 
-from model.repository.exc.product import UniqueProductNameException, NonExistentProductException
+from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
+    InvalidProductQuantityException
 
 
 class ProductRepository:
@@ -11,9 +12,15 @@ class ProductRepository:
         self.__session = session
 
     def insert_product(self, product: Product):
+        self.__check_correctness_of_quantity(product)
         self.__check_name_is_not_used(product)
+
         self.__session.add(product)
         self.__session.commit()
+
+    def __check_correctness_of_quantity(self, product: Product):
+        if product.quantity < 0:
+            raise InvalidProductQuantityException()
 
     def __check_name_is_not_used(self, product: Product):
         found_product = self.__find_product_by_name(product.name)
@@ -44,6 +51,7 @@ class ProductRepository:
         ).first()
 
     def update_product(self, new: Product):
+        self.__check_correctness_of_quantity(new)
         old = self.__check_product_exists(new)
         self.__check_name_can_be_used(old, new)
 
