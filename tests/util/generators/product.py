@@ -1,30 +1,23 @@
+from money import Money
+
 from model.entity.models import Product
-from unittest.mock import create_autospec
 from faker import Faker
 
 fake = Faker()
 
 
-def equals(self, other: Product):
-    return self.name == other.name and self.description == other.description
-
-
-def to_string(self):
-    return '[name: "{}", description: "{}"]'.format(self.name, self.description)
-
-
 class ProductGenerator:
+
+    DEFAULT_MONEY = Money('1.00', 'CUP')
 
     @staticmethod
     def generate_products_by_quantity(quantity: int) -> list:
         products = []
         for _ in range(quantity):
-            a_product = Product()
 
-            a_product.name = fake.company()
-            a_product.description = fake.text()
-
+            a_product = ProductGenerator.generate_one_product()
             products.append(a_product)
+
         return products
 
     @staticmethod
@@ -32,5 +25,8 @@ class ProductGenerator:
         a_product = Product()
         a_product.name = fake.company()
         a_product.description = fake.text()
+        a_product.quantity = 0
+        a_product.price = ProductGenerator.DEFAULT_MONEY
+        a_product.profit = ProductGenerator.DEFAULT_MONEY
 
         return a_product
