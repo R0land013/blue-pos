@@ -3,7 +3,7 @@ import unittest
 from sqlalchemy import select
 from model.entity.models import Product
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
-    InvalidProductQuantityException, InvalidPriceForProductException
+    InvalidProductQuantityException, InvalidPriceForProductException, NegativeProfitForProductException
 from model.repository.factory import RepositoryFactory
 from model.util.monetary_types import CUPMoney
 from tests.util.generators.product import ProductGenerator
@@ -69,6 +69,13 @@ class TestProductRepository(unittest.TestCase):
         product.price = CUPMoney('0.00')
 
         self.assertRaises(InvalidPriceForProductException, self.product_repository.insert_product,
+                          product)
+
+    def test_product_inserted_with_negative_profit_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        product.profit = CUPMoney('-1.00')
+
+        self.assertRaises(NegativeProfitForProductException, self.product_repository.insert_product,
                           product)
 
     def test_product_is_deleted_successfully(self):
@@ -176,6 +183,17 @@ class TestProductRepository(unittest.TestCase):
 
             product.price = CUPMoney('0.00')
             self.assertRaises(InvalidPriceForProductException, self.product_repository.update_product,
+                              product)
+
+    def test_product_updated_with_negative_profit_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+
+        with create_test_session() as session:
+            session.add(product)
+            session.commit()
+
+            product.profit = CUPMoney('-1.00')
+            self.assertRaises(NegativeProfitForProductException, self.product_repository.update_product,
                               product)
 
     def test_get_all_products_returns_empty_list(self):
