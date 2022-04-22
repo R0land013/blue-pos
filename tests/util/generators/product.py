@@ -1,14 +1,14 @@
-from money import Money
-
 from model.entity.models import Product
 from faker import Faker
+
+from model.util.monetary_types import CUPMoney
 
 fake = Faker()
 
 
 class ProductGenerator:
 
-    DEFAULT_MONEY = Money('1.00', 'CUP')
+    DEFAULT_MONEY = CUPMoney('1.00')
 
     @staticmethod
     def generate_products_by_quantity(quantity: int) -> list:

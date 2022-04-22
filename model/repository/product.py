@@ -1,10 +1,10 @@
-from money import Money
 from sqlalchemy.orm import Session
 from model.entity.models import Product
 from sqlalchemy import select, update
 
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
     InvalidProductQuantityException, InvalidPriceForProductException
+from model.util.monetary_types import CUPMoney
 
 
 class ProductRepository:
@@ -25,7 +25,7 @@ class ProductRepository:
             raise InvalidProductQuantityException()
 
     def __check_correctness_of_price(self, product: Product):
-        if product.price <= Money('0.00', 'CUP'):
+        if product.price <= CUPMoney('0.00'):
             raise InvalidPriceForProductException()
 
     def __check_name_is_not_used(self, product: Product):

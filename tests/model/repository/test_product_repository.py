@@ -1,11 +1,11 @@
 import unittest
 
-from money import Money
 from sqlalchemy import select
 from model.entity.models import Product
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
     InvalidProductQuantityException, InvalidPriceForProductException
 from model.repository.factory import RepositoryFactory
+from model.util.monetary_types import CUPMoney
 from tests.util.generators.product import ProductGenerator
 from tests.util.general import TEST_DB_URL
 from tests.util.general import create_test_session
@@ -59,14 +59,14 @@ class TestProductRepository(unittest.TestCase):
 
     def test_product_inserted_with_negative_price_raises_exception(self):
         product = ProductGenerator.generate_one_product()
-        product.price = Money('-1.00', 'CUP')
+        product.price = CUPMoney('-1.00')
 
         self.assertRaises(InvalidPriceForProductException, self.product_repository.insert_product,
                           product)
 
     def test_product_inserted_with_zero_price_raises_exception(self):
         product = ProductGenerator.generate_one_product()
-        product.price = Money('0.00', 'CUP')
+        product.price = CUPMoney('0.00')
 
         self.assertRaises(InvalidPriceForProductException, self.product_repository.insert_product,
                           product)
@@ -163,7 +163,7 @@ class TestProductRepository(unittest.TestCase):
             session.add(product)
             session.commit()
 
-            product.price = Money('-1.00', 'CUP')
+            product.price = CUPMoney('-1.00')
             self.assertRaises(InvalidPriceForProductException, self.product_repository.update_product,
                               product)
 
@@ -174,7 +174,7 @@ class TestProductRepository(unittest.TestCase):
             session.add(product)
             session.commit()
 
-            product.price = Money('0.00', 'CUP')
+            product.price = CUPMoney('0.00')
             self.assertRaises(InvalidPriceForProductException, self.product_repository.update_product,
                               product)
 
