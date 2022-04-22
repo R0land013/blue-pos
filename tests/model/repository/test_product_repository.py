@@ -21,84 +21,84 @@ class TestProductRepository(unittest.TestCase):
 
         with create_test_session() as session:
             statement = select(Product)
-            for an_product in session.scalars(statement):
-                session.delete(an_product)
+            for a_product in session.scalars(statement):
+                session.delete(a_product)
             session.commit()
 
     def test_products_are_inserted_successfully(self):
-        fake_products = ProductGenerator.generate_products_by_quantity(3)
+        products = ProductGenerator.generate_products_by_quantity(3)
 
-        for an_product in fake_products:
-            self.product_repository.insert_product(an_product)
+        for a_product in products:
+            self.product_repository.insert_product(a_product)
 
         with create_test_session() as session:
             inserted_products = session.scalars(select(Product)).all()
-            self.assertEqual(inserted_products, fake_products)
+            self.assertEqual(inserted_products, products)
 
     def test_product_inserted_with_used_name_raise_exception(self):
-        fake_product = ProductGenerator.generate_one_product()
+        product = ProductGenerator.generate_one_product()
 
-        self.product_repository.insert_product(fake_product)
+        self.product_repository.insert_product(product)
 
-        self.assertRaises(UniqueProductNameException, self.product_repository.insert_product, fake_product)
+        self.assertRaises(UniqueProductNameException, self.product_repository.insert_product, product)
 
     def test_product_inserted_with_used_name_in_uppercase_raises_exception(self):
-        fake_product = ProductGenerator.generate_one_product()
-        self.product_repository.insert_product(fake_product)
+        product = ProductGenerator.generate_one_product()
+        self.product_repository.insert_product(product)
 
-        fake_product.name = fake_product.name.upper()
+        product.name = product.name.upper()
 
         self.assertRaises(UniqueProductNameException, self.product_repository.insert_product,
-                          fake_product)
+                          product)
 
     def test_product_inserted_with_negative_quantity_raises_exception(self):
-        fake_product = ProductGenerator.generate_one_product()
-        fake_product.quantity = -1
+        product = ProductGenerator.generate_one_product()
+        product.quantity = -1
         self.assertRaises(InvalidProductQuantityException, self.product_repository.insert_product,
-                          fake_product)
+                          product)
 
     def test_product_inserted_with_negative_price_raises_exception(self):
-        fake_product = ProductGenerator.generate_one_product()
-        fake_product.price = Money('-1.00', 'CUP')
+        product = ProductGenerator.generate_one_product()
+        product.price = Money('-1.00', 'CUP')
 
         self.assertRaises(InvalidPriceForProductException, self.product_repository.insert_product,
-                          fake_product)
+                          product)
 
     def test_product_inserted_with_zero_price_raises_exception(self):
-        fake_product = ProductGenerator.generate_one_product()
-        fake_product.price = Money('0.00', 'CUP')
+        product = ProductGenerator.generate_one_product()
+        product.price = Money('0.00', 'CUP')
 
         self.assertRaises(InvalidPriceForProductException, self.product_repository.insert_product,
-                          fake_product)
+                          product)
 
     def test_product_is_deleted_successfully(self):
-        fake_product = ProductGenerator.generate_one_product()
+        product = ProductGenerator.generate_one_product()
         with create_test_session() as session:
-            session.add(fake_product)
+            session.add(product)
             session.commit()
 
         with create_test_session() as session:
-            fake_product = session.scalar(select(Product))
-            self.product_repository.delete_product(fake_product)
+            product = session.scalar(select(Product))
+            self.product_repository.delete_product(product)
 
             products = session.scalars(select(Product)).all()
             self.assertEqual(len(products), 0)
 
     def test_trying_to_delete_nonexistent_product_raises_exception(self):
-        fake_product = ProductGenerator.generate_one_product()
-        fake_product.id = 1
+        product = ProductGenerator.generate_one_product()
+        product.id = 1
 
         self.assertRaises(NonExistentProductException, self.product_repository.delete_product,
-                          fake_product)
+                          product)
 
     def test_product_is_updated_successfully(self):
-        fake_product = ProductGenerator.generate_one_product()
+        product = ProductGenerator.generate_one_product()
 
         with create_test_session() as session:
-            session.add(fake_product)
+            session.add(product)
             session.commit()
             new_product = ProductGenerator.generate_one_product()
-            new_product.id = fake_product.id
+            new_product.id = product.id
 
             self.product_repository.update_product(new_product)
 
@@ -107,11 +107,11 @@ class TestProductRepository(unittest.TestCase):
             self.assertEqual(updated_product, new_product)
 
     def test_trying_to_update_nonexistent_product_raises_exception(self):
-        fake_product = ProductGenerator.generate_one_product()
-        fake_product.id = 1
+        product = ProductGenerator.generate_one_product()
+        product.id = 1
 
         new_product = ProductGenerator.generate_one_product()
-        new_product.id = fake_product.id
+        new_product.id = product.id
 
         self.assertRaises(NonExistentProductException, self.product_repository.update_product,
                           new_product)
@@ -131,14 +131,14 @@ class TestProductRepository(unittest.TestCase):
                               new_product)
 
     def test_trying_to_update_product_using_same_name_does_not_raise_exception(self):
-        fake_product = ProductGenerator.generate_one_product()
+        product = ProductGenerator.generate_one_product()
 
         with create_test_session() as session:
-            session.add(fake_product)
+            session.add(product)
             session.commit()
             new_product = ProductGenerator.generate_one_product()
-            new_product.id = fake_product.id
-            new_product.name = fake_product.name
+            new_product.id = product.id
+            new_product.name = product.name
 
             self.product_repository.update_product(new_product)
 
@@ -147,36 +147,36 @@ class TestProductRepository(unittest.TestCase):
             self.assertEqual(updated_product, new_product)
 
     def test_product_updated_with_negative_quantity_raises_exception(self):
-        fake_product = ProductGenerator.generate_one_product()
-        fake_product.quantity = -1
+        product = ProductGenerator.generate_one_product()
+        product.quantity = -1
         with create_test_session() as session:
-            session.add(fake_product)
+            session.add(product)
             session.commit()
 
             self.assertRaises(InvalidProductQuantityException, self.product_repository.update_product,
-                              fake_product)
+                              product)
 
     def test_product_updated_with_negative_price_raises_exception(self):
-        fake_product = ProductGenerator.generate_one_product()
+        product = ProductGenerator.generate_one_product()
 
         with create_test_session() as session:
-            session.add(fake_product)
+            session.add(product)
             session.commit()
 
-            fake_product.price = Money('-1.00', 'CUP')
+            product.price = Money('-1.00', 'CUP')
             self.assertRaises(InvalidPriceForProductException, self.product_repository.update_product,
-                              fake_product)
+                              product)
 
     def test_product_updated_with_zero_price_raises_exception(self):
-        fake_product = ProductGenerator.generate_one_product()
+        product = ProductGenerator.generate_one_product()
 
         with create_test_session() as session:
-            session.add(fake_product)
+            session.add(product)
             session.commit()
 
-            fake_product.price = Money('0.00', 'CUP')
+            product.price = Money('0.00', 'CUP')
             self.assertRaises(InvalidPriceForProductException, self.product_repository.update_product,
-                              fake_product)
+                              product)
 
     def test_get_all_products_returns_empty_list(self):
         empty_list = []
@@ -186,11 +186,11 @@ class TestProductRepository(unittest.TestCase):
         self.assertEqual(retrieved_list, empty_list)
 
     def test_get_all_products_returns_nonempty_list(self):
-        fake_products = ProductGenerator.generate_products_by_quantity(3)
+        products = ProductGenerator.generate_products_by_quantity(3)
 
         with create_test_session() as session:
-            session.add_all(fake_products)
+            session.add_all(products)
             session.commit()
 
             retrieved_products = self.product_repository.get_all_products()
-            self.assertEqual(fake_products, retrieved_products)
+            self.assertEqual(products, retrieved_products)
