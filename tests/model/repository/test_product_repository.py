@@ -1,8 +1,10 @@
 import unittest
+
+from money import Money
 from sqlalchemy import select
 from model.entity.models import Product
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
-    InvalidProductQuantityException
+    InvalidProductQuantityException, InvalidPriceForProductException
 from model.repository.factory import RepositoryFactory
 from tests.util.generators.product import ProductGenerator
 from tests.util.general import TEST_DB_URL
@@ -53,6 +55,20 @@ class TestProductRepository(unittest.TestCase):
         fake_product = ProductGenerator.generate_one_product()
         fake_product.quantity = -1
         self.assertRaises(InvalidProductQuantityException, self.product_repository.insert_product,
+                          fake_product)
+
+    def test_product_inserted_with_negative_price_raises_exception(self):
+        fake_product = ProductGenerator.generate_one_product()
+        fake_product.price = Money('-1.00', 'CUP')
+
+        self.assertRaises(InvalidPriceForProductException, self.product_repository.insert_product,
+                          fake_product)
+
+    def test_product_inserted_with_zero_price_raises_exception(self):
+        fake_product = ProductGenerator.generate_one_product()
+        fake_product.price = Money('0.00', 'CUP')
+
+        self.assertRaises(InvalidPriceForProductException, self.product_repository.insert_product,
                           fake_product)
 
     def test_product_is_deleted_successfully(self):
@@ -138,6 +154,28 @@ class TestProductRepository(unittest.TestCase):
             session.commit()
 
             self.assertRaises(InvalidProductQuantityException, self.product_repository.update_product,
+                              fake_product)
+
+    def test_product_updated_with_negative_price_raises_exception(self):
+        fake_product = ProductGenerator.generate_one_product()
+
+        with create_test_session() as session:
+            session.add(fake_product)
+            session.commit()
+
+            fake_product.price = Money('-1.00', 'CUP')
+            self.assertRaises(InvalidPriceForProductException, self.product_repository.update_product,
+                              fake_product)
+
+    def test_product_updated_with_zero_price_raises_exception(self):
+        fake_product = ProductGenerator.generate_one_product()
+
+        with create_test_session() as session:
+            session.add(fake_product)
+            session.commit()
+
+            fake_product.price = Money('0.00', 'CUP')
+            self.assertRaises(InvalidPriceForProductException, self.product_repository.update_product,
                               fake_product)
 
     def test_get_all_products_returns_empty_list(self):
