@@ -24,4 +24,5 @@ class Product(Base):
     name = Column(String(length=80), nullable=False, unique=True)
     description = Column(String(length=300), nullable=True, default='')
     price = Column(MoneyColumn(), nullable=False, default=Money('1.00', 'CUP'))
+    profit = Column(MoneyColumn(), nullable=False, default=Money('1.00', 'CUP'))
     quantity = Column(Integer, nullable=False, default=0)
