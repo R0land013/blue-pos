@@ -3,7 +3,7 @@ from model.entity.models import Product
 from sqlalchemy import select, update
 
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
-    InvalidProductQuantityException, InvalidPriceForProductException
+    InvalidProductQuantityException, InvalidPriceForProductException, NegativeProfitForProductException
 from model.util.monetary_types import CUPMoney
 
 
@@ -15,6 +15,7 @@ class ProductRepository:
     def insert_product(self, product: Product):
         self.__check_correctness_of_quantity(product)
         self.__check_correctness_of_price(product)
+        self.__check_correctness_of_profit(product)
         self.__check_name_is_not_used(product)
 
         self.__session.add(product)
@@ -27,6 +28,10 @@ class ProductRepository:
     def __check_correctness_of_price(self, product: Product):
         if product.price <= CUPMoney('0.00'):
             raise InvalidPriceForProductException()
+
+    def __check_correctness_of_profit(self, product: Product):
+        if product.profit < CUPMoney('0.00'):
+            raise NegativeProfitForProductException()
 
     def __check_name_is_not_used(self, product: Product):
         found_product = self.__find_product_by_name(product.name)
@@ -59,6 +64,7 @@ class ProductRepository:
     def update_product(self, new: Product):
         self.__check_correctness_of_quantity(new)
         self.__check_correctness_of_price(new)
+        self.__check_correctness_of_profit(new)
         old = self.__check_product_exists(new)
         self.__check_name_can_be_used(old, new)
 
