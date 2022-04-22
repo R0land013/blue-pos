@@ -1,7 +1,8 @@
 import unittest
 from sqlalchemy import select
 from model.entity.models import Product
-from model.repository.exc.product import UniqueProductNameException, NonExistentProductException
+from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
+    InvalidProductQuantityException
 from model.repository.factory import RepositoryFactory
 from tests.util.generators.product import ProductGenerator
 from tests.util.general import TEST_DB_URL
@@ -46,6 +47,12 @@ class TestProductRepository(unittest.TestCase):
         fake_product.name = fake_product.name.upper()
 
         self.assertRaises(UniqueProductNameException, self.product_repository.insert_product,
+                          fake_product)
+
+    def test_product_inserted_with_negative_quantity_raises_exception(self):
+        fake_product = ProductGenerator.generate_one_product()
+        fake_product.quantity = -1
+        self.assertRaises(InvalidProductQuantityException, self.product_repository.insert_product,
                           fake_product)
 
     def test_product_is_deleted_successfully(self):
@@ -122,6 +129,16 @@ class TestProductRepository(unittest.TestCase):
             session.expunge_all()
             updated_product = session.scalar(select(Product))
             self.assertEqual(updated_product, new_product)
+
+    def test_product_updated_with_negative_quantity_raises_exception(self):
+        fake_product = ProductGenerator.generate_one_product()
+        fake_product.quantity = -1
+        with create_test_session() as session:
+            session.add(fake_product)
+            session.commit()
+
+            self.assertRaises(InvalidProductQuantityException, self.product_repository.update_product,
+                              fake_product)
 
     def test_get_all_products_returns_empty_list(self):
         empty_list = []
