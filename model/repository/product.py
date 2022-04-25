@@ -98,4 +98,10 @@ class ProductRepository:
         return self.__session.scalars(filter_query).all()
 
     def __create_query(self, the_filter: ProductFilter):
-        return select(Product).filter_by(id=the_filter.id)
+        query = select(Product)
+        if the_filter.id is not None:
+            query = query.where(Product.id == the_filter.id)
+
+        if the_filter.name is not None:
+            query = query.where(Product.name.ilike('%{}%'.format(the_filter.name)))
+        return query
