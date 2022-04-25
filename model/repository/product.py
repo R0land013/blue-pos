@@ -7,6 +7,17 @@ from model.repository.exc.product import UniqueProductNameException, NonExistent
 from model.util.monetary_types import CUPMoney
 
 
+class ProductFilter:
+
+    def __init__(self):
+        self.id = None
+        self.name = None
+        self.description = None
+        self.price = None
+        self.profit = None
+        self.quantity = None
+
+
 class ProductRepository:
 
     def __init__(self, session: Session):
@@ -81,3 +92,6 @@ class ProductRepository:
 
     def get_all_products(self) -> list:
         return self.__session.scalars(select(Product)).all()
+
+    def get_products_by_filter(self, the_filter: ProductFilter) -> list:
+        raise NotImplementedError()
