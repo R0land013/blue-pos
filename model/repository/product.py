@@ -186,4 +186,9 @@ class ProductRepository:
             query = query.where(Product.profit >= the_filter.more_than_profit)
         if the_filter.less_than_profit is not None:
             query = query.where(Product.profit <= the_filter.less_than_profit)
+
+        if the_filter.more_than_quantity is not None:
+            query = query.where(Product.quantity >= the_filter.more_than_quantity)
+        if the_filter.less_than_quantity is not None:
+            query = query.where(Product.quantity <= the_filter.less_than_quantity)
         return query
