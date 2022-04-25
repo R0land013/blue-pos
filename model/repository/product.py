@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from model.entity.models import Product
-from sqlalchemy import select, update
+from sqlalchemy import select
 
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
     InvalidProductQuantityException, InvalidPriceForProductException, NegativeProfitForProductException
@@ -13,9 +13,78 @@ class ProductFilter:
         self.id = None
         self.name = None
         self.description = None
-        self.price = None
-        self.profit = None
-        self.quantity = None
+        self.__less_than_price = None
+        self.__more_than_price = None
+        self.__less_than_profit = None
+        self.__more_than_profit = None
+        self.__less_than_quantity = None
+        self.__more_than_quantity = None
+
+    @property
+    def less_than_price(self):
+        return self.__less_than_price
+
+    @less_than_price.setter
+    def less_than_price(self, value: CUPMoney):
+        self.__check_price_correctness(value)
+        self.__less_than_price = value
+
+    def __check_price_correctness(self, value: CUPMoney):
+        if value is not None and value <= CUPMoney('0'):
+            raise InvalidPriceForProductException()
+
+    @property
+    def more_than_price(self):
+        return self.__more_than_price
+
+    @more_than_price.setter
+    def more_than_price(self, value: CUPMoney):
+        self.__check_price_correctness(value)
+        self.__more_than_price = value
+
+    @property
+    def less_than_profit(self):
+        return self.__less_than_profit
+
+    @less_than_profit.setter
+    def less_than_profit(self, value: CUPMoney):
+        self.__check_profit_correctness(value)
+        self.__less_than_profit = value
+
+    def __check_profit_correctness(self, value: CUPMoney):
+        if value is not None and value < CUPMoney('0'):
+            raise NegativeProfitForProductException()
+
+    @property
+    def more_than_profit(self):
+        return self.__more_than_profit
+
+    @more_than_profit.setter
+    def more_than_profit(self, value: CUPMoney):
+        self.__check_profit_correctness(value)
+        self.__more_than_profit = value
+
+    @property
+    def less_than_quantity(self):
+        return self.__less_than_quantity
+
+    @less_than_quantity.setter
+    def less_than_quantity(self, value: int):
+        self.__check_quantity_correctness(value)
+        self.__less_than_quantity = value
+
+    def __check_quantity_correctness(self, value: int):
+        if value is not None and value < 0:
+            raise InvalidProductQuantityException()
+
+    @property
+    def more_than_quantity(self):
+        return self.__more_than_quantity
+
+    @more_than_quantity.setter
+    def more_than_quantity(self, value: int):
+        self.__check_quantity_correctness(value)
+        self.__more_than_quantity = value
 
 
 class ProductRepository:
