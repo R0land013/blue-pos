@@ -202,3 +202,17 @@ class TestProductRepository(unittest.TestCase):
         filtered_products = self.product_repository.get_products_by_filter(the_filter)
 
         self.assertEqual([product_2], filtered_products)
+
+    def test_get_products_by_filter_using_description(self):
+        products = ProductGenerator.generate_products_by_quantity(3)
+        product_0, product_1, product_2 = products
+        product_0.description = 'A pretty picture'
+        product_1.description = 'A small shoe'
+        product_2.description = 'Cellphone protection'
+        products = insert_products_in_database_and_return_them(products)
+
+        the_filter = ProductFilter()
+        the_filter.description = 'LL'
+        filtered_products = self.product_repository.get_products_by_filter(the_filter)
+
+        self.assertEqual([product_1, product_2], filtered_products)
