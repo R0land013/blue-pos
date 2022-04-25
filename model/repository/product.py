@@ -94,4 +94,8 @@ class ProductRepository:
         return self.__session.scalars(select(Product)).all()
 
     def get_products_by_filter(self, the_filter: ProductFilter) -> list:
-        raise NotImplementedError()
+        filter_query = self.__create_query(the_filter)
+        return self.__session.scalars(filter_query).all()
+
+    def __create_query(self, the_filter: ProductFilter):
+        return select(Product).filter_by(id=the_filter.id)

@@ -185,6 +185,6 @@ class TestProductRepository(unittest.TestCase):
         the_filter = ProductFilter()
         the_filter.id = product.id
 
-        filtered_product = self.product_repository.get_products_by_filter(the_filter)
+        filtered_products = self.product_repository.get_products_by_filter(the_filter)
 
-        self.assertEqual(product, filtered_product)
+        self.assertEqual([product], filtered_products)
