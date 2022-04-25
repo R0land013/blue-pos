@@ -248,3 +248,19 @@ class TestProductRepository(unittest.TestCase):
         filtered_products = self.product_repository.get_products_by_filter(the_filter)
 
         self.assertEqual([product_0, product_1, product_2], filtered_products)
+
+    def test_get_products_by_filter_using_quantity_range(self):
+        products = ProductGenerator.generate_products_by_quantity(4)
+        product_0, product_1, product_2, product_3 = products
+        product_0.quantity = 13
+        product_1.quantity = 17
+        product_2.quantity = 18
+        product_3.quantity = 23
+        products = insert_products_in_database_and_return_them(products)
+
+        the_filter = ProductFilter()
+        the_filter.more_than_quantity = 13
+        the_filter.less_than_quantity = 18
+        filtered_products = self.product_repository.get_products_by_filter(the_filter)
+
+        self.assertEqual([product_0, product_1, product_2], filtered_products)
