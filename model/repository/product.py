@@ -173,4 +173,7 @@ class ProductRepository:
 
         if the_filter.name is not None:
             query = query.where(Product.name.ilike('%{}%'.format(the_filter.name)))
+
+        if the_filter.description is not None:
+            query = query.where(Product.description.ilike('%{}%'.format(the_filter.description)))
         return query
