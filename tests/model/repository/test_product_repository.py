@@ -2,6 +2,7 @@ import unittest
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
     InvalidProductQuantityException, InvalidPriceForProductException, NegativeProfitForProductException
 from model.repository.factory import RepositoryFactory
+from model.repository.product import ProductFilter
 from model.util.monetary_types import CUPMoney
 from tests.util.generators.product import ProductGenerator
 from tests.util.general import TEST_DB_URL, get_all_products_in_database, insert_product_and_return_it, \
@@ -177,3 +178,13 @@ class TestProductRepository(unittest.TestCase):
 
         retrieved_products = self.product_repository.get_all_products()
         self.assertEqual(products, retrieved_products)
+
+    def test_get_products_by_filter_id(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        the_filter = ProductFilter()
+        the_filter.id = product.id
+
+        filtered_product = self.product_repository.get_products_by_filter(the_filter)
+
+        self.assertEqual(product, filtered_product)
