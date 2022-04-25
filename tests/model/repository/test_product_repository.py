@@ -6,7 +6,7 @@ from model.repository.product import ProductFilter
 from model.util.monetary_types import CUPMoney
 from tests.util.generators.product import ProductGenerator
 from tests.util.general import TEST_DB_URL, get_all_products_in_database, insert_product_and_return_it, \
-    get_one_product_from_database, insert_products_in_database, delete_all_products_from_database
+    get_one_product_from_database, insert_products_in_database_and_return_them, delete_all_products_from_database
 
 
 class TestProductRepository(unittest.TestCase):
@@ -173,7 +173,7 @@ class TestProductRepository(unittest.TestCase):
 
     def test_get_all_products_returns_nonempty_list(self):
         products = ProductGenerator.generate_products_by_quantity(3)
-        insert_products_in_database(products)
+        insert_products_in_database_and_return_them(products)
         products = get_all_products_in_database()
 
         retrieved_products = self.product_repository.get_all_products()

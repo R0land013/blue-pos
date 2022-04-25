@@ -37,10 +37,13 @@ def insert_product_and_return_it(product: Product) -> Product:
         return __get_unlinked_copy_of_product(product)
 
 
-def insert_products_in_database(products: list):
+def insert_products_in_database_and_return_them(products: list) -> list:
     with create_test_session() as session:
         session.add_all(products)
         session.commit()
+
+        products_copy = list(map(__get_unlinked_copy_of_product, products))
+        return products_copy
 
 
 def get_one_product_from_database() -> Product:
