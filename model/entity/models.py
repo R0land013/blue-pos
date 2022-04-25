@@ -13,7 +13,9 @@ Base = declarative_base()
 class Product(Base):
 
     def __repr__(self):
-        return '[id: {}, name: "{}", description: "{}"]'.format(self.id, self.name, self.description)
+        return '[id: {}, name: "{}", description: "{}", price: {}, profit: {}, ' \
+               'quantity: {}]'.format(self.id, self.name, self.description, self.price,
+                                      self.profit, self.quantity)
 
     def __str__(self):
         return self.__repr__()
