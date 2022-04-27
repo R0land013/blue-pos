@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from sqlalchemy.pool import NullPool
 
+from model.repository.sale import SaleRepository
+
 DB_URL = 'sqlite:///data.db'
 
 
@@ -29,6 +31,9 @@ class RepositoryFactory:
             RepositoryFactory.__engine = create_engine(db_url, poolclass=NullPool)
             RepositoryFactory.__session = Session(RepositoryFactory.__engine)
         return RepositoryFactory.__session
+
+    def get_sale_repository(self, url: str = DB_URL) -> SaleRepository:
+        raise NotImplementedError()
 
     @staticmethod
     def close_session():
