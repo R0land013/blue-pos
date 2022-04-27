@@ -1,11 +1,11 @@
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column
+from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
+from sqlalchemy import Date
 from model.util.money_colum import MoneyColumn
-from money import Money
-
 from model.util.monetary_types import CUPMoney
+from datetime import date
 
 Base = declarative_base()
 
@@ -30,3 +30,27 @@ class Product(Base):
     price = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
     profit = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
     quantity = Column(Integer, nullable=False, default=0)
+    sales = relationship('Sale', back_populates='product')
+
+
+class Sale(Base):
+
+    def __repr__(self):
+        return 'Sale(id: {}, product_id: "{}", date: "{}", price: {}, profit: {})'\
+            .format(self.id, self.product_id, self.date, self.price, self.profit)
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __eq__(self, other):
+        return (self.id == other.id and self.product_id == other.product_id
+                and self.date == other.date and self.price == other.price
+                and self.profit == other.profit)
+
+    __tablename__ = 'sales'
+    id = Column(Integer, primary_key=True)
+    product_id = Column(Integer, ForeignKey('products.id', ondelete='CASCADE'), nullable=False)
+    date = Column(Date, nullable=False, default=date.today())
+    price = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
+    profit = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
+    product = relationship('Product', back_populates='sales')
