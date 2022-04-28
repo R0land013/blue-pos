@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, select
 
-from model.entity.models import Product
+from model.entity.models import Product, Sale
 
 TEST_DB_URL = 'sqlite:///test.db'
 
@@ -9,6 +9,21 @@ TEST_DB_URL = 'sqlite:///test.db'
 def create_test_session() -> Session:
     engine = create_engine(TEST_DB_URL)
     return Session(engine)
+
+
+def __get_unlinked_copies_of_sales(sales: list) -> list:
+    sale_copies = []
+
+    for current_sale in sales:
+        a_sale = Sale()
+        a_sale.id = current_sale.id
+        a_sale.date = current_sale.date
+        a_sale.product = current_sale.product
+        a_sale.product_id = current_sale.product_id
+        a_sale.price = current_sale.price
+        a_sale.profit = current_sale.profit
+        sale_copies.append(a_sale)
+    return sale_copies
 
 
 def __get_unlinked_copy_of_product(product: Product) -> Product:
@@ -19,6 +34,7 @@ def __get_unlinked_copy_of_product(product: Product) -> Product:
     product_copy.price = product.price
     product_copy.profit = product.profit
     product_copy.quantity = product.quantity
+    product_copy.sales = __get_unlinked_copies_of_sales(product.sales)
     return product_copy
 
 
