@@ -97,3 +97,8 @@ def delete_all_products_from_database():
         for a_product in session.scalars(statement):
             session.delete(a_product)
         session.commit()
+
+
+def get_all_sales_from_database():
+    with create_test_session() as session:
+        return session.scalars(select(Sale)).all()
