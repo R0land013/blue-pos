@@ -34,7 +34,7 @@ class RepositoryFactory:
         return RepositoryFactory.__session
 
     @staticmethod
-    def get_sale_repository(self, url: str = DB_URL) -> SaleRepository:
+    def get_sale_repository(url: str = DB_URL) -> SaleRepository:
         RepositoryFactory.__create_session_if_necessary(url)
 
         if RepositoryFactory.__sale_repository is None:

@@ -1,4 +1,4 @@
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import declarative_base, relationship, backref
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
@@ -30,7 +30,6 @@ class Product(Base):
     price = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
     profit = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
     quantity = Column(Integer, nullable=False, default=0)
-    sales = relationship('Sale', back_populates='product')
 
 
 class Sale(Base):
@@ -53,4 +52,4 @@ class Sale(Base):
     date = Column(Date, nullable=False, default=date.today())
     price = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
     profit = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
-    product = relationship('Product', back_populates='sales')
+    product = relationship('Product', backref=backref('sales', cascade='all,delete'))

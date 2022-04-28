@@ -14,7 +14,8 @@ def create_test_session() -> Session:
 def __get_unlinked_copies_of_sales(sales: list) -> list:
     sale_copies = []
 
-    for current_sale in sales:
+    for sale_index in range(len(sales)):
+        current_sale = sales[sale_index]
         a_sale = Sale()
         a_sale.id = current_sale.id
         a_sale.date = current_sale.date
