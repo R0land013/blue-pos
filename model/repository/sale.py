@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 class SaleRepository:
 
     def __init__(self, session: Session):
-        raise NotImplementedError()
+        self.__session = session
 
     def insert_sale(self, product: Product, sale_date: date):
         raise NotImplementedError()

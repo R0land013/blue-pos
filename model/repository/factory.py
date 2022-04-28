@@ -12,6 +12,7 @@ class RepositoryFactory:
     __url = None
     __session: Session = None
     __product_repository = None
+    __sale_repository = None
     __engine = None
 
     @staticmethod
@@ -32,8 +33,14 @@ class RepositoryFactory:
             RepositoryFactory.__session = Session(RepositoryFactory.__engine)
         return RepositoryFactory.__session
 
+    @staticmethod
     def get_sale_repository(self, url: str = DB_URL) -> SaleRepository:
-        raise NotImplementedError()
+        RepositoryFactory.__create_session_if_necessary(url)
+
+        if RepositoryFactory.__sale_repository is None:
+            RepositoryFactory.__sale_repository = SaleRepository(RepositoryFactory.__session)
+
+        return RepositoryFactory.__sale_repository
 
     @staticmethod
     def close_session():
