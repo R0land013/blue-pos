@@ -5,6 +5,7 @@ from model.repository.factory import RepositoryFactory
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, insert_product_and_return_it, \
     get_one_product_from_database, get_all_sales_from_database
 from tests.util.generators.product import ProductGenerator
+from tests.util.generators.sale import SaleGenerator
 
 
 class TestSaleRepository(unittest.TestCase):
@@ -17,12 +18,13 @@ class TestSaleRepository(unittest.TestCase):
         RepositoryFactory.close_session()
         delete_all_products_from_database()
 
-    def test_sale_is_inserted(self):
+    def test_sales_are_inserted(self):
         product = ProductGenerator.generate_one_product()
         product = insert_product_and_return_it(product)
+        sales = SaleGenerator.generate_sales_from_product(product, 3)
 
-        self.sale_repository.insert_sale(product, self.TODAY_DATE)
+        for a_sale in sales:
+            self.sale_repository.insert_sale(a_sale, product)
 
-        product = get_one_product_from_database()
-        inserted_sales = get_all_sales_from_database()
-        self.assertEqual(product.sales, inserted_sales)
+        retrieved_sales = get_all_sales_from_database()
+        self.assertEqual(sales, retrieved_sales)
