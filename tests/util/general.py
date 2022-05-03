@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import create_engine, select
 
 from model.entity.models import Product, Sale
@@ -8,42 +8,13 @@ TEST_DB_URL = 'sqlite:///test.db'
 
 def create_test_session() -> Session:
     engine = create_engine(TEST_DB_URL)
-    return Session(engine)
-
-
-def __get_unlinked_copies_of_sales(sales: list) -> list:
-    sale_copies = []
-
-    for sale_index in range(len(sales)):
-        current_sale = sales[sale_index]
-        a_sale = Sale()
-        a_sale.id = current_sale.id
-        a_sale.date = current_sale.date
-        a_sale.product = current_sale.product
-        a_sale.product_id = current_sale.product_id
-        a_sale.price = current_sale.price
-        a_sale.profit = current_sale.profit
-        sale_copies.append(a_sale)
-    return sale_copies
-
-
-def __get_unlinked_copy_of_product(product: Product) -> Product:
-    product_copy = Product()
-    product_copy.id = product.id
-    product_copy.name = product.name
-    product_copy.description = product.description
-    product_copy.price = product.price
-    product_copy.profit = product.profit
-    product_copy.quantity = product.quantity
-    product_copy.sales = __get_unlinked_copies_of_sales(product.sales)
-    return product_copy
+    return Session(engine, expire_on_commit=False)
 
 
 def insert_product_and_return_it(product: Product) -> Product:
     """
     Insert a product into the test database, and return it. The object
-    returned is not linked with a database session and errors will not
-    be thrown when accessing a field of the object.
+    returned is not linked with a database session.
 
     :param Product product:
     :return Product:
@@ -51,7 +22,7 @@ def insert_product_and_return_it(product: Product) -> Product:
     with create_test_session() as session:
         session.add(product)
         session.commit()
-        return __get_unlinked_copy_of_product(product)
+        return product
 
 
 def insert_products_in_database_and_return_them(products: list) -> list:
@@ -59,8 +30,7 @@ def insert_products_in_database_and_return_them(products: list) -> list:
         session.add_all(products)
         session.commit()
 
-        products_copy = list(map(__get_unlinked_copy_of_product, products))
-        return products_copy
+        return products
 
 
 def get_one_product_from_database() -> Product:
@@ -71,8 +41,7 @@ def get_one_product_from_database() -> Product:
     :return Product:
     """
     with create_test_session() as session:
-        product_linked_to_session = session.scalar(select(Product))
-        return __get_unlinked_copy_of_product(product_linked_to_session)
+        return session.query(Product).options(joinedload(Product.sales)).one()
 
 
 def get_all_products_in_database() -> list:
@@ -85,10 +54,7 @@ def get_all_products_in_database() -> list:
 
     with create_test_session() as session:
 
-        products_linked_to_session = session.scalars(select(Product)).all()
-        products_to_return = map(__get_unlinked_copy_of_product, products_linked_to_session)
-
-        return list(products_to_return)
+        return session.query(Product).options(joinedload(Product.sales)).all()
 
 
 def delete_all_products_from_database():
@@ -102,4 +68,4 @@ def delete_all_products_from_database():
 
 def get_all_sales_from_database():
     with create_test_session() as session:
-        return session.scalars(select(Sale)).all()
+        return session.query(Sale).options(joinedload(Sale.product)).all()

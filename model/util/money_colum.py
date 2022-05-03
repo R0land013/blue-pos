@@ -12,6 +12,8 @@ class MoneyColumn(TypeDecorator):
         return '{} {}'.format(money.currency, money.amount)
 
     def process_result_value(self, money_as_str: str, dialect) -> Money:
+        if money_as_str is None:
+            return None
         money_as_list = money_as_str.split()
         currency = money_as_list[0]
         amount = money_as_list[1]
