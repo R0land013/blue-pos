@@ -24,7 +24,8 @@ class TestSaleRepository(unittest.TestCase):
         sales = SaleGenerator.generate_sales_from_product(product, 3)
 
         for a_sale in sales:
-            self.sale_repository.insert_sale(a_sale, product)
+            self.sale_repository.insert_sale(a_sale)
 
         retrieved_sales = get_all_sales_from_database()
         self.assertEqual(sales, retrieved_sales)
+

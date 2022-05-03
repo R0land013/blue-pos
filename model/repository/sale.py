@@ -7,13 +7,9 @@ class SaleRepository:
     def __init__(self, session: Session):
         self.__session = session
 
-    def insert_sale(self, sale: Sale, product: Product):
-        self.__execute_insert_clause(sale, product)
-        self.__session.commit()
-
-    def __execute_insert_clause(self, sale: Sale, product: Product):
-        sale.product_id = product.id
+    def insert_sale(self, sale: Sale):
         self.__session.add(sale)
+        self.__session.commit()
 
     def delete_sale(self, sale: Sale):
         raise NotImplementedError()
