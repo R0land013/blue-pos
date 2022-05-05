@@ -3,7 +3,7 @@ from datetime import date
 
 from model.repository.factory import RepositoryFactory
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, insert_product_and_return_it, \
-    get_all_sales_from_database, assert_sale_lists_are_equal_ignoring_id
+    get_all_sales_from_database, assert_sale_lists_are_equal_ignoring_id, get_one_product_from_database
 from tests.util.generators.product import ProductGenerator
 from tests.util.generators.sale import SaleGenerator
 
@@ -35,3 +35,14 @@ class TestSaleRepository(unittest.TestCase):
         sale = SaleGenerator.generate_one_sale_from_product(product)
 
         self.assertRaises(ValueError, self.sale_repository.insert_sales, sale, 0)
+
+    def test_sale_insertion_decreases_product_quantity(self):
+        product = ProductGenerator.generate_one_product()
+        product.quantity = 5
+        product = insert_product_and_return_it(product)
+        sale = SaleGenerator.generate_one_sale_from_product(product)
+
+        self.sale_repository.insert_sales(sale, 3)
+
+        product = get_one_product_from_database()
+        self.assertEqual(product.quantity, 2)
