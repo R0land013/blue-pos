@@ -69,3 +69,17 @@ def delete_all_products_from_database():
 def get_all_sales_from_database():
     with create_test_session() as session:
         return session.query(Sale).options(joinedload(Sale.product)).all()
+
+
+def __are_sales_equal_ignoring_id(sale_1: Sale, sale_2: Sale):
+    return (sale_1.product_id == sale_2.product_id and sale_1.date == sale_2.date
+            and sale_1.price == sale_2.price and sale_1.profit == sale_2.profit)
+
+
+def assert_sale_lists_are_equal_ignoring_id(list_1: list, list_2):
+    assert len(list_1) == len(list_2), 'Lists have different sizes.'
+
+    for sale_index in range(len(list_1)):
+        sale_1 = list_1[sale_index]
+        sale_2 = list_2[sale_index]
+        assert __are_sales_equal_ignoring_id(sale_1, sale_2), '{} != {}'.format(sale_1, sale_2)

@@ -19,6 +19,7 @@ class SaleGenerator:
     def generate_one_sale_from_product(product: Product) -> Sale:
         sale = Sale()
         sale.date = SaleGenerator.DEFAULT_DATE
+        sale.product_id = product.id
         sale.product = product
         sale.price = product.price
         sale.profit = product.profit
