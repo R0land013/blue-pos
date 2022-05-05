@@ -10,8 +10,14 @@ class SaleRepository:
         self.__session = session
 
     def insert_sales(self, sale: Sale, quantity: int):
+        self.__check_quantity_is_positive(quantity)
+
         self.__execute_insertion(sale, quantity)
         self.__session.commit()
+
+    def __check_quantity_is_positive(self, quantity: int):
+        if quantity <= 0:
+            raise ValueError('The quantity of sales must be positive.')
 
     def __execute_insertion(self, sale: Sale, quantity: int):
         for i in range(quantity):
