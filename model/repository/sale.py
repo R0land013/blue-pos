@@ -1,4 +1,4 @@
-from sqlalchemy import insert
+from sqlalchemy import insert, update, select
 
 from model.entity.models import Product, Sale
 from sqlalchemy.orm import Session
@@ -13,6 +13,7 @@ class SaleRepository:
         self.__check_quantity_is_positive(quantity)
 
         self.__execute_insertion(sale, quantity)
+        self.__execute_product_quantity_update(sale, quantity)
         self.__session.commit()
 
     def __check_quantity_is_positive(self, quantity: int):
@@ -30,6 +31,15 @@ class SaleRepository:
                     profit=sale.profit
                 )
             )
+
+    def __execute_product_quantity_update(self, sale: Sale, sale_quantity: int):
+        product = self.__session.scalar(select(Product).where(Product.id == sale.product_id))
+
+        self.__session.execute(
+            update(Product)
+            .where(Product.id == sale.product_id)
+            .values(quantity=product.quantity - sale_quantity)
+        )
 
     def delete_sale(self, sale: Sale):
         raise NotImplementedError()
