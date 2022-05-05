@@ -1,7 +1,7 @@
 import unittest
 from datetime import date
 
-from model.repository.exc.sale import NoEnoughProductsException
+from model.repository.exc.sale import NoEnoughProductQuantityException
 from model.repository.factory import RepositoryFactory
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, insert_product_and_return_it, \
     get_all_sales_from_database, assert_sale_lists_are_equal_ignoring_id, get_one_product_from_database
@@ -54,4 +54,4 @@ class TestSaleRepository(unittest.TestCase):
         product = insert_product_and_return_it(product)
         sale = SaleGenerator.generate_one_sale_from_product(product)
 
-        self.assertRaises(NoEnoughProductsException, self.sale_repository.insert_sales, sale, 5)
+        self.assertRaises(NoEnoughProductQuantityException, self.sale_repository.insert_sales, sale, 5)

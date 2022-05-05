@@ -3,7 +3,7 @@ from sqlalchemy import insert, update, select
 from model.entity.models import Product, Sale
 from sqlalchemy.orm import Session
 
-from model.repository.exc.sale import NoEnoughProductsException
+from model.repository.exc.sale import NoEnoughProductQuantityException
 
 
 class SaleRepository:
@@ -29,7 +29,7 @@ class SaleRepository:
 
     def __check_there_are_enough_products(self, product: Product, sale_quantity: int):
         if product.quantity - sale_quantity < 0:
-            raise NoEnoughProductsException(product.quantity)
+            raise NoEnoughProductQuantityException(product.quantity)
 
     def __execute_insertion(self, sale: Sale, quantity: int):
         for i in range(quantity):

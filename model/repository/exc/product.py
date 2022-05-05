@@ -25,18 +25,6 @@ class NonExistentProductException(Exception):
         return self.__product
 
 
-class NoEnoughProductQuantityException(Exception):
-
-    MSG = 'No enough product {}. Remaining quantity: {}.'
-
-    def __init__(self, product: Product):
-        super().__init__(NoEnoughProductQuantityException.MSG.format(product, product.quantity))
-        self.__product = product
-
-    def get_product(self) -> Product:
-        return self.__product
-
-
 class InvalidProductQuantityException(Exception):
 
     MSG = 'The product quantity can not be negative.'
