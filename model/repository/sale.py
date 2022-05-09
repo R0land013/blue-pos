@@ -72,7 +72,8 @@ class SaleRepository:
         )
 
     def delete_sale(self, sale: Sale):
-        raise NotImplementedError()
+        self.__session.delete(sale)
+        self.__session.commit()
 
     def update_sale(self, sale: Sale):
         raise NotImplementedError()
