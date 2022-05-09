@@ -1,9 +1,10 @@
 import unittest
 from datetime import date
 
-from model.repository.exc.product import NonExistentProductException
+from model.repository.exc.product import NonExistentProductException, InvalidPriceForProductException
 from model.repository.exc.sale import NoEnoughProductQuantityException
 from model.repository.factory import RepositoryFactory
+from model.util.monetary_types import CUPMoney
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, insert_product_and_return_it, \
     get_all_sales_from_database, assert_sale_lists_are_equal_ignoring_id, get_one_product_from_database
 from tests.util.generators.product import ProductGenerator
@@ -63,3 +64,11 @@ class TestSaleRepository(unittest.TestCase):
         sale.product_id = nonexistent_product_id
 
         self.assertRaises(NonExistentProductException, self.sale_repository.insert_sales, sale, 1)
+
+    def test_sale_insertion_with_no_positive_price_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sale = SaleGenerator.generate_one_sale_from_product(product)
+        sale.price = CUPMoney('0.00')
+
+        self.assertRaises(InvalidPriceForProductException, self.sale_repository.insert_sales, sale, 1)
