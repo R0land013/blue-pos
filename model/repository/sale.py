@@ -3,7 +3,7 @@ from sqlalchemy import insert, update, select
 from model.entity.models import Product, Sale
 from sqlalchemy.orm import Session
 
-from model.repository.exc.product import NonExistentProductException, NoPositivePriceException
+from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeProfitException
 from model.repository.exc.sale import NoEnoughProductQuantityException
 from model.util.monetary_types import CUPMoney
 
@@ -16,6 +16,7 @@ class SaleRepository:
     def insert_sales(self, sale: Sale, quantity: int):
         self.__check_quantity_is_positive(quantity)
         self.__check_price_is_positive(sale)
+        self.__check_profit_is_not_negative(sale)
         product = self.__get_product_by_id(sale.product_id)
         self.__check_product_exists(product, sale.product_id)
         self.__check_there_are_enough_products(product, quantity)
@@ -31,6 +32,10 @@ class SaleRepository:
     def __check_price_is_positive(self, sale: Sale):
         if not sale.price > CUPMoney('0.00'):
             raise NoPositivePriceException()
+
+    def __check_profit_is_not_negative(self, sale: Sale):
+        if sale.profit < CUPMoney('0.00'):
+            raise NegativeProfitException()
 
     def __get_product_by_id(self, product_id: int) -> Product:
         return self.__session.scalar(select(Product).where(Product.id == product_id))
