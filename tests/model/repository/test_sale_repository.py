@@ -103,6 +103,15 @@ class TestSaleRepository(unittest.TestCase):
 
         self.assertRaises(NonExistentSaleException, self.sale_repository.delete_sale, sale)
 
+    def test_delete_sale_with_nonexistent_product_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sale = SaleGenerator.generate_one_sale_from_product(product)
+        sale = insert_sale_and_return_it(sale)
+        sale.product_id = 10
+
+        self.assertRaises(NonExistentProductException, self.sale_repository.delete_sale, sale)
+
     def test_sale_deleted_increases_associated_product_quantity(self):
         product = ProductGenerator.generate_one_product()
         product.quantity = 3
