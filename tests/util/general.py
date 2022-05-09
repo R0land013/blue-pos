@@ -66,9 +66,14 @@ def delete_all_products_from_database():
         session.commit()
 
 
-def get_all_sales_from_database():
+def get_all_sales_from_database() -> list:
     with create_test_session() as session:
         return session.query(Sale).options(joinedload(Sale.product)).all()
+
+
+def get_one_sale_from_database() -> Sale:
+    with create_test_session() as session:
+        return session.query(Sale).options(joinedload(Sale.product)).one()
 
 
 def __are_sales_equal_ignoring_id(sale_1: Sale, sale_2: Sale):
