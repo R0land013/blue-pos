@@ -87,7 +87,16 @@ class SaleRepository:
         )
 
     def update_sale(self, sale: Sale):
-        raise NotImplementedError()
+        self.__session.execute(
+            update(Sale)
+            .where(sale.id == sale.id)
+            .values(
+                date=sale.date,
+                price=sale.price,
+                profit=sale.profit
+            )
+        )
+        self.__session.commit()
 
     def get_all_sales(self) -> list:
         raise NotImplementedError()
