@@ -1,6 +1,7 @@
 import unittest
 from datetime import date
 
+from model.repository.exc.product import NonExistentProductException
 from model.repository.exc.sale import NoEnoughProductQuantityException
 from model.repository.factory import RepositoryFactory
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, insert_product_and_return_it, \
@@ -55,3 +56,10 @@ class TestSaleRepository(unittest.TestCase):
         sale = SaleGenerator.generate_one_sale_from_product(product)
 
         self.assertRaises(NoEnoughProductQuantityException, self.sale_repository.insert_sales, sale, 5)
+
+    def test_sale_insertion_with_nonexistent_product_raises_exception(self):
+        sale = SaleGenerator.generate_one_sale_without_product()
+        nonexistent_product_id = 3
+        sale.product_id = nonexistent_product_id
+
+        self.assertRaises(NonExistentProductException, self.sale_repository.insert_sales, sale, 1)
