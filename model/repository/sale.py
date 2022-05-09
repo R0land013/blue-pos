@@ -3,6 +3,7 @@ from sqlalchemy import insert, update, select
 from model.entity.models import Product, Sale
 from sqlalchemy.orm import Session
 
+from model.repository.exc.product import NonExistentProductException
 from model.repository.exc.sale import NoEnoughProductQuantityException
 
 
@@ -14,6 +15,7 @@ class SaleRepository:
     def insert_sales(self, sale: Sale, quantity: int):
         self.__check_quantity_is_positive(quantity)
         product = self.__get_product_by_id(sale.product_id)
+        self.__check_product_exists(product, sale.product_id)
         self.__check_there_are_enough_products(product, quantity)
 
         self.__execute_insertion(sale, quantity)
@@ -26,6 +28,12 @@ class SaleRepository:
 
     def __get_product_by_id(self, product_id: int) -> Product:
         return self.__session.scalar(select(Product).where(Product.id == product_id))
+
+    def __check_product_exists(self, product: Product, product_id: int):
+        if product is None:
+            nonexistent_product = Product()
+            nonexistent_product.id = product_id
+            raise NonExistentProductException(nonexistent_product)
 
     def __check_there_are_enough_products(self, product: Product, sale_quantity: int):
         if product.quantity - sale_quantity < 0:
