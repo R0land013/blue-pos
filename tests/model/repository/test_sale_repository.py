@@ -1,12 +1,15 @@
 import unittest
 from datetime import date
 
+from numpy.lib.function_base import insert
+
 from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeProfitException
 from model.repository.exc.sale import NoEnoughProductQuantityException
 from model.repository.factory import RepositoryFactory
 from model.util.monetary_types import CUPMoney
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, insert_product_and_return_it, \
-    get_all_sales_from_database, assert_sale_lists_are_equal_ignoring_id, get_one_product_from_database
+    get_all_sales_from_database, assert_sale_lists_are_equal_ignoring_id, get_one_product_from_database, \
+    insert_sale_and_return_it
 from tests.util.generators.product import ProductGenerator
 from tests.util.generators.sale import SaleGenerator
 
@@ -80,3 +83,14 @@ class TestSaleRepository(unittest.TestCase):
         sale.profit = CUPMoney('-1.00')
 
         self.assertRaises(NegativeProfitException, self.sale_repository.insert_sales, sale, 1)
+
+    def test_sale_is_deleted_successfully(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sale = SaleGenerator.generate_one_sale_from_product(product)
+        sale = insert_sale_and_return_it(sale)
+
+        self.sale_repository.delete_sale(sale)
+
+        read_sales = get_all_sales_from_database()
+        self.assertEqual(read_sales, [])

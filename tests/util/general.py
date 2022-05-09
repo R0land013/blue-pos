@@ -76,6 +76,13 @@ def __are_sales_equal_ignoring_id(sale_1: Sale, sale_2: Sale):
             and sale_1.price == sale_2.price and sale_1.profit == sale_2.profit)
 
 
+def insert_sale_and_return_it(sale: Sale):
+    with create_test_session() as session:
+        session.add(sale)
+        session.commit()
+        return sale
+
+
 def assert_sale_lists_are_equal_ignoring_id(list_1: list, list_2):
     assert len(list_1) == len(list_2), 'Lists have different sizes.'
 
