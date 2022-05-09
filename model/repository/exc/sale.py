@@ -10,3 +10,15 @@ class NoEnoughProductQuantityException(Exception):
 
     def get_remaining_quantity(self) -> int:
         return self.__remaining_quantity
+
+
+class NonExistentSaleException(Exception):
+
+    MSG = 'The sale {} does not exist.'
+
+    def __init__(self, sale):
+        super().__init__(NonExistentSaleException.MSG.format(sale))
+        self.__sale = sale
+
+    def get_sale(self):
+        return self.__sale

@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from numpy.lib.function_base import insert
 
 from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeProfitException
-from model.repository.exc.sale import NoEnoughProductQuantityException
+from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException
 from model.repository.factory import RepositoryFactory
 from model.util.monetary_types import CUPMoney
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, insert_product_and_return_it, \
@@ -94,6 +94,14 @@ class TestSaleRepository(unittest.TestCase):
 
         read_sales = get_all_sales_from_database()
         self.assertEqual(read_sales, [])
+
+    def test_trying_to_delete_nonexistent_sale_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sale = SaleGenerator.generate_one_sale_from_product(product)
+        sale.id = 5
+
+        self.assertRaises(NonExistentSaleException, self.sale_repository.delete_sale, sale)
 
     def test_sale_deleted_increases_associated_product_quantity(self):
         product = ProductGenerator.generate_one_product()
