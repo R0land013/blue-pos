@@ -73,6 +73,8 @@ class SaleRepository:
 
     def delete_sale(self, sale_to_delete: Sale):
         self.__check_sale_exists(sale_to_delete)
+        product = self.__get_product_by_id(sale_to_delete.product_id)
+        self.__check_product_exists(product, sale_to_delete.product_id)
         self.__increase_product_quantity(sale_to_delete)
 
         self.__session.execute(
