@@ -72,8 +72,19 @@ class SaleRepository:
         )
 
     def delete_sale(self, sale: Sale):
+        self.__increase_product_quantity(sale)
+
         self.__session.delete(sale)
         self.__session.commit()
+
+    def __increase_product_quantity(self, sale: Sale):
+        product = self.__get_product_by_id(sale.product_id)
+
+        self.__session.execute(
+            update(Product)
+            .where(Product.id == sale.product_id)
+            .values(quantity=product.quantity + 1)
+        )
 
     def update_sale(self, sale: Sale):
         raise NotImplementedError()
