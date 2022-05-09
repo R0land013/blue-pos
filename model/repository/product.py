@@ -3,7 +3,7 @@ from model.entity.models import Product
 from sqlalchemy import select
 
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
-    InvalidProductQuantityException, InvalidPriceForProductException, NegativeProfitForProductException
+    InvalidProductQuantityException, NoPositivePriceException, NegativeProfitException
 from model.util.monetary_types import CUPMoney
 
 
@@ -31,7 +31,7 @@ class ProductFilter:
 
     def __check_price_correctness(self, value: CUPMoney):
         if value is not None and value <= CUPMoney('0'):
-            raise InvalidPriceForProductException()
+            raise NoPositivePriceException()
 
     @property
     def more_than_price(self):
@@ -53,7 +53,7 @@ class ProductFilter:
 
     def __check_profit_correctness(self, value: CUPMoney):
         if value is not None and value < CUPMoney('0'):
-            raise NegativeProfitForProductException()
+            raise NegativeProfitException()
 
     @property
     def more_than_profit(self):
@@ -107,11 +107,11 @@ class ProductRepository:
 
     def __check_correctness_of_price(self, product: Product):
         if product.price <= CUPMoney('0.00'):
-            raise InvalidPriceForProductException()
+            raise NoPositivePriceException()
 
     def __check_correctness_of_profit(self, product: Product):
         if product.profit < CUPMoney('0.00'):
-            raise NegativeProfitForProductException()
+            raise NegativeProfitException()
 
     def __check_name_is_not_used(self, product: Product):
         found_product = self.__find_product_by_name(product.name)

@@ -33,17 +33,17 @@ class InvalidProductQuantityException(Exception):
         super().__init__(InvalidProductQuantityException.MSG)
 
 
-class InvalidPriceForProductException(Exception):
+class NoPositivePriceException(Exception):
 
     MSG = 'The price of a product can not be negative or zero.'
 
     def __init__(self):
-        super().__init__(InvalidPriceForProductException.MSG)
+        super().__init__(NoPositivePriceException.MSG)
 
 
-class NegativeProfitForProductException(Exception):
+class NegativeProfitException(Exception):
 
     MSG = 'The profit of a product can not be negative.'
 
     def __init__(self):
-        super().__init__(NegativeProfitForProductException.MSG)
+        super().__init__(NegativeProfitException.MSG)

@@ -1,7 +1,7 @@
 import unittest
 from datetime import date
 
-from model.repository.exc.product import NonExistentProductException, InvalidPriceForProductException
+from model.repository.exc.product import NonExistentProductException, NoPositivePriceException
 from model.repository.exc.sale import NoEnoughProductQuantityException
 from model.repository.factory import RepositoryFactory
 from model.util.monetary_types import CUPMoney
@@ -71,4 +71,4 @@ class TestSaleRepository(unittest.TestCase):
         sale = SaleGenerator.generate_one_sale_from_product(product)
         sale.price = CUPMoney('0.00')
 
-        self.assertRaises(InvalidPriceForProductException, self.sale_repository.insert_sales, sale, 1)
+        self.assertRaises(NoPositivePriceException, self.sale_repository.insert_sales, sale, 1)
