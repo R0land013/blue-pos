@@ -94,3 +94,15 @@ class TestSaleRepository(unittest.TestCase):
 
         read_sales = get_all_sales_from_database()
         self.assertEqual(read_sales, [])
+
+    def test_sale_deleted_increases_associated_product_quantity(self):
+        product = ProductGenerator.generate_one_product()
+        product.quantity = 3
+        product = insert_product_and_return_it(product)
+        sale = SaleGenerator.generate_one_sale_from_product(product)
+        sale = insert_product_and_return_it(sale)
+
+        self.sale_repository.delete_sale(sale)
+
+        product = get_one_product_from_database()
+        self.assertEqual(product.quantity, 4)
