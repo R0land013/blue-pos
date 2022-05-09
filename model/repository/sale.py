@@ -1,10 +1,10 @@
-from sqlalchemy import insert, update, select
+from sqlalchemy import insert, update, select, delete
 
 from model.entity.models import Product, Sale
 from sqlalchemy.orm import Session
 
 from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeProfitException
-from model.repository.exc.sale import NoEnoughProductQuantityException
+from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException
 from model.util.monetary_types import CUPMoney
 
 
@@ -71,11 +71,23 @@ class SaleRepository:
             .values(quantity=product.quantity - sale_quantity)
         )
 
-    def delete_sale(self, sale: Sale):
-        self.__increase_product_quantity(sale)
+    def delete_sale(self, sale_to_delete: Sale):
+        self.__check_sale_exists(sale_to_delete)
+        self.__increase_product_quantity(sale_to_delete)
 
-        self.__session.delete(sale)
+        self.__session.execute(
+            delete(Sale)
+            .where(Sale.id == sale_to_delete.id)
+        )
         self.__session.commit()
+
+    def __get_sale_by_id(self, sale_id: int):
+        return self.__session.scalar(select(Sale).where(Sale.id == sale_id))
+
+    def __check_sale_exists(self, sale_to_delete):
+        read_sale = self.__get_sale_by_id(sale_to_delete.id)
+        if read_sale is None:
+            raise NonExistentSaleException(sale_to_delete)
 
     def __increase_product_quantity(self, sale: Sale):
         product = self.__get_product_by_id(sale.product_id)
