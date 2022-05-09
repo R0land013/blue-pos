@@ -1,7 +1,7 @@
 import unittest
 from datetime import date
 
-from model.repository.exc.product import NonExistentProductException, NoPositivePriceException
+from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeProfitException
 from model.repository.exc.sale import NoEnoughProductQuantityException
 from model.repository.factory import RepositoryFactory
 from model.util.monetary_types import CUPMoney
@@ -72,3 +72,11 @@ class TestSaleRepository(unittest.TestCase):
         sale.price = CUPMoney('0.00')
 
         self.assertRaises(NoPositivePriceException, self.sale_repository.insert_sales, sale, 1)
+
+    def test_sale_insertion_with_negative_profit_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sale = SaleGenerator.generate_one_sale_from_product(product)
+        sale.profit = CUPMoney('-1.00')
+
+        self.assertRaises(NegativeProfitException, self.sale_repository.insert_sales, sale, 1)
