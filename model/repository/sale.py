@@ -18,9 +18,8 @@ class SaleRepository:
         self.__check_quantity_is_positive(quantity)
         self.__check_price_is_positive(sale)
         self.__check_profit_is_not_negative(sale)
-        product = self.__get_product_by_id(sale.product_id)
-        self.__check_product_exists(product, sale.product_id)
-        self.__check_there_are_enough_products(product, quantity)
+        self.__check_product_exists(sale)
+        self.__check_there_are_enough_products(sale, quantity)
 
         self.__execute_insertion(sale, quantity)
         self.__execute_product_quantity_update(sale, quantity)
@@ -41,15 +40,17 @@ class SaleRepository:
     def __get_product_by_id(self, product_id: int) -> Product:
         return self.__session.scalar(select(Product).where(Product.id == product_id))
 
-    def __check_product_exists(self, product: Product, product_id: int):
-        if product is None:
+    def __check_product_exists(self, sale: Sale):
+        read_product = self.__get_product_by_id(sale.product_id)
+        if read_product is None:
             nonexistent_product = Product()
-            nonexistent_product.id = product_id
+            nonexistent_product.id = sale.product_id
             raise NonExistentProductException(nonexistent_product)
 
-    def __check_there_are_enough_products(self, product: Product, sale_quantity: int):
-        if product.quantity - sale_quantity < 0:
-            raise NoEnoughProductQuantityException(product.quantity)
+    def __check_there_are_enough_products(self, sale: Sale, quantity_of_sales):
+        read_product = self.__get_product_by_id(sale.product_id)
+        if read_product.quantity - quantity_of_sales < 0:
+            raise NoEnoughProductQuantityException(read_product.quantity)
 
     def __execute_insertion(self, sale: Sale, quantity: int):
         for i in range(quantity):
@@ -74,8 +75,7 @@ class SaleRepository:
 
     def delete_sale(self, sale_to_delete: Sale):
         self.__check_sale_exists(sale_to_delete)
-        product = self.__get_product_by_id(sale_to_delete.product_id)
-        self.__check_product_exists(product, sale_to_delete.product_id)
+        self.__check_product_exists(sale_to_delete)
         self.__increase_product_quantity(sale_to_delete)
 
         self.__session.execute(
