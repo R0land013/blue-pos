@@ -101,16 +101,26 @@ class SaleRepository:
         )
 
     def update_sale(self, sale: Sale):
+        self.__check_sale_exists(sale)
+
+        self.__execute_update_operation(sale)
+        self.__session.commit()
+
+    def __check_sale_exists(self, sale: Sale):
+        read_sale = self.__session.scalar(select(Sale).where(Sale.id == sale.id))
+        if read_sale is None:
+            raise NonExistentSaleException(sale)
+
+    def __execute_update_operation(self, sale: Sale):
         self.__session.execute(
             update(Sale)
-            .where(sale.id == sale.id)
-            .values(
+                .where(sale.id == sale.id)
+                .values(
                 date=sale.date,
                 price=sale.price,
                 profit=sale.profit
             )
         )
-        self.__session.commit()
 
     def get_all_sales(self) -> list:
         raise NotImplementedError()
