@@ -132,4 +132,4 @@ class SaleRepository:
         )
 
     def get_all_sales(self) -> list:
-        raise NotImplementedError()
+        return self.__session.scalars(select(Sale)).all()
