@@ -164,3 +164,12 @@ class TestSaleRepository(unittest.TestCase):
 
         sale.price = CUPMoney('0.00')
         self.assertRaises(NoPositivePriceException, self.sale_repository.update_sale, sale)
+
+    def test_sale_update_with_negative_profit_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sale = SaleGenerator.generate_one_sale_from_product(product)
+        sale = insert_sale_and_return_it(sale)
+
+        sale.profit = CUPMoney('1.00')
+        self.assertRaises(NegativeProfitException, self.sale_repository.update_sale, sale)
