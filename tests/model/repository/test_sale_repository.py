@@ -4,12 +4,13 @@ from datetime import date, timedelta
 from numpy.lib.function_base import insert
 
 from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeProfitException
-from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException
+from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException, \
+    ChangeProductIdInSaleException
 from model.repository.factory import RepositoryFactory
 from model.util.monetary_types import CUPMoney
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, insert_product_and_return_it, \
     get_all_sales_from_database, assert_sale_lists_are_equal_ignoring_id, get_one_product_from_database, \
-    insert_sale_and_return_it, get_one_sale_from_database
+    insert_sale_and_return_it, get_one_sale_from_database, insert_products_in_database_and_return_them
 from tests.util.generators.product import ProductGenerator
 from tests.util.generators.sale import SaleGenerator
 
@@ -145,3 +146,12 @@ class TestSaleRepository(unittest.TestCase):
         sale.id = 5
 
         self.assertRaises(NonExistentSaleException, self.sale_repository.update_sale, sale)
+
+    def test_trying_to_change_product_of_a_sale_raises_exception(self):
+        products = ProductGenerator.generate_products_by_quantity(2)
+        product_1, product_2 = insert_products_in_database_and_return_them(products)
+        sale = SaleGenerator.generate_one_sale_from_product(product_1)
+        sale = insert_sale_and_return_it(sale)
+
+        sale.product_id = product_2.id
+        self.assertRaises(ChangeProductIdInSaleException, self.sale_repository.update_sale, sale)

@@ -22,3 +22,11 @@ class NonExistentSaleException(Exception):
 
     def get_sale(self):
         return self.__sale
+
+
+class ChangeProductIdInSaleException(Exception):
+
+    MSG = 'The product id of a sale can not be changed.'
+
+    def __init__(self):
+        super().__init__(ChangeProductIdInSaleException.MSG)
