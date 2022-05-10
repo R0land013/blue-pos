@@ -10,7 +10,8 @@ from model.repository.factory import RepositoryFactory
 from model.util.monetary_types import CUPMoney
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, insert_product_and_return_it, \
     get_all_sales_from_database, assert_sale_lists_are_equal_ignoring_id, get_one_product_from_database, \
-    insert_sale_and_return_it, get_one_sale_from_database, insert_products_in_database_and_return_them
+    insert_sale_and_return_it, get_one_sale_from_database, insert_products_in_database_and_return_them, \
+    insert_sales_and_return_them
 from tests.util.generators.product import ProductGenerator
 from tests.util.generators.sale import SaleGenerator
 
@@ -173,3 +174,14 @@ class TestSaleRepository(unittest.TestCase):
 
         sale.profit = CUPMoney('-1.00')
         self.assertRaises(NegativeProfitException, self.sale_repository.update_sale, sale)
+
+    def test_all_sales_are_read_from_database(self):
+        product = ProductGenerator.generate_one_product()
+        product.quantity = 5
+        product = insert_product_and_return_it(product)
+        sales = SaleGenerator.generate_sales_from_product(product, 3)
+        sales = insert_sales_and_return_them(sales)
+
+        read_sales = self.sale_repository.get_all_sales()
+
+        self.assertEqual(read_sales, sales)

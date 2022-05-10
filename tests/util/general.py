@@ -88,6 +88,13 @@ def insert_sale_and_return_it(sale: Sale):
         return sale
 
 
+def insert_sales_and_return_them(sales: list) -> list:
+    with create_test_session() as session:
+        session.add_all(sales)
+        session.commit()
+        return sales
+
+
 def assert_sale_lists_are_equal_ignoring_id(list_1: list, list_2):
     assert len(list_1) == len(list_2), 'Lists have different sizes.'
 
