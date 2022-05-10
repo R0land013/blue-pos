@@ -155,3 +155,12 @@ class TestSaleRepository(unittest.TestCase):
 
         sale.product_id = product_2.id
         self.assertRaises(ChangeProductIdInSaleException, self.sale_repository.update_sale, sale)
+
+    def test_sale_update_without_positive_price_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sale = SaleGenerator.generate_one_sale_from_product(product)
+        sale = insert_sale_and_return_it(sale)
+
+        sale.price = CUPMoney('0.00')
+        self.assertRaises(NoPositivePriceException, self.sale_repository.update_sale, sale)
