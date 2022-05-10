@@ -4,7 +4,8 @@ from model.entity.models import Product, Sale
 from sqlalchemy.orm import Session
 
 from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeProfitException
-from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException
+from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException, \
+    ChangeProductIdInSaleException
 from model.util.monetary_types import CUPMoney
 
 
@@ -102,6 +103,7 @@ class SaleRepository:
 
     def update_sale(self, sale: Sale):
         self.__check_sale_exists(sale)
+        self.__check_product_id_is_not_changed_in_sale(sale)
 
         self.__execute_update_operation(sale)
         self.__session.commit()
@@ -110,6 +112,12 @@ class SaleRepository:
         read_sale = self.__session.scalar(select(Sale).where(Sale.id == sale.id))
         if read_sale is None:
             raise NonExistentSaleException(sale)
+
+    def __check_product_id_is_not_changed_in_sale(self, sale: Sale):
+        read_sale = self.__get_sale_by_id(sale.id)
+        if read_sale.product_id != sale.product_id:
+            raise ChangeProductIdInSaleException()
+
 
     def __execute_update_operation(self, sale: Sale):
         self.__session.execute(
