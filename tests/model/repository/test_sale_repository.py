@@ -137,3 +137,11 @@ class TestSaleRepository(unittest.TestCase):
 
         read_sale = get_one_sale_from_database()
         self.assertEqual(new_sale, read_sale)
+
+    def test_trying_to_update_nonexistent_sale_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sale = SaleGenerator.generate_one_sale_from_product(product)
+        sale.id = 5
+
+        self.assertRaises(NonExistentSaleException, self.sale_repository.update_sale, sale)
