@@ -102,6 +102,7 @@ class SaleRepository:
         )
 
     def update_sale(self, sale: Sale):
+        self.__check_price_is_positive(sale)
         self.__check_sale_exists(sale)
         self.__check_product_id_is_not_changed_in_sale(sale)
 
@@ -117,7 +118,6 @@ class SaleRepository:
         read_sale = self.__get_sale_by_id(sale.id)
         if read_sale.product_id != sale.product_id:
             raise ChangeProductIdInSaleException()
-
 
     def __execute_update_operation(self, sale: Sale):
         self.__session.execute(
