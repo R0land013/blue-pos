@@ -171,5 +171,5 @@ class TestSaleRepository(unittest.TestCase):
         sale = SaleGenerator.generate_one_sale_from_product(product)
         sale = insert_sale_and_return_it(sale)
 
-        sale.profit = CUPMoney('1.00')
+        sale.profit = CUPMoney('-1.00')
         self.assertRaises(NegativeProfitException, self.sale_repository.update_sale, sale)

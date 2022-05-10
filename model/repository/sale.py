@@ -103,6 +103,7 @@ class SaleRepository:
 
     def update_sale(self, sale: Sale):
         self.__check_price_is_positive(sale)
+        self.__check_profit_is_not_negative(sale)
         self.__check_sale_exists(sale)
         self.__check_product_id_is_not_changed_in_sale(sale)
 
