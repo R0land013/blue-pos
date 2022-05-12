@@ -181,4 +181,7 @@ class SaleRepository:
         if the_filter.maximum_date is not None:
             query = query.where(Sale.date <= the_filter.maximum_date)
 
+        if the_filter.product_id_list is not None:
+            query = query.where(Sale.product_id.in_(the_filter.product_id_list))
+
         return query
