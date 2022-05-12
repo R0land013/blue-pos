@@ -169,4 +169,16 @@ class SaleRepository:
         return self.__session.scalars(select(Sale)).all()
 
     def get_sales_by_filter(self, the_filter: SaleFilter) -> list:
-        raise NotImplementedError()
+        filter_query = SaleRepository.__create_filter_query(the_filter)
+        return self.__session.scalars(filter_query).all()
+
+    @staticmethod
+    def __create_filter_query(the_filter: SaleFilter):
+        query = select(Sale)
+
+        if the_filter.minimum_date is not None:
+            query = query.where(Sale.date >= the_filter.minimum_date)
+        if the_filter.maximum_date is not None:
+            query = query.where(Sale.date <= the_filter.maximum_date)
+
+        return query
