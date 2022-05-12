@@ -204,3 +204,21 @@ class TestSaleRepository(unittest.TestCase):
         filtered_sales = self.sale_repository.get_sales_by_filter(sale_filter)
 
         self.assertEqual(filtered_sales, sales)
+
+    def test_get_sales_by_using_product_id_list(self):
+        products = ProductGenerator.generate_products_by_quantity(3)
+        products = insert_products_in_database_and_return_them(products)
+        p1, p2, p3 = products
+        sales_of_p1 = SaleGenerator.generate_sales_from_product(p1, 2)
+        sales_of_p2 = SaleGenerator.generate_sales_from_product(p2, 2)
+        sales_of_p3 = SaleGenerator.generate_sales_from_product(p3, 2)
+        sales_of_p1 = insert_sales_and_return_them(sales_of_p1)
+        sales_of_p2 = insert_sales_and_return_them(sales_of_p2)
+        sales_of_p3 = insert_sales_and_return_them(sales_of_p3)
+
+        sale_filter = SaleFilter()
+        sale_filter.product_id_list = [p1.id, p3.id]
+        filtered_sales = self.sale_repository.get_sales_by_filter(sale_filter)
+
+        sales_of_p1_and_p3 = sales_of_p1 + sales_of_p3
+        self.assertEqual(filtered_sales, sales_of_p1_and_p3)
