@@ -7,6 +7,7 @@ from model.repository.exc.product import NonExistentProductException, NoPositive
 from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException, \
     ChangeProductIdInSaleException
 from model.repository.factory import RepositoryFactory
+from model.repository.sale import SaleFilter
 from model.util.monetary_types import CUPMoney
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, insert_product_and_return_it, \
     get_all_sales_from_database, assert_sale_lists_are_equal_ignoring_id, get_one_product_from_database, \
@@ -185,3 +186,21 @@ class TestSaleRepository(unittest.TestCase):
         read_sales = self.sale_repository.get_all_sales()
 
         self.assertEqual(read_sales, sales)
+
+    def test_get_sales_by_filter_using_date_range(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sales = SaleGenerator.generate_sales_from_product(product, 3)
+        s1, s2, s3 = sales
+        one_day, two_days = timedelta(days=1), timedelta(days=2)
+        s1.date = self.TODAY_DATE
+        s2.date = self.TODAY_DATE + one_day
+        s3.date = self.TODAY_DATE + two_days
+        sales = insert_sales_and_return_them(sales)
+
+        sale_filter = SaleFilter()
+        sale_filter.minimum_date = self.TODAY_DATE
+        sale_filter.maximum_date = self.TODAY_DATE + two_days
+        filtered_sales = self.sale_repository.get_sales_by_filter(sale_filter)
+
+        self.assertEqual(filtered_sales, sales)
