@@ -1,3 +1,5 @@
+from datetime import date
+
 from sqlalchemy import insert, update, select, delete
 
 from model.entity.models import Product, Sale
@@ -7,6 +9,38 @@ from model.repository.exc.product import NonExistentProductException, NoPositive
 from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException, \
     ChangeProductIdInSaleException
 from model.util.monetary_types import CUPMoney
+
+
+class SaleFilter:
+
+    def __init__(self):
+        self.__product_id_list = None
+        self.__minimum_date = None
+        self.__maximum_date = None
+
+    @property
+    def product_id_list(self) -> list:
+        return self.__product_id_list
+
+    @product_id_list.setter
+    def product_id_list(self, value: list):
+        self.__product_id_list = value
+
+    @property
+    def minimum_date(self) -> date:
+        return self.__minimum_date
+
+    @minimum_date.setter
+    def minimum_date(self, value: date):
+        self.__minimum_date = value
+
+    @property
+    def maximum_date(self) -> date:
+        return self.__maximum_date
+
+    @maximum_date.setter
+    def maximum_date(self, value: date):
+        self.__maximum_date = value
 
 
 class SaleRepository:
