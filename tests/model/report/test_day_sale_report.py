@@ -33,4 +33,4 @@ class TestDaySaleReport(unittest.TestCase):
         report = DaySaleReport(self.YESTERDAY, self.sale_repository)
         sales_of_report = report.get_sales()
 
-        assert_sale_lists_are_equal_ignoring_id(sales_of_report, [s1, s2])
+        assert_sale_lists_are_equal_ignoring_id(sales_of_report, [s1, s3])
