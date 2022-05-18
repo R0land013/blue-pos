@@ -59,7 +59,7 @@ class TestDaySaleReport(unittest.TestCase):
         s3.date = self.TODAY
 
         report = DaySaleReport(self.TODAY, self.sale_repository)
-        report.generate_report_as_html(TestDaySaleReport.html_report_path)
-
         report_path = Path(TestDaySaleReport.html_report_path)
+        report.generate_report_as_html(report_path)
+
         self.assertTrue(report_path.exists())
