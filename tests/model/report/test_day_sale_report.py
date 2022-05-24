@@ -24,6 +24,7 @@ class TestDaySaleReport(unittest.TestCase):
         self.TODAY = date.today()
         self.YESTERDAY = self.TODAY - timedelta(days=1)
         self.HTML_DAY_REPORT_PATH = Path('generated').joinpath('reports').joinpath('day_report.html')
+        self.PDF_DAY_REPORT_PATH = Path('generated').joinpath('reports').joinpath('day_report.pdf')
 
     def tearDown(self):
         RepositoryFactory.close_session()
@@ -74,4 +75,4 @@ class TestDaySaleReport(unittest.TestCase):
         p2_sales = insert_sales_and_return_them(p2_sales)
 
         report = DaySaleReport(self.TODAY, self.sale_repository)
-        generate_pdf_file(self.HTML_DAY_REPORT_PATH, report)
+        generate_pdf_file(self.PDF_DAY_REPORT_PATH, report)
