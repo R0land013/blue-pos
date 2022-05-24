@@ -2,6 +2,21 @@
 <html>
     <head>
         <title>Reporte Diario {{ date.day }}-{{ date.month }}-{{ date.year }}</title>
+
+        <style>
+            table{
+                border-collapse: collapse;
+                border:solid 1px black;
+            }
+            td, th{
+                border-collapse: collapse;
+                text-align: center;
+                vertical-align: middle;
+                padding: 5px;
+                border:solid 1px black;
+            }
+        </style>
+
     </head>
 
     <body>
@@ -12,13 +27,13 @@
         <h3>Dinero Recolectado: {{ total_collected_money }}</h3>
 
         <table>
-            <tr>
+            <thead>
                 <th>Id. Venta</th>
                 <th>Producto</th>
                 <th>Id. Producto</th>
                 <th>Precio</th>
                 <th>Ganancia por unidad</th>
-            </tr>
+            </thead>
                 <tbody>
                 {% for a_sale in sales %}
                     <tr>
