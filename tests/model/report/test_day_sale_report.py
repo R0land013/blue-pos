@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 from model.report.day import DaySaleReport
-from model.report.generators import generate_html_file
+from model.report.generators import generate_html_file, generate_pdf_file
 from model.repository.factory import RepositoryFactory
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, insert_product_and_return_it, \
     insert_sales_and_return_them, assert_sale_lists_are_equal_ignoring_id, insert_products_in_database_and_return_them
@@ -59,3 +59,19 @@ class TestDaySaleReport(unittest.TestCase):
 
         report = DaySaleReport(self.TODAY, self.sale_repository)
         generate_html_file(self.HTML_DAY_REPORT_PATH, report)
+
+    def test_pdf_report_is_correctly_generated(self):
+        products = ProductGenerator.generate_products_by_quantity(2)
+        products = insert_products_in_database_and_return_them(products)
+        p1, p2 = products
+        p1_sales = SaleGenerator.generate_sales_from_product(p1, 3)
+        p2_sales = SaleGenerator.generate_sales_from_product(p2, 3)
+        for a_sale in p1_sales:
+            a_sale.date = self.TODAY
+        for a_sale in p2_sales:
+            a_sale.date = self.TODAY
+        p1_sales = insert_sales_and_return_them(p1_sales)
+        p2_sales = insert_sales_and_return_them(p2_sales)
+
+        report = DaySaleReport(self.TODAY, self.sale_repository)
+        generate_pdf_file(self.HTML_DAY_REPORT_PATH, report)
