@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeProfitException
 from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException, \
     ChangeProductIdInSaleException
+from model.repository.observer import RepositoryObserver
 from model.util.monetary_types import CUPMoney
 
 
@@ -43,9 +44,10 @@ class SaleFilter:
         self.__maximum_date = value
 
 
-class SaleRepository:
+class SaleRepository(RepositoryObserver):
 
     def __init__(self, session: Session):
+        super().__init__()
         self.__session = session
 
     def insert_sales(self, sale: Sale, quantity: int):
@@ -58,6 +60,7 @@ class SaleRepository:
         self.__execute_insertion(sale, quantity)
         self.__execute_product_quantity_update(sale, quantity)
         self.__session.commit()
+        self._notify_on_data_changed_listeners()
 
     def __check_quantity_is_positive(self, quantity: int):
         if quantity <= 0:
@@ -117,6 +120,7 @@ class SaleRepository:
             .where(Sale.id == sale_to_delete.id)
         )
         self.__session.commit()
+        self._notify_on_data_changed_listeners()
 
     def __get_sale_by_id(self, sale_id: int):
         return self.__session.scalar(select(Sale).where(Sale.id == sale_id))
@@ -143,6 +147,7 @@ class SaleRepository:
 
         self.__execute_update_operation(sale)
         self.__session.commit()
+        self._notify_on_data_changed_listeners()
 
     def __check_sale_exists(self, sale: Sale):
         read_sale = self.__session.scalar(select(Sale).where(Sale.id == sale.id))

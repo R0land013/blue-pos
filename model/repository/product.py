@@ -4,6 +4,7 @@ from sqlalchemy import select
 
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
     InvalidProductQuantityException, NoPositivePriceException, NegativeProfitException
+from model.repository.observer import RepositoryObserver
 from model.util.monetary_types import CUPMoney
 
 
@@ -87,9 +88,10 @@ class ProductFilter:
         self.__more_than_quantity = value
 
 
-class ProductRepository:
+class ProductRepository(RepositoryObserver):
 
     def __init__(self, session: Session):
+        super().__init__()
         self.__session = session
 
     def insert_product(self, product: Product):
@@ -100,6 +102,7 @@ class ProductRepository:
 
         self.__session.add(product)
         self.__session.commit()
+        self._notify_on_data_changed_listeners()
 
     def __check_correctness_of_quantity(self, product: Product):
         if product.quantity < 0:
@@ -129,6 +132,7 @@ class ProductRepository:
 
         self.__session.delete(found_product)
         self.__session.commit()
+        self._notify_on_data_changed_listeners()
 
     def __check_product_exists(self, product) -> Product:
         found_product = self.__find_product_by_id(product.id)
@@ -153,6 +157,7 @@ class ProductRepository:
 
         self.__session.flush()
         self.__session.commit()
+        self._notify_on_data_changed_listeners()
 
     def __check_name_can_be_used(self, old: Product, new: Product):
         found_product = self.__find_product_by_name(new.name)
