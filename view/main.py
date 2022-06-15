@@ -9,4 +9,7 @@ class MainView(QFrame):
         self.__presenter = presenter
 
         loadUi('./view/ui/main.ui', self)
+        self.wire_up_gui_connections()
 
+    def wire_up_gui_connections(self):
+        self.product_management_button.clicked.connect(self.__presenter.open_product_management)
