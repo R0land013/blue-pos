@@ -103,7 +103,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QTableView" name="product_table"/>
+    <widget class="QTableWidget" name="product_table"/>
    </item>
    <item>
     <widget class="QLabel" name="state_bar_label">
