@@ -34,6 +34,7 @@ class ProductManagementView(QFrame):
 
     def __wire_up_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.return_to_main)
+        self.new_button.clicked.connect(self.__presenter.open_presenter_to_create_new_product)
 
     def set_cell_in_table(self, row: int, column: int, data):
         item = QTableWidgetItem(str(data))

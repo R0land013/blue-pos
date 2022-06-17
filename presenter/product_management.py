@@ -1,6 +1,8 @@
 from easy_mvp.abstract_presenter import AbstractPresenter
+from easy_mvp.intent import Intent
 
 from model.repository.factory import RepositoryFactory
+from presenter.product_presenter import ProductPresenter
 from view.product_management import ProductManagementView
 
 
@@ -8,6 +10,8 @@ class ProductManagementPresenter(AbstractPresenter):
 
     def _on_initialize(self):
         self.__initialize_view()
+        self.__product_repo = RepositoryFactory.get_product_repository()
+        self.__product_repo.add_on_data_changed_listener(self)
 
     def __initialize_view(self):
         view = ProductManagementView(self)
@@ -21,9 +25,8 @@ class ProductManagementPresenter(AbstractPresenter):
 
     def __fill_table(self):
         view = self.get_view()
-        product_repo = RepositoryFactory.get_product_repository()
-        products = product_repo.get_all_products()
-        print(products)
+        products = self.__product_repo.get_all_products()
+
         for index in range(len(products)):
             row = index
             a_product = products[index]
@@ -36,3 +39,15 @@ class ProductManagementPresenter(AbstractPresenter):
             view.set_cell_in_table(row, ProductManagementView.PROFIT_COLUMN, a_product.profit)
             view.set_cell_in_table(row, ProductManagementView.QUANTITY_COLUMN, a_product.quantity)
         view.resize_table_columns_to_contents()
+
+    def open_presenter_to_create_new_product(self):
+        intent = Intent(ProductPresenter)
+        intent.set_action(ProductPresenter.NEW_PRODUCT_ACTION)
+        intent.use_new_window(True)
+        intent.use_modal(True)
+
+        self._open_other_presenter(intent)
+
+    def on_data_changed(self):
+        self.get_view().clean_table()
+        self.__fill_table()

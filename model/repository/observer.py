@@ -6,7 +6,7 @@ class RepositoryObserver:
         self.__listeners = []
 
     def add_on_data_changed_listener(self, listener):
-        if listener.on_data_changed() is None:
+        if listener.on_data_changed is None:
             raise NotImplementedError('Listeners must implement the method on_data_changed().')
 
         self.__listeners.append(listener)
