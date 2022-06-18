@@ -21,7 +21,9 @@ class Product(Base):
         return self.__repr__()
 
     def __eq__(self, other):
-        return self.id == other.id and self.name == other.name and self.description == other.description
+        return (self.id == other.id and self.name == other.name and self.description == other.description
+                and self.price == other.price and self.profit == other.profit
+                and self.quantity == other.quantity)
 
     __tablename__ = 'products'
     id = Column(Integer, primary_key=True)

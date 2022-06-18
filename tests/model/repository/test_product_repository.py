@@ -87,16 +87,20 @@ class TestProductRepository(unittest.TestCase):
                           product)
 
     def test_product_is_updated_successfully(self):
-        product = ProductGenerator.generate_one_product()
+        old_product = ProductGenerator.generate_one_product()
 
-        product = insert_product_and_return_it(product)
+        old_product = insert_product_and_return_it(old_product)
         new_product = ProductGenerator.generate_one_product()
-        new_product.id = product.id
+        new_product.id = old_product.id
+        new_product.price = CUPMoney('55.00')
+        new_product.profit = CUPMoney('45.00')
+        new_product.quantity = 13
 
         self.product_repository.update_product(new_product)
 
         updated_product = get_one_product_from_database()
-        self.assertEqual(updated_product, new_product)
+        self.assertTrue(old_product != updated_product and new_product == updated_product)
+
 
     def test_trying_to_update_nonexistent_product_raises_exception(self):
         product = ProductGenerator.generate_one_product()
