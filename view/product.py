@@ -23,17 +23,35 @@ class ProductView(QFrame):
             self.id_label.show()
             self.id_value_label.show()
 
+    def set_product_id(self, product_id: int):
+        self.id_value_label.setText(str(product_id))
+
     def get_name(self) -> str:
         return self.name_line_edit.text()
+
+    def set_name(self, name: str):
+        self.name_line_edit.setText(name)
 
     def get_description(self) -> str:
         return self.description_text_edit.document().toRawText()
 
+    def set_description(self, description: str):
+        self.description_text_edit.insertPlainText(description)
+
     def get_price(self) -> str:
         return self.price_spin_box.cleanText()
+
+    def set_price(self, price: float):
+        self.price_spin_box.setValue(price)
 
     def get_profit(self) -> str:
         return self.profit_spin_box.cleanText()
 
+    def set_profit(self, profit: float):
+        self.profit_spin_box.setValue(profit)
+
     def get_quantity(self) -> int:
         return self.quantity_spin_box.value()
+
+    def set_quantity(self, quantity: str):
+        self.quantity_spin_box.setValue(int(quantity))

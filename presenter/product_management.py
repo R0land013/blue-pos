@@ -54,4 +54,12 @@ class ProductManagementPresenter(AbstractPresenter):
 
     def open_presenter_to_edit_product(self):
         product_id = self.get_view().get_selected_product_id()
-        print(product_id)
+        data = {ProductPresenter.PRODUCT_ID: product_id}
+
+        intent = Intent(ProductPresenter)
+        intent.set_action(ProductPresenter.EDIT_PRODUCT_ACTION)
+        intent.use_new_window()
+        intent.use_modal(True)
+        intent.set_data(data)
+
+        self._open_other_presenter(intent)
