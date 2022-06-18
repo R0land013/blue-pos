@@ -51,3 +51,7 @@ class ProductManagementPresenter(AbstractPresenter):
     def on_data_changed(self):
         self.get_view().clean_table()
         self.__fill_table()
+
+    def open_presenter_to_edit_product(self):
+        product_id = self.get_view().get_selected_product_id()
+        print(product_id)
