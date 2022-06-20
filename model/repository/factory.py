@@ -5,7 +5,7 @@ from sqlalchemy.pool import NullPool
 
 from model.repository.sale import SaleRepository
 
-DB_URL = 'sqlite:///data.db'
+DB_URL = 'sqlite:///data.db?check_same_thread=False'
 
 
 class RepositoryFactory:
