@@ -77,3 +77,9 @@ class ProductManagementView(QFrame):
 
         product_id = int(self.product_table.item(row, self.ID_COLUMN).text())
         return product_id
+
+    def set_disabled_view_except_status_bar(self, disable: bool):
+        self.main_content_frame.setDisabled(disable)
+
+    def set_state_bar_message(self, message: str):
+        self.state_bar_label.setText(message)

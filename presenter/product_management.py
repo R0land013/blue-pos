@@ -6,6 +6,8 @@ from model.repository.product import ProductFilter
 from presenter.product_presenter import ProductPresenter
 from view.product_management import ProductManagementView
 
+from threading import Thread
+
 
 class ProductManagementPresenter(AbstractPresenter):
 
@@ -22,9 +24,17 @@ class ProductManagementPresenter(AbstractPresenter):
         self._close_this_presenter()
 
     def on_view_shown(self):
-        self.__fill_table()
+        self.__execute_thread_to_fill_table()
 
-    def __fill_table(self):
+    def __execute_thread_to_fill_table(self):
+
+        thread = Thread(target=self.fill_table)
+        thread.start()
+
+    def fill_table(self):
+        self.__set_state_bar_message('Cargando datos...')
+        self.__set_disabled_view_except_state_bar(True)
+
         view = self.get_view()
         products = self.__product_repo.get_all_products()
 
@@ -41,6 +51,15 @@ class ProductManagementPresenter(AbstractPresenter):
             view.set_cell_in_table(row, ProductManagementView.QUANTITY_COLUMN, a_product.quantity)
         view.resize_table_columns_to_contents()
 
+        self.__set_disabled_view_except_state_bar(False)
+        self.__set_state_bar_message('Datos cargados')
+
+    def __set_state_bar_message(self, message: str):
+        self.get_view().set_state_bar_message(message)
+
+    def __set_disabled_view_except_state_bar(self, disabled: bool):
+        self.get_view().set_disabled_view_except_status_bar(disabled)
+
     def open_presenter_to_create_new_product(self):
         intent = Intent(ProductPresenter)
         intent.set_action(ProductPresenter.NEW_PRODUCT_ACTION)
@@ -51,7 +70,7 @@ class ProductManagementPresenter(AbstractPresenter):
 
     def on_data_changed(self):
         self.get_view().clean_table()
-        self.__fill_table()
+        self.fill_table()
 
     def open_presenter_to_edit_product(self):
         product_id = self.get_view().get_selected_product_id()
