@@ -23,6 +23,18 @@ class ProductView(QFrame):
             self.id_label.show()
             self.id_value_label.show()
 
+    def set_state_bar_invisible(self, invisible: bool):
+        if invisible:
+            self.state_bar_label.hide()
+        else:
+            self.state_bar_label.show()
+
+    def set_state_bar_message(self, message: str):
+        self.state_bar_label.setText(message)
+
+    def set_disabled_view_except_state_bar(self, disabled: bool):
+        self.main_content_frame.setDisabled(disabled)
+
     def set_product_id(self, product_id: int):
         self.id_value_label.setText(str(product_id))
 

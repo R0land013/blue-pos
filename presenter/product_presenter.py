@@ -1,9 +1,13 @@
+from threading import Thread
+
+from PyQt5.QtCore import QThread
 from easy_mvp.abstract_presenter import AbstractPresenter
 
 from model.entity.models import Product
 from model.repository.factory import RepositoryFactory
 from model.repository.product import ProductFilter
 from model.util.monetary_types import CUPMoney
+from presenter.util.thread_worker import PresenterThreadWorker
 from view.product import ProductView
 
 
@@ -11,6 +15,8 @@ class ProductPresenter(AbstractPresenter):
 
     NEW_PRODUCT_ACTION = 'new_product_action'
     EDIT_PRODUCT_ACTION = 'edit_product_action'
+
+    NEW_PRODUCT_RESULT = 'new_product_result'
 
     PRODUCT = 'product'
     PRODUCT_ID = 'product_id'
@@ -34,6 +40,7 @@ class ProductPresenter(AbstractPresenter):
 
     def on_view_shown(self):
         self.__hide_labels_depending_on_intent_action()
+        self.get_view().set_state_bar_invisible(True)
         self.__fill_product_form_if_action_is_for_editing_product()
 
     def __hide_labels_depending_on_intent_action(self):
@@ -56,15 +63,25 @@ class ProductPresenter(AbstractPresenter):
 
     def save_product(self):
         if self._get_intent_action() == self.NEW_PRODUCT_ACTION:
-            self.__insert_new_product()
+            self.__execute_thread_to_insert_new_product()
         elif self._get_intent_action() == self.EDIT_PRODUCT_ACTION:
             self.__update_product()
 
-    def __insert_new_product(self):
+    def __execute_thread_to_insert_new_product(self):
+        self.worker = PresenterThreadWorker(self.insert_new_product)
+        self.worker.when_finished.connect(self._close_this_presenter)
+        self.worker.start()
+
+    def insert_new_product(self):
+        self.get_view().set_disabled_view_except_state_bar(True)
+        self.get_view().set_state_bar_invisible(False)
+        self.get_view().set_state_bar_message('Insertando producto...')
 
         product = self.__construct_product_instance_from_view_fields()
         self.__product_repo.insert_product(product)
-        self._close_this_presenter()
+
+        self.get_view().set_disabled_view_except_state_bar(False)
+        self.get_view().set_state_bar_message('Producto insertado')
 
     def __construct_product_instance_from_view_fields(self):
         view = self.get_view()
@@ -81,6 +98,9 @@ class ProductPresenter(AbstractPresenter):
             profit=profit,
             quantity=quantity
         )
+
+    def close_presenter_with_new_product_result(self):
+        self._close_this_presenter_with_result({}, self.NEW_PRODUCT_RESULT)
 
     def __update_product(self):
         product = self.__construct_product_instance_from_view_fields()

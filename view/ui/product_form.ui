@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QFrame" name="frame_4">
+    <widget class="QFrame" name="main_content_frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -195,6 +195,13 @@
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="state_bar_label">
+     <property name="text">
+      <string>Barra de estado</string>
+     </property>
     </widget>
    </item>
   </layout>
