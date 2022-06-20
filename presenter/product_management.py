@@ -2,6 +2,7 @@ from easy_mvp.abstract_presenter import AbstractPresenter
 from easy_mvp.intent import Intent
 
 from model.repository.factory import RepositoryFactory
+from model.repository.product import ProductFilter
 from presenter.product_presenter import ProductPresenter
 from view.product_management import ProductManagementView
 
@@ -63,3 +64,10 @@ class ProductManagementPresenter(AbstractPresenter):
         intent.set_data(data)
 
         self._open_other_presenter(intent)
+
+    def delete_selected_product(self):
+        product_id = self.get_view().get_selected_product_id()
+        a_filter = ProductFilter()
+        a_filter.id = product_id
+        product = self.__product_repo.get_products_by_filter(a_filter)[0]
+        self.__product_repo.delete_product(product)
