@@ -4,9 +4,8 @@ from easy_mvp.intent import Intent
 from model.repository.factory import RepositoryFactory
 from model.repository.product import ProductFilter
 from presenter.product_presenter import ProductPresenter
+from presenter.util.thread_worker import PresenterThreadWorker
 from view.product_management import ProductManagementView
-
-from threading import Thread
 
 
 class ProductManagementPresenter(AbstractPresenter):
@@ -27,9 +26,8 @@ class ProductManagementPresenter(AbstractPresenter):
         self.__execute_thread_to_fill_table()
 
     def __execute_thread_to_fill_table(self):
-
-        thread = Thread(target=self.fill_table)
-        thread.start()
+        self.thread = PresenterThreadWorker(self.fill_table)
+        self.thread.start()
 
     def fill_table(self):
         self.__set_state_bar_message('Cargando datos...')
