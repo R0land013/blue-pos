@@ -16,6 +16,7 @@ class ProductPresenter(AbstractPresenter):
     EDIT_PRODUCT_ACTION = 'edit_product_action'
 
     NEW_PRODUCT_RESULT = 'new_product_result'
+    UPDATED_PRODUCT_RESULT = 'updated_product_result'
 
     PRODUCT = 'product'
     PRODUCT_ID = 'product_id'
@@ -64,12 +65,12 @@ class ProductPresenter(AbstractPresenter):
         if self._get_intent_action() == self.NEW_PRODUCT_ACTION:
             self.__execute_thread_to_insert_new_product()
         elif self._get_intent_action() == self.EDIT_PRODUCT_ACTION:
-            self.__update_product()
+            self.__execute_thread_to_update_product()
 
     def __execute_thread_to_insert_new_product(self):
         self.worker = PresenterThreadWorker(self.insert_new_product)
-        self.worker.when_initialized.connect(self.__on_start_product_insertion)
-        self.worker.error_found.connect(self.__handle_errors_on_product_insertion)
+        self.worker.when_initialized.connect(self.__disable_gui_and_show_operation_message)
+        self.worker.error_found.connect(self.__handle_errors_on_product_fields)
         self.worker.finished_without_error.connect(self.__close_presenter_with_new_product_result)
         self.worker.start()
 
@@ -97,26 +98,39 @@ class ProductPresenter(AbstractPresenter):
             quantity=quantity
         )
 
-    def __on_start_product_insertion(self):
+    def __disable_gui_and_show_operation_message(self):
         self.get_view().set_disabled_view_except_state_bar(True)
         self.get_view().set_state_bar_invisible(False)
-        self.get_view().set_state_bar_message('Insertando producto...')
+        self.get_view().set_state_bar_message('Procesando...')
 
-    def __handle_errors_on_product_insertion(self, error: Exception):
+    def __handle_errors_on_product_fields(self, error: Exception):
         if isinstance(error, UniqueProductNameException):
             self.get_view().set_state_bar_invisible(True)
-            self.get_view().show_error_message('Ya existe un producto con el nombre {}.'.format(error.get_product_name()))
+            self.get_view().show_error_message('Ya existe un producto con el nombre \'{}\'.'.format(error.get_product_name()))
             self.get_view().set_disabled_view_except_state_bar(False)
 
     def __close_presenter_with_new_product_result(self):
         self._close_this_presenter_with_result({}, self.NEW_PRODUCT_RESULT)
 
-    def __update_product(self):
-        product = self.__construct_product_instance_from_view_fields()
-        product.id = self._get_intent_data()[self.PRODUCT_ID]
-        
-        self.__product_repo.update_product(product)
-        self._close_this_presenter()
+    def __execute_thread_to_update_product(self):
+        self.thread = PresenterThreadWorker(self.__update_product)
+        self.thread.when_initialized.connect(self.__disable_gui_and_show_operation_message)
+        self.thread.error_found.connect(self.__handle_errors_on_product_fields)
+        self.thread.finished_without_error.connect(self.__close_presenter_with_product_updated_result)
+        self.thread.start()
+
+    def __update_product(self, error_found: pyqtSignal, finished_without_error: pyqtSignal):
+
+        try:
+            product = self.__construct_product_instance_from_view_fields()
+            product.id = self._get_intent_data()[self.PRODUCT_ID]
+            self.__product_repo.update_product(product)
+            finished_without_error.emit()
+        except Exception as e:
+            error_found.emit(e)
+
+    def __close_presenter_with_product_updated_result(self):
+        self._close_this_presenter_with_result({}, self.UPDATED_PRODUCT_RESULT)
 
     def go_back(self):
         self._close_this_presenter()

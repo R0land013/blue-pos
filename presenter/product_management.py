@@ -73,7 +73,7 @@ class ProductManagementPresenter(AbstractPresenter):
 
         intent = Intent(ProductPresenter)
         intent.set_action(ProductPresenter.EDIT_PRODUCT_ACTION)
-        intent.use_new_window()
+        intent.use_new_window(True)
         intent.use_modal(True)
         intent.set_data(data)
 
@@ -87,5 +87,5 @@ class ProductManagementPresenter(AbstractPresenter):
         self.__product_repo.delete_product(product)
 
     def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
-        if result == ProductPresenter.NEW_PRODUCT_RESULT:
+        if result in (ProductPresenter.NEW_PRODUCT_RESULT, ProductPresenter.UPDATED_PRODUCT_RESULT):
             self.__execute_thread_to_fill_table()
