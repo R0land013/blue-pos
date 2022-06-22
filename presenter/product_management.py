@@ -91,16 +91,21 @@ class ProductManagementPresenter(AbstractPresenter):
         self.__set_state_bar_message('Procesando...')
         self.__set_disabled_view_except_state_bar(True)
 
-        product_id = self.get_view().get_selected_product_id()
-        a_filter = ProductFilter()
-        a_filter.id = product_id
-
-        product = self.__product_repo.get_products_by_filter(a_filter)[0]
+        product = self.__get_selected_product()
         self.__product_repo.delete_product(product)
 
         self.get_view().delete_selected_product_from_table()
         self.__set_state_bar_message('Producto eliminado')
         self.__set_disabled_view_except_state_bar(False)
+
+    def __get_selected_product(self):
+        product_id = self.get_view().get_selected_product_id()
+        a_filter = ProductFilter()
+        a_filter.id = product_id
+        products = self.__product_repo.get_products_by_filter(a_filter)
+        if len(products) == 1:
+            return products[0]
+        return None
 
     def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
         if result == ProductPresenter.NEW_PRODUCT_RESULT:
