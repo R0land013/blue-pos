@@ -1,7 +1,7 @@
 from PyQt5.QtCore import pyqtSignal
 from easy_mvp.abstract_presenter import AbstractPresenter
 from easy_mvp.intent import Intent
-
+from model.entity.models import Product
 from model.repository.factory import RepositoryFactory
 from model.repository.product import ProductFilter
 from presenter.product_presenter import ProductPresenter
@@ -37,17 +37,9 @@ class ProductManagementPresenter(AbstractPresenter):
         view = self.get_view()
         products = self.__product_repo.get_all_products()
 
-        for index in range(len(products)):
-            row = index
-            a_product = products[index]
-            view.add_empty_row_at_the_end_of_table()
+        for a_product in products:
+            self.__add_product_to_table(a_product)
 
-            view.set_cell_in_table(row, ProductManagementView.ID_COLUMN, a_product.id)
-            view.set_cell_in_table(row, ProductManagementView.NAME_COLUMN, a_product.name)
-            view.set_cell_in_table(row, ProductManagementView.DESCRIPTION_COLUMN, a_product.description)
-            view.set_cell_in_table(row, ProductManagementView.PRICE_COLUMN, a_product.price)
-            view.set_cell_in_table(row, ProductManagementView.PROFIT_COLUMN, a_product.profit)
-            view.set_cell_in_table(row, ProductManagementView.QUANTITY_COLUMN, a_product.quantity)
         view.resize_table_columns_to_contents()
 
         self.__set_disabled_view_except_state_bar(False)
@@ -58,6 +50,18 @@ class ProductManagementPresenter(AbstractPresenter):
 
     def __set_disabled_view_except_state_bar(self, disabled: bool):
         self.get_view().set_disabled_view_except_status_bar(disabled)
+
+    def __add_product_to_table(self, product: Product):
+        view = self.get_view()
+        view.add_empty_row_at_the_end_of_table()
+        row = view.get_last_row_index()
+
+        view.set_cell_in_table(row, ProductManagementView.ID_COLUMN, product.id)
+        view.set_cell_in_table(row, ProductManagementView.NAME_COLUMN, product.name)
+        view.set_cell_in_table(row, ProductManagementView.DESCRIPTION_COLUMN, product.description)
+        view.set_cell_in_table(row, ProductManagementView.PRICE_COLUMN, product.price)
+        view.set_cell_in_table(row, ProductManagementView.PROFIT_COLUMN, product.profit)
+        view.set_cell_in_table(row, ProductManagementView.QUANTITY_COLUMN, product.quantity)
 
     def open_presenter_to_create_new_product(self):
         intent = Intent(ProductPresenter)
@@ -99,5 +103,11 @@ class ProductManagementPresenter(AbstractPresenter):
         self.__set_disabled_view_except_state_bar(False)
 
     def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
-        if result in (ProductPresenter.NEW_PRODUCT_RESULT, ProductPresenter.UPDATED_PRODUCT_RESULT):
+        if result == ProductPresenter.NEW_PRODUCT_RESULT:
+            self.__add_new_product_to_table(result_data)
+        if result in (ProductPresenter.UPDATED_PRODUCT_RESULT,):
             self.__execute_thread_to_fill_table()
+
+    def __add_new_product_to_table(self, result_data: dict):
+        new_product = result_data[ProductPresenter.NEW_PRODUCT]
+        self.__add_product_to_table(new_product)

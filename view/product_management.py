@@ -90,3 +90,6 @@ class ProductManagementView(QFrame):
             self.product_table.removeRow(row)
         self.product_table.clearSelection()
         self.__disable_edit_and_delete_buttons_if_no_row_selected()
+
+    def get_last_row_index(self) -> int:
+        return self.product_table.rowCount() - 1

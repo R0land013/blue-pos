@@ -20,6 +20,7 @@ class ProductPresenter(AbstractPresenter):
 
     PRODUCT = 'product'
     PRODUCT_ID = 'product_id'
+    NEW_PRODUCT = 'new_product'
 
     def _on_initialize(self):
         self.__initialize_view()
@@ -78,6 +79,7 @@ class ProductPresenter(AbstractPresenter):
         try:
             product = self.__construct_product_instance_from_view_fields()
             self.__product_repo.insert_product(product)
+            self.new_product = product
             finished_without_error.emit()
         except UniqueProductNameException as e:
             error_found.emit(e)
@@ -110,7 +112,9 @@ class ProductPresenter(AbstractPresenter):
             self.get_view().set_disabled_view_except_state_bar(False)
 
     def __close_presenter_with_new_product_result(self):
-        self._close_this_presenter_with_result({}, self.NEW_PRODUCT_RESULT)
+        self._close_this_presenter_with_result({
+            self.NEW_PRODUCT: self.new_product
+        }, self.NEW_PRODUCT_RESULT)
 
     def __execute_thread_to_update_product(self):
         self.thread = PresenterThreadWorker(self.__update_product)
