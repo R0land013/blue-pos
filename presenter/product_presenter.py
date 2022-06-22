@@ -71,7 +71,7 @@ class ProductPresenter(AbstractPresenter):
 
     def __execute_thread_to_insert_new_product(self):
         self.worker = PresenterThreadWorker(self.insert_new_product)
-        self.worker.when_initialized.connect(self.__disable_gui_and_show_operation_message)
+        self.worker.when_started.connect(self.__disable_gui_and_show_operation_message)
         self.worker.error_found.connect(self.__handle_errors_on_product_fields)
         self.worker.finished_without_error.connect(self.__close_presenter_with_new_product_result)
         self.worker.start()
@@ -119,7 +119,7 @@ class ProductPresenter(AbstractPresenter):
 
     def __execute_thread_to_update_product(self):
         self.thread = PresenterThreadWorker(self.__update_product)
-        self.thread.when_initialized.connect(self.__disable_gui_and_show_operation_message)
+        self.thread.when_started.connect(self.__disable_gui_and_show_operation_message)
         self.thread.error_found.connect(self.__handle_errors_on_product_fields)
         self.thread.finished_without_error.connect(self.__close_presenter_with_product_updated_result)
         self.thread.start()
