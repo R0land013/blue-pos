@@ -93,3 +93,6 @@ class ProductManagementView(QFrame):
 
     def get_last_row_index(self) -> int:
         return self.product_table.rowCount() - 1
+
+    def get_selected_row_index(self) -> int:
+        return self.product_table.currentRow()

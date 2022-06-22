@@ -52,10 +52,12 @@ class ProductManagementPresenter(AbstractPresenter):
         self.get_view().set_disabled_view_except_status_bar(disabled)
 
     def __add_product_to_table(self, product: Product):
-        view = self.get_view()
-        view.add_empty_row_at_the_end_of_table()
-        row = view.get_last_row_index()
+        self.get_view().add_empty_row_at_the_end_of_table()
+        row = self.get_view().get_last_row_index()
+        self.__set_table_row_by_product(row, product)
 
+    def __set_table_row_by_product(self, row: int, product: Product):
+        view = self.get_view()
         view.set_cell_in_table(row, ProductManagementView.ID_COLUMN, product.id)
         view.set_cell_in_table(row, ProductManagementView.NAME_COLUMN, product.name)
         view.set_cell_in_table(row, ProductManagementView.DESCRIPTION_COLUMN, product.description)
@@ -110,9 +112,14 @@ class ProductManagementPresenter(AbstractPresenter):
     def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
         if result == ProductPresenter.NEW_PRODUCT_RESULT:
             self.__add_new_product_to_table(result_data)
-        if result in (ProductPresenter.UPDATED_PRODUCT_RESULT,):
-            self.__execute_thread_to_fill_table()
+        if result == ProductPresenter.UPDATED_PRODUCT_RESULT:
+            self.__update_product_on_table(result_data)
 
     def __add_new_product_to_table(self, result_data: dict):
         new_product = result_data[ProductPresenter.NEW_PRODUCT]
         self.__add_product_to_table(new_product)
+
+    def __update_product_on_table(self, result_data: dict):
+        updated_product = result_data[ProductPresenter.UPDATED_PRODUCT]
+        row = self.get_view().get_selected_row_index()
+        self.__set_table_row_by_product(row, updated_product)

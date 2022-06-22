@@ -21,6 +21,7 @@ class ProductPresenter(AbstractPresenter):
     PRODUCT = 'product'
     PRODUCT_ID = 'product_id'
     NEW_PRODUCT = 'new_product'
+    UPDATED_PRODUCT = 'updated_product'
 
     def _on_initialize(self):
         self.__initialize_view()
@@ -129,12 +130,17 @@ class ProductPresenter(AbstractPresenter):
             product = self.__construct_product_instance_from_view_fields()
             product.id = self._get_intent_data()[self.PRODUCT_ID]
             self.__product_repo.update_product(product)
+            a_filter = ProductFilter()
+            a_filter.id = product.id
+            self.updated_product = self.__product_repo.get_products_by_filter(a_filter)[0]
             finished_without_error.emit()
         except Exception as e:
             error_found.emit(e)
 
     def __close_presenter_with_product_updated_result(self):
-        self._close_this_presenter_with_result({}, self.UPDATED_PRODUCT_RESULT)
+        self._close_this_presenter_with_result({
+            self.UPDATED_PRODUCT: self.updated_product
+        }, self.UPDATED_PRODUCT_RESULT)
 
     def go_back(self):
         self._close_this_presenter()
