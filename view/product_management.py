@@ -88,3 +88,5 @@ class ProductManagementView(QFrame):
         row = self.product_table.currentRow()
         if row != -1:
             self.product_table.removeRow(row)
+        self.product_table.clearSelection()
+        self.__disable_edit_and_delete_buttons_if_no_row_selected()

@@ -80,12 +80,23 @@ class ProductManagementPresenter(AbstractPresenter):
         self._open_other_presenter(intent)
 
     def delete_selected_product(self):
+        self.thread = PresenterThreadWorker(self.__product_deletion)
+        self.thread.start()
+
+    def __product_deletion(self, error_found: pyqtSignal, finished_without_error: pyqtSignal):
+        self.__set_state_bar_message('Procesando...')
+        self.__set_disabled_view_except_state_bar(True)
+
         product_id = self.get_view().get_selected_product_id()
         a_filter = ProductFilter()
         a_filter.id = product_id
+
         product = self.__product_repo.get_products_by_filter(a_filter)[0]
         self.__product_repo.delete_product(product)
+
         self.get_view().delete_selected_product_from_table()
+        self.__set_state_bar_message('Producto eliminado')
+        self.__set_disabled_view_except_state_bar(False)
 
     def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
         if result in (ProductPresenter.NEW_PRODUCT_RESULT, ProductPresenter.UPDATED_PRODUCT_RESULT):
