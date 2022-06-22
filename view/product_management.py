@@ -83,3 +83,8 @@ class ProductManagementView(QFrame):
 
     def set_state_bar_message(self, message: str):
         self.state_bar_label.setText(message)
+
+    def delete_selected_product_from_table(self):
+        row = self.product_table.currentRow()
+        if row != -1:
+            self.product_table.removeRow(row)
