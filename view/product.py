@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QFrame
+from PyQt5.QtWidgets import QFrame, QMessageBox
 from PyQt5.uic import loadUi
 
 
@@ -67,3 +67,6 @@ class ProductView(QFrame):
 
     def set_quantity(self, quantity: str):
         self.quantity_spin_box.setValue(int(quantity))
+
+    def show_error_message(self, message: str):
+        QMessageBox.critical(self.window(), 'Error', message)

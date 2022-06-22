@@ -1,9 +1,8 @@
-from threading import Thread
-
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import pyqtSignal
 from easy_mvp.abstract_presenter import AbstractPresenter
 
 from model.entity.models import Product
+from model.repository.exc.product import UniqueProductNameException
 from model.repository.factory import RepositoryFactory
 from model.repository.product import ProductFilter
 from model.util.monetary_types import CUPMoney
@@ -69,19 +68,18 @@ class ProductPresenter(AbstractPresenter):
 
     def __execute_thread_to_insert_new_product(self):
         self.worker = PresenterThreadWorker(self.insert_new_product)
-        self.worker.when_finished.connect(self._close_this_presenter)
+        self.worker.when_initialized.connect(self.__on_start_product_insertion)
+        self.worker.error_found.connect(self.__handle_errors_on_product_insertion)
+        self.worker.finished_without_error.connect(self.__close_presenter_with_new_product_result)
         self.worker.start()
 
-    def insert_new_product(self):
-        self.get_view().set_disabled_view_except_state_bar(True)
-        self.get_view().set_state_bar_invisible(False)
-        self.get_view().set_state_bar_message('Insertando producto...')
-
-        product = self.__construct_product_instance_from_view_fields()
-        self.__product_repo.insert_product(product)
-
-        self.get_view().set_disabled_view_except_state_bar(False)
-        self.get_view().set_state_bar_message('Producto insertado')
+    def insert_new_product(self, error_found: pyqtSignal, finished_without_error: pyqtSignal):
+        try:
+            product = self.__construct_product_instance_from_view_fields()
+            self.__product_repo.insert_product(product)
+            finished_without_error.emit()
+        except UniqueProductNameException as e:
+            error_found.emit(e)
 
     def __construct_product_instance_from_view_fields(self):
         view = self.get_view()
@@ -99,7 +97,18 @@ class ProductPresenter(AbstractPresenter):
             quantity=quantity
         )
 
-    def close_presenter_with_new_product_result(self):
+    def __on_start_product_insertion(self):
+        self.get_view().set_disabled_view_except_state_bar(True)
+        self.get_view().set_state_bar_invisible(False)
+        self.get_view().set_state_bar_message('Insertando producto...')
+
+    def __handle_errors_on_product_insertion(self, error: Exception):
+        if isinstance(error, UniqueProductNameException):
+            self.get_view().set_state_bar_invisible(True)
+            self.get_view().show_error_message('Ya existe un producto con el nombre {}.'.format(error.get_product_name()))
+            self.get_view().set_disabled_view_except_state_bar(False)
+
+    def __close_presenter_with_new_product_result(self):
         self._close_this_presenter_with_result({}, self.NEW_PRODUCT_RESULT)
 
     def __update_product(self):

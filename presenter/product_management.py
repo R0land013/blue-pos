@@ -1,3 +1,4 @@
+from PyQt5.QtCore import pyqtSignal
 from easy_mvp.abstract_presenter import AbstractPresenter
 from easy_mvp.intent import Intent
 
@@ -13,7 +14,6 @@ class ProductManagementPresenter(AbstractPresenter):
     def _on_initialize(self):
         self.__initialize_view()
         self.__product_repo = RepositoryFactory.get_product_repository()
-        self.__product_repo.add_on_data_changed_listener(self)
 
     def __initialize_view(self):
         view = ProductManagementView(self)
@@ -29,7 +29,8 @@ class ProductManagementPresenter(AbstractPresenter):
         self.thread = PresenterThreadWorker(self.fill_table)
         self.thread.start()
 
-    def fill_table(self):
+    def fill_table(self, error_found: pyqtSignal, finished_without_error: pyqtSignal):
+        self.get_view().clean_table()
         self.__set_state_bar_message('Cargando datos...')
         self.__set_disabled_view_except_state_bar(True)
 
@@ -65,10 +66,6 @@ class ProductManagementPresenter(AbstractPresenter):
         intent.use_modal(True)
 
         self._open_other_presenter(intent)
-
-    def on_data_changed(self):
-        self.get_view().clean_table()
-        self.fill_table()
 
     def open_presenter_to_edit_product(self):
         product_id = self.get_view().get_selected_product_id()

@@ -5,6 +5,8 @@ class PresenterThreadWorker(QThread):
 
     when_initialized = pyqtSignal()
     when_finished = pyqtSignal()
+    error_found = pyqtSignal(Exception)
+    finished_without_error = pyqtSignal()
 
     def __init__(self, a_callable):
         super().__init__()
@@ -12,6 +14,6 @@ class PresenterThreadWorker(QThread):
 
     def run(self):
         self.when_initialized.emit()
-        self.__a_callable()
+        self.__a_callable(self.error_found, self.finished_without_error)
         self.when_finished.emit()
 
