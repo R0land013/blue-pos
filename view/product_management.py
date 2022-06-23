@@ -1,10 +1,9 @@
-from PyQt5.QtWidgets import QFrame, QTableWidgetItem, QTableWidget
+from PyQt5.QtWidgets import QFrame, QTableWidgetItem, QTableWidget, QMessageBox
 from PyQt5.uic import loadUi
 from PyQt5.QtCore import Qt
 
 
 class ProductManagementView(QFrame):
-
     ID_COLUMN = 0
     NAME_COLUMN = 1
     DESCRIPTION_COLUMN = 2
@@ -97,3 +96,16 @@ class ProductManagementView(QFrame):
 
     def get_selected_row_index(self) -> int:
         return self.product_table.currentRow()
+
+    def ask_user_to_confirm_product_deletion(self, product_quantity: int) -> bool:
+        product_text = 'producto'
+        if product_quantity > 1:
+            product_text = 'productos'
+        detail_message = '¿Seguro que desea borrar {} {}?'.format(product_quantity, product_text)
+        pressed_button = QMessageBox.question(self.window(),
+                                              'Blue POS - Eliminar productos',
+                                              detail_message,
+                                              QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
+        if pressed_button == QMessageBox.StandardButton.Ok:
+            return True
+        return False

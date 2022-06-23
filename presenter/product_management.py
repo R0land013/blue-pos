@@ -86,8 +86,9 @@ class ProductManagementPresenter(AbstractPresenter):
         self._open_other_presenter(intent)
 
     def delete_selected_product(self):
-        self.thread = PresenterThreadWorker(self.__product_deletion)
-        self.thread.start()
+        if self.get_view().ask_user_to_confirm_product_deletion(1):
+            self.thread = PresenterThreadWorker(self.__product_deletion)
+            self.thread.start()
 
     def __product_deletion(self, error_found: pyqtSignal, finished_without_error: pyqtSignal):
         self.__set_state_bar_message('Procesando...')
