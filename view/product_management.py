@@ -36,7 +36,7 @@ class ProductManagementView(QFrame):
         ])
         self.product_table.resizeColumnsToContents()
         self.product_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-        self.product_table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        self.product_table.setSelectionMode(QTableWidget.SelectionMode.ExtendedSelection)
 
     def __wire_up_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.return_to_main)
@@ -46,12 +46,17 @@ class ProductManagementView(QFrame):
         self.product_table.itemSelectionChanged.connect(self.__disable_edit_and_delete_buttons_if_no_row_selected)
 
     def __disable_edit_and_delete_buttons_if_no_row_selected(self):
-        if not self.product_table.selectionModel().hasSelection():
-            self.edit_button.setDisabled(True)
-            self.delete_button.setDisabled(True)
-        else:
+        selected_row_quantity = len(self.product_table.selectionModel().selectedRows(self.ID_COLUMN))
+
+        if selected_row_quantity == 1:
             self.edit_button.setDisabled(False)
             self.delete_button.setDisabled(False)
+        elif selected_row_quantity >= 1:
+            self.edit_button.setDisabled(True)
+            self.delete_button.setDisabled(False)
+        else:
+            self.edit_button.setDisabled(True)
+            self.delete_button.setDisabled(True)
 
     def set_cell_in_table(self, row: int, column: int, data):
         item = QTableWidgetItem(str(data))
