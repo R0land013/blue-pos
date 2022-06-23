@@ -86,7 +86,7 @@ class ProductManagementPresenter(AbstractPresenter):
         self._open_other_presenter(intent)
 
     def delete_selected_product(self):
-        if self.get_view().ask_user_to_confirm_product_deletion(1):
+        if self.get_view().ask_user_to_confirm_product_deletion():
             self.thread = PresenterThreadWorker(self.__product_deletion)
             self.thread.start()
 
@@ -94,10 +94,11 @@ class ProductManagementPresenter(AbstractPresenter):
         self.__set_state_bar_message('Procesando...')
         self.__set_disabled_view_except_state_bar(True)
 
-        product = self.__get_selected_product()
-        self.__product_repo.delete_product(product)
+        products = self.__get_all_selected_products()
+        for a_product in products:
+            self.__product_repo.delete_product(a_product)
 
-        self.get_view().delete_selected_product_from_table()
+        self.get_view().delete_selected_products_from_table()
         self.__set_state_bar_message('Producto eliminado')
         self.__set_disabled_view_except_state_bar(False)
 
@@ -109,6 +110,16 @@ class ProductManagementPresenter(AbstractPresenter):
         if len(products) == 1:
             return products[0]
         return None
+
+    def __get_all_selected_products(self) -> list:
+        products = []
+        product_id_list = self.get_view().get_all_selected_product_ids()
+        a_filter = ProductFilter()
+        for product_id in product_id_list:
+            a_filter.id = product_id
+            a_product = self.__product_repo.get_products_by_filter(a_filter)[0]
+            products.append(a_product)
+        return products
 
     def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
         if result == ProductPresenter.NEW_PRODUCT_RESULT:

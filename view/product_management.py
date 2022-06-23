@@ -83,16 +83,32 @@ class ProductManagementView(QFrame):
         product_id = int(self.product_table.item(row, self.ID_COLUMN).text())
         return product_id
 
+    def get_all_selected_product_ids(self) -> list:
+        ids = []
+        model_indexes = self.product_table.selectionModel().selectedRows(self.ID_COLUMN)
+        for a_model_index in model_indexes:
+            row = a_model_index.row()
+            product_id = int(self.product_table.item(row, self.ID_COLUMN).text())
+            ids.append(product_id)
+        return ids
+
     def set_disabled_view_except_status_bar(self, disable: bool):
         self.main_content_frame.setDisabled(disable)
 
     def set_state_bar_message(self, message: str):
         self.state_bar_label.setText(message)
 
-    def delete_selected_product_from_table(self):
-        row = self.product_table.currentRow()
-        if row != -1:
-            self.product_table.removeRow(row)
+    def delete_selected_products_from_table(self):
+        model_indexes = self.product_table.selectionModel().selectedRows(self.ID_COLUMN)
+        selected_row_quantity = len(model_indexes)
+
+        while selected_row_quantity != 0:
+            a_row = model_indexes[0].row()
+            self.product_table.removeRow(a_row)
+
+            model_indexes = self.product_table.selectionModel().selectedRows(self.ID_COLUMN)
+            selected_row_quantity = len(model_indexes)
+
         self.product_table.clearSelection()
         self.__disable_edit_and_delete_buttons_if_no_row_selected()
 
@@ -102,7 +118,8 @@ class ProductManagementView(QFrame):
     def get_selected_row_index(self) -> int:
         return self.product_table.currentRow()
 
-    def ask_user_to_confirm_product_deletion(self, product_quantity: int) -> bool:
+    def ask_user_to_confirm_product_deletion(self) -> bool:
+        product_quantity = len(self.product_table.selectionModel().selectedRows(self.ID_COLUMN))
         product_text = 'producto'
         if product_quantity > 1:
             product_text = 'productos'
