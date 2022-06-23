@@ -44,6 +44,7 @@ class ProductManagementView(QFrame):
         self.edit_button.clicked.connect(self.__presenter.open_presenter_to_edit_product)
         self.delete_button.clicked.connect(self.__presenter.delete_selected_product)
         self.product_table.itemSelectionChanged.connect(self.__disable_edit_and_delete_buttons_if_no_row_selected)
+        self.product_table.itemDoubleClicked.connect(self.__presenter.open_presenter_to_edit_product)
 
     def __disable_edit_and_delete_buttons_if_no_row_selected(self):
         selected_row_quantity = len(self.product_table.selectionModel().selectedRows(self.ID_COLUMN))
