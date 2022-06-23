@@ -1,9 +1,12 @@
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import create_engine, select
-
 from model.entity.models import Product, Sale
+from pathlib import Path
+
 
 TEST_DB_URL = 'sqlite:///test.db'
+
+TEST_REPORT_PATH = Path('generated').joinpath('reports')
 
 
 def create_test_session() -> Session:

@@ -1,30 +1,23 @@
 import unittest
 from datetime import date, timedelta
-from pathlib import Path
-
 from model.report.day import DaySaleReport
 from model.report.generators import generate_html_file, generate_pdf_file
 from model.repository.factory import RepositoryFactory
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, insert_product_and_return_it, \
-    insert_sales_and_return_them, assert_sale_lists_are_equal_ignoring_id, insert_products_in_database_and_return_them
+    insert_sales_and_return_them, assert_sale_lists_are_equal_ignoring_id, insert_products_in_database_and_return_them, \
+    TEST_REPORT_PATH
 from tests.util.generators.product import ProductGenerator
 from tests.util.generators.sale import SaleGenerator
 
 
 class TestDaySaleReport(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        report_path = Path('generated').joinpath('reports')
-        if not report_path.exists():
-            report_path.mkdir(parents=True)
-
     def setUp(self) -> None:
         self.sale_repository = RepositoryFactory.get_sale_repository(TEST_DB_URL)
         self.TODAY = date.today()
         self.YESTERDAY = self.TODAY - timedelta(days=1)
-        self.HTML_DAY_REPORT_PATH = Path('generated').joinpath('reports').joinpath('day_report.html')
-        self.PDF_DAY_REPORT_PATH = Path('generated').joinpath('reports').joinpath('day_report.pdf')
+        self.HTML_DAY_REPORT_PATH = TEST_REPORT_PATH.joinpath('day_report.html')
+        self.PDF_DAY_REPORT_PATH = TEST_REPORT_PATH.joinpath('day_report.pdf')
 
     def tearDown(self):
         RepositoryFactory.close_session()
