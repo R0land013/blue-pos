@@ -57,6 +57,7 @@ class ProductManagementView(QFrame):
     def set_cell_in_table(self, row: int, column: int, data):
         item = QTableWidgetItem(str(data))
         item.setData = (Qt.ItemDataRole.DisplayRole, data)
+        self.product_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.product_table.setItem(row, column, item)
 
     def add_empty_row_at_the_end_of_table(self):
