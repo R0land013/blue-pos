@@ -1,4 +1,3 @@
-from PyQt5.QtCore import pyqtSignal
 from easy_mvp.abstract_presenter import AbstractPresenter
 
 from model.entity.models import Product
@@ -76,14 +75,14 @@ class ProductPresenter(AbstractPresenter):
         self.worker.finished_without_error.connect(self.__close_presenter_with_new_product_result)
         self.worker.start()
 
-    def insert_new_product(self, error_found: pyqtSignal, finished_without_error: pyqtSignal):
+    def insert_new_product(self, thread: PresenterThreadWorker):
         try:
             product = self.__construct_product_instance_from_view_fields()
             self.__product_repo.insert_product(product)
             self.new_product = product
-            finished_without_error.emit()
+            thread.finished_without_error.emit()
         except UniqueProductNameException as e:
-            error_found.emit(e)
+            thread.error_found.emit(e)
 
     def __construct_product_instance_from_view_fields(self):
         view = self.get_view()
@@ -124,7 +123,7 @@ class ProductPresenter(AbstractPresenter):
         self.thread.finished_without_error.connect(self.__close_presenter_with_product_updated_result)
         self.thread.start()
 
-    def __update_product(self, error_found: pyqtSignal, finished_without_error: pyqtSignal):
+    def __update_product(self, thread: PresenterThreadWorker):
 
         try:
             product = self.__construct_product_instance_from_view_fields()
@@ -133,9 +132,9 @@ class ProductPresenter(AbstractPresenter):
             a_filter = ProductFilter()
             a_filter.id = product.id
             self.updated_product = self.__product_repo.get_products_by_filter(a_filter)[0]
-            finished_without_error.emit()
+            thread.finished_without_error.emit()
         except Exception as e:
-            error_found.emit(e)
+            thread.error_found.emit(e)
 
     def __close_presenter_with_product_updated_result(self):
         self._close_this_presenter_with_result({

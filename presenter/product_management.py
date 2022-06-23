@@ -1,4 +1,3 @@
-from PyQt5.QtCore import pyqtSignal
 from easy_mvp.abstract_presenter import AbstractPresenter
 from easy_mvp.intent import Intent
 from model.entity.models import Product
@@ -29,7 +28,7 @@ class ProductManagementPresenter(AbstractPresenter):
         self.thread = PresenterThreadWorker(self.fill_table)
         self.thread.start()
 
-    def fill_table(self, error_found: pyqtSignal, finished_without_error: pyqtSignal):
+    def fill_table(self, thread: PresenterThreadWorker):
         self.get_view().clean_table()
         self.__set_state_bar_message('Cargando datos...')
         self.__set_disabled_view_except_state_bar(True)
@@ -90,7 +89,7 @@ class ProductManagementPresenter(AbstractPresenter):
             self.thread = PresenterThreadWorker(self.__product_deletion)
             self.thread.start()
 
-    def __product_deletion(self, error_found: pyqtSignal, finished_without_error: pyqtSignal):
+    def __product_deletion(self, thread: PresenterThreadWorker):
         self.__set_state_bar_message('Procesando...')
         self.__set_disabled_view_except_state_bar(True)
 

@@ -14,6 +14,6 @@ class PresenterThreadWorker(QThread):
 
     def run(self):
         self.when_started.emit()
-        self.__a_callable(self.error_found, self.finished_without_error)
+        self.__a_callable(self)
         self.when_finished.emit()
 
