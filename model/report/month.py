@@ -1,6 +1,11 @@
 from datetime import date, timedelta
+
+from jinja2 import Environment, PackageLoader, select_autoescape
+from jinja2.nodes import Template
+
 from model.report.abstract_report import AbstractSaleReport
 from model.repository.sale import SaleRepository, SaleFilter
+from model.util.monetary_types import CUPMoney
 
 
 class MonthSaleReport(AbstractSaleReport):
@@ -10,7 +15,34 @@ class MonthSaleReport(AbstractSaleReport):
         self.__sale_repo = sale_repository
 
     def get_report_as_html(self) -> str:
-        pass
+        sales = self.get_sales()
+        total_profit = self.__calculate_total_profit(sales)
+        total_collected_money = self.__calculate_collected_money(sales)
+
+        template = self.get_template()
+        return template.render(date=self.__month_date,
+                               sales=sales,
+                               total_profit=total_profit,
+                               total_collected_money=total_collected_money)
+
+    def get_template(self) -> Template:
+        env = Environment(
+            loader=PackageLoader('model.report'),
+            autoescape=select_autoescape()
+        )
+        return env.get_template('month_report.html')
+
+    def __calculate_total_profit(self, sales: list) -> CUPMoney:
+        total = 0
+        for a_sale in sales:
+            total += a_sale.profit
+        return total
+
+    def __calculate_collected_money(self, sales: list) -> CUPMoney:
+        total = 0
+        for a_sale in sales:
+            total += a_sale.price
+        return total
 
     def get_sales(self) -> list:
         first_date_of_month = date(day=1,
