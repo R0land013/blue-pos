@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 from unittest import TestCase
 
+from model.report.generators import generate_html_file
 from model.report.month import MonthSaleReport
 from model.repository.factory import RepositoryFactory
 from tests.util.general import TEST_REPORT_PATH, TEST_DB_URL, insert_product_and_return_it, \
@@ -51,3 +52,16 @@ class TestMonthSaleReport(TestCase):
         sales_of_report = report.get_sales()
 
         self.assertEqual(sales_of_report, [s3, s4, s5])
+
+    def test_html_report_is_generated(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sales = SaleGenerator.generate_sales_from_product(product, 3)
+        s1, s2, s3 = sales
+        s1.date = self.FIRST_DATE_OF_THIS_MONTH
+        s2.date = self.FIRST_DATE_OF_THIS_MONTH + timedelta(days=10)
+        s3.date = self.LAST_DATE_OF_THIS_MONTH
+        insert_sales_and_return_them(sales)
+
+        report = MonthSaleReport(self.FIRST_DATE_OF_THIS_MONTH, self.sale_repository)
+        generate_html_file(self.HTML_MONTH_REPORT_PATH, report)
