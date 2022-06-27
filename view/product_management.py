@@ -7,10 +7,9 @@ from PyQt5.QtCore import Qt
 class ProductManagementView(QFrame):
     ID_COLUMN = 0
     NAME_COLUMN = 1
-    DESCRIPTION_COLUMN = 2
-    PRICE_COLUMN = 3
-    PROFIT_COLUMN = 4
-    QUANTITY_COLUMN = 5
+    PRICE_COLUMN = 2
+    PROFIT_COLUMN = 3
+    QUANTITY_COLUMN = 4
 
     def __init__(self, presenter):
         super().__init__()
@@ -27,11 +26,10 @@ class ProductManagementView(QFrame):
         self.delete_button.setDisabled(True)
 
     def __set_table_format(self):
-        self.product_table.setColumnCount(6)
+        self.product_table.setColumnCount(5)
         self.product_table.setHorizontalHeaderLabels([
             'Id.',
             'Nombre',
-            'Descripción',
             'Precio/u',
             'Ganacia/u',
             'Cantidad'

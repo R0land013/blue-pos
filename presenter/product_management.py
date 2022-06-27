@@ -59,7 +59,6 @@ class ProductManagementPresenter(AbstractPresenter):
         view = self.get_view()
         view.set_cell_in_table(row, ProductManagementView.ID_COLUMN, product.id)
         view.set_cell_in_table(row, ProductManagementView.NAME_COLUMN, product.name)
-        view.set_cell_in_table(row, ProductManagementView.DESCRIPTION_COLUMN, product.description)
         view.set_cell_in_table(row, ProductManagementView.PRICE_COLUMN, product.price)
         view.set_cell_in_table(row, ProductManagementView.PROFIT_COLUMN, product.profit)
         view.set_cell_in_table(row, ProductManagementView.QUANTITY_COLUMN, product.quantity)
@@ -129,6 +128,7 @@ class ProductManagementPresenter(AbstractPresenter):
     def __add_new_product_to_table(self, result_data: dict):
         new_product = result_data[ProductPresenter.NEW_PRODUCT]
         self.__add_product_to_table(new_product)
+        self.get_view().resize_table_columns_to_contents()
 
     def __update_product_on_table(self, result_data: dict):
         updated_product = result_data[ProductPresenter.UPDATED_PRODUCT]
