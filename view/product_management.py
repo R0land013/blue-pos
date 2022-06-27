@@ -24,6 +24,7 @@ class ProductManagementView(QFrame):
         self.__wire_up_gui_connections()
         self.edit_button.setDisabled(True)
         self.delete_button.setDisabled(True)
+        self.sell_button.setDisabled(True)
 
     def __set_table_format(self):
         self.product_table.setColumnCount(5)
@@ -72,6 +73,7 @@ class ProductManagementView(QFrame):
         self.new_button.clicked.connect(self.__presenter.open_presenter_to_create_new_product)
         self.edit_button.clicked.connect(self.__presenter.open_presenter_to_edit_product)
         self.delete_button.clicked.connect(self.__presenter.delete_selected_product)
+        self.sell_button.clicked.connect(self.__presenter.open_product_sale_management_presenter)
         self.product_table.itemSelectionChanged.connect(self.__disable_edit_and_delete_buttons_if_no_row_selected)
         self.product_table.itemDoubleClicked.connect(self.__presenter.open_presenter_to_edit_product)
 

@@ -4,6 +4,7 @@ from model.entity.models import Product
 from model.repository.factory import RepositoryFactory
 from model.repository.product import ProductFilter
 from presenter.product_presenter import ProductPresenter
+from presenter.product_sale_management import ProductSaleManagementPresenter
 from presenter.util.thread_worker import PresenterThreadWorker
 from view.product_management import ProductManagementView
 
@@ -134,3 +135,7 @@ class ProductManagementPresenter(AbstractPresenter):
         updated_product = result_data[ProductPresenter.UPDATED_PRODUCT]
         row = self.get_view().get_selected_row_index()
         self.__set_table_row_by_product(row, updated_product)
+
+    def open_product_sale_management_presenter(self):
+        intent = Intent(ProductSaleManagementPresenter)
+        self._open_other_presenter(intent)
