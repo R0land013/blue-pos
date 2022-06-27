@@ -54,6 +54,8 @@ class ProductManagementView(QFrame):
         self.tool_bar.addWidget(self.edit_button)
         self.tool_bar.addSeparator()
         self.tool_bar.addWidget(self.delete_button)
+        self.tool_bar.addSeparator()
+        self.tool_bar.addWidget(self.sell_button)
 
     def set_up_tool_buttons(self):
         self.back_button = QToolButton()
@@ -64,6 +66,8 @@ class ProductManagementView(QFrame):
         self.edit_button.setIcon(QIcon('./view/ui/images/edit.png'))
         self.delete_button = QToolButton()
         self.delete_button.setIcon(QIcon('./view/ui/images/delete.png'))
+        self.sell_button = QToolButton()
+        self.sell_button.setIcon(QIcon('./view/ui/images/sale.png'))
 
     def __wire_up_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.return_to_main)
@@ -79,12 +83,15 @@ class ProductManagementView(QFrame):
         if selected_row_quantity == 1:
             self.edit_button.setDisabled(False)
             self.delete_button.setDisabled(False)
+            self.sell_button.setDisabled(False)
         elif selected_row_quantity >= 1:
             self.edit_button.setDisabled(True)
             self.delete_button.setDisabled(False)
+            self.sell_button.setDisabled(True)
         else:
             self.edit_button.setDisabled(True)
             self.delete_button.setDisabled(True)
+            self.sell_button.setDisabled(True)
 
     def set_cell_in_table(self, row: int, column: int, data):
         item = QTableWidgetItem(str(data))
