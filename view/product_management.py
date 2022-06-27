@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QFrame, QTableWidgetItem, QTableWidget, QMessageBox
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QFrame, QTableWidgetItem, QTableWidget, QMessageBox, QToolBar, QToolButton, QHBoxLayout
 from PyQt5.uic import loadUi
 from PyQt5.QtCore import Qt
 
@@ -20,6 +21,7 @@ class ProductManagementView(QFrame):
 
     def __prepare_gui(self):
         self.__set_table_format()
+        self.__set_up_tool_bar()
         self.__wire_up_gui_connections()
         self.edit_button.setDisabled(True)
         self.delete_button.setDisabled(True)
@@ -37,6 +39,31 @@ class ProductManagementView(QFrame):
         self.product_table.resizeColumnsToContents()
         self.product_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.product_table.setSelectionMode(QTableWidget.SelectionMode.ExtendedSelection)
+
+    def __set_up_tool_bar(self):
+        self.set_up_tool_buttons()
+        self.tool_bar = QToolBar()
+        self.tool_bar_frame.setLayout(QHBoxLayout())
+        self.tool_bar_frame.layout().setContentsMargins(0, 0, 0, 0)
+        self.tool_bar_frame.layout().setMenuBar(self.tool_bar)
+
+        self.tool_bar.addWidget(self.back_button)
+        self.tool_bar.addSeparator()
+        self.tool_bar.addWidget(self.new_button)
+        self.tool_bar.addSeparator()
+        self.tool_bar.addWidget(self.edit_button)
+        self.tool_bar.addSeparator()
+        self.tool_bar.addWidget(self.delete_button)
+
+    def set_up_tool_buttons(self):
+        self.back_button = QToolButton()
+        self.back_button.setIcon(QIcon('./view/ui/images/back.png'))
+        self.new_button = QToolButton()
+        self.new_button.setIcon(QIcon('./view/ui/images/new.png'))
+        self.edit_button = QToolButton()
+        self.edit_button.setIcon(QIcon('./view/ui/images/edit.png'))
+        self.delete_button = QToolButton()
+        self.delete_button.setIcon(QIcon('./view/ui/images/delete.png'))
 
     def __wire_up_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.return_to_main)
