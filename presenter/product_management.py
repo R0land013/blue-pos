@@ -137,5 +137,9 @@ class ProductManagementPresenter(AbstractPresenter):
         self.__set_table_row_by_product(row, updated_product)
 
     def open_product_sale_management_presenter(self):
+        selected_product = self.__get_selected_product()
+        data = {ProductSaleManagementPresenter.PRODUCT_DATA: selected_product}
+
         intent = Intent(ProductSaleManagementPresenter)
+        intent.set_data(data)
         self._open_other_presenter(intent)
