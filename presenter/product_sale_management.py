@@ -61,7 +61,13 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         view.set_cell_in_table(row, ProductSaleManagementView.SALE_DATE_COLUMN, sale.date)
 
     def open_make_sale_presenter(self):
+        data = {MakeSalePresenter.PRODUCT: self.__product}
         intent = Intent(MakeSalePresenter)
+        intent.set_data(data)
         intent.use_new_window(True)
         intent.use_modal(True)
         self._open_other_presenter(intent)
+
+    def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
+        if result == MakeSalePresenter.NEW_SALES_RESULT:
+            self.__execute_thread_to_fill_table()
