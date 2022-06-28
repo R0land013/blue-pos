@@ -50,17 +50,18 @@ class SaleRepository(RepositoryObserver):
         super().__init__()
         self.__session = session
 
-    def insert_sales(self, sale: Sale, quantity: int):
+    def insert_sales(self, sale: Sale, quantity: int) -> list:
         self.__check_quantity_is_positive(quantity)
         self.__check_price_is_positive(sale)
         self.__check_profit_is_not_negative(sale)
         self.__check_product_exists(sale)
         self.__check_there_are_enough_products(sale, quantity)
 
-        self.__execute_insertion(sale, quantity)
+        sales = self.__execute_insertion_and_return_sales(sale, quantity)
         self.__execute_product_quantity_update(sale, quantity)
         self.__session.commit()
         self._notify_on_data_changed_listeners()
+        return sales
 
     def __check_quantity_is_positive(self, quantity: int):
         if quantity <= 0:
@@ -89,17 +90,18 @@ class SaleRepository(RepositoryObserver):
         if read_product.quantity - quantity_of_sales < 0:
             raise NoEnoughProductQuantityException(read_product.quantity)
 
-    def __execute_insertion(self, sale: Sale, quantity: int):
+    def __execute_insertion_and_return_sales(self, sale: Sale, quantity: int) -> list:
+        sales = []
         for i in range(quantity):
-            self.__session.execute(
-                insert(Sale)
-                .values(
-                    product_id=sale.product_id,
-                    date=sale.date,
-                    price=sale.price,
-                    profit=sale.profit
-                )
+            a_sale = Sale(
+                product_id=sale.product_id,
+                date=sale.date,
+                price=sale.price,
+                profit=sale.profit
             )
+            sales.append(a_sale)
+        self.__session.add_all(sales)
+        return sales
 
     def __execute_product_quantity_update(self, sale: Sale, sale_quantity: int):
         product = self.__session.scalar(select(Product).where(Product.id == sale.product_id))
