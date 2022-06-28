@@ -21,9 +21,6 @@ class ProductSaleManagementView(QFrame):
         self.__set_table_format()
         self.__wire_up_connections()
 
-    def __wire_up_connections(self):
-        self.back_button.clicked.connect(self.__presenter.close_presenter)
-
     def __set_table_format(self):
         self.sale_table.setColumnCount(4)
         self.sale_table.setHorizontalHeaderLabels([
@@ -35,6 +32,10 @@ class ProductSaleManagementView(QFrame):
         self.sale_table.resizeColumnsToContents()
         self.sale_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.sale_table.setSelectionMode(QTableWidget.SelectionMode.ExtendedSelection)
+
+    def __wire_up_connections(self):
+        self.back_button.clicked.connect(self.__presenter.close_presenter)
+        self.sell_button.clicked.connect(self.__presenter.open_make_sale_presenter)
 
     def clean_table(self):
         while self.sale_table.rowCount() > 0:

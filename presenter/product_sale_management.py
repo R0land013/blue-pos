@@ -1,8 +1,10 @@
 from easy_mvp.abstract_presenter import AbstractPresenter
+from easy_mvp.intent import Intent
 
 from model.entity.models import Sale
 from model.repository.factory import RepositoryFactory
 from model.repository.sale import SaleFilter
+from presenter.sell_product import MakeSalePresenter
 from presenter.util.thread_worker import PresenterThreadWorker
 from view.product_sale_management import ProductSaleManagementView
 
@@ -57,3 +59,9 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         view.set_cell_in_table(row, ProductSaleManagementView.PAYMENT_COLUMN, sale.price)
         view.set_cell_in_table(row, ProductSaleManagementView.PROFIT_COLUMN, sale.profit)
         view.set_cell_in_table(row, ProductSaleManagementView.SALE_DATE_COLUMN, sale.date)
+
+    def open_make_sale_presenter(self):
+        intent = Intent(MakeSalePresenter)
+        intent.use_new_window(True)
+        intent.use_modal(True)
+        self._open_other_presenter(intent)
