@@ -127,16 +127,17 @@ class TestSaleRepository(unittest.TestCase):
     def test_sale_is_updated_successfully(self):
         product = ProductGenerator.generate_one_product()
         product = insert_product_and_return_it(product)
-        sale = SaleGenerator.generate_one_sale_from_product(product)
-        new_sale = insert_sale_and_return_it(sale)
+        sales = SaleGenerator.generate_sales_from_product(product, 2)
+        s1, s2 = sales
+        insert_sales_and_return_them(sales)
 
-        new_sale.price = CUPMoney('50')
-        new_sale.profit = CUPMoney('40')
-        new_sale.date = new_sale.date - timedelta(days=1)
-        self.sale_repository.update_sale(new_sale)
+        s1.price = CUPMoney('50')
+        s1.profit = CUPMoney('40')
+        s1.date = s1.date - timedelta(days=1)
+        self.sale_repository.update_sale(s1)
 
-        read_sale = get_one_sale_from_database()
-        self.assertEqual(new_sale, read_sale)
+        sales_in_db = get_all_sales_from_database()
+        self.assertEqual([s1, s2], sales_in_db)
 
     def test_trying_to_update_nonexistent_sale_raises_exception(self):
         product = ProductGenerator.generate_one_product()

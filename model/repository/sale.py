@@ -173,7 +173,7 @@ class SaleRepository(RepositoryObserver):
     def __execute_update_operation(self, sale: Sale):
         self.__session.execute(
             update(Sale)
-                .where(sale.id == sale.id)
+                .where(Sale.id == sale.id)
                 .values(
                 date=sale.date,
                 price=sale.price,
