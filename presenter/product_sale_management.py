@@ -110,6 +110,8 @@ class ProductSaleManagementPresenter(AbstractPresenter):
     def open_presenter_to_edit_sale(self):
         data = {EditSalePresenter.SALE: self.__get_selected_sale()}
         intent = Intent(EditSalePresenter)
+        intent.use_new_window(True)
+        intent.use_modal(True)
         intent.set_data(data)
         self._open_other_presenter(intent)
 
