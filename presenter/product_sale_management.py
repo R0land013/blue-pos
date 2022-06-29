@@ -116,5 +116,5 @@ class ProductSaleManagementPresenter(AbstractPresenter):
     def __get_selected_sale(self) -> Sale:
         sale_id = self.get_view().get_selected_sale_ids()[0]
         filter_by_id = SaleFilter()
-        filter_by_id.product_id_list = [sale_id]
+        filter_by_id.sale_id_list = [sale_id]
         return self.__sale_repo.get_sales_by_filter(filter_by_id)[0]
