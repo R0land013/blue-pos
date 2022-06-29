@@ -1,4 +1,6 @@
 from datetime import date
+
+from PyQt5.QtCore import QDate
 from PyQt5.QtWidgets import QFrame
 from PyQt5.uic import loadUi
 
@@ -13,7 +15,11 @@ class MakeSaleView(QFrame):
 
     def __set_up_gui(self):
         loadUi('./view/ui/make_sale_form.ui', self)
+        self.set_date_to_today()
         self.__wire_up_gui_connections()
+
+    def set_date_to_today(self):
+        self.sale_date_edit.setDate(QDate.currentDate())
 
     def __wire_up_gui_connections(self):
         self.sale_quantity_spin_box.valueChanged.connect(
