@@ -62,3 +62,6 @@ class ProductSaleManagementView(QFrame):
 
     def set_disabled_view_except_status_bar(self, disable: bool):
         self.main_content_frame.setDisabled(disable)
+
+    def set_available_product_quantity(self, quantity: int):
+        self.quantity_value_label.setText(str(quantity))

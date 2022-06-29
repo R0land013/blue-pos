@@ -23,6 +23,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self._close_this_presenter()
 
     def on_view_shown(self):
+        self.get_view().set_available_product_quantity(self.__product.quantity)
         self.__execute_thread_to_fill_table()
 
     def __execute_thread_to_fill_table(self):
@@ -70,4 +71,11 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
         if result == MakeSalePresenter.NEW_SALES_RESULT:
-            self.__execute_thread_to_fill_table()
+            self.__update_gui_on_new_sales_inserted()
+
+    def __update_gui_on_new_sales_inserted(self):
+        self.__execute_thread_to_fill_table()
+
+        # Aquí no es necesario realizar ninguna substracción porque SqlAlchemy
+        # se encarga de actualizar el valor de los atributos cada vez que son accedidos
+        self.get_view().set_available_product_quantity(self.__product.quantity)
