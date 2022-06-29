@@ -102,10 +102,17 @@ class ProductSaleManagementPresenter(AbstractPresenter):
     def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
         if result == MakeSalePresenter.NEW_SALES_RESULT:
             self.__update_gui_on_new_sales_inserted()
+        elif result == EditSalePresenter.UPDATED_SALE_RESULT:
+            self.__update_sale_on_table(result_data)
 
     def __update_gui_on_new_sales_inserted(self):
         self.__execute_thread_to_fill_table()
         self.__update_available_product_quantity_on_gui()
+
+    def __update_sale_on_table(self, result_data: dict):
+        selected_row = self.get_view().get_selected_row_index()
+        updated_sale = result_data[EditSalePresenter.UPDATED_SALE]
+        self.__set_table_row_by_sale(selected_row, updated_sale)
 
     def open_presenter_to_edit_sale(self):
         data = {EditSalePresenter.SALE: self.__get_selected_sale()}

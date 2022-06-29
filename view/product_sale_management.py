@@ -117,3 +117,6 @@ class ProductSaleManagementView(QFrame):
             sale_id = int(self.sale_table.item(row, self.SALE_ID_COLUMN).text())
             ids.append(sale_id)
         return ids
+
+    def get_selected_row_index(self) -> int:
+        return self.sale_table.currentRow()
