@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QMessageBox
 from PyQt5.uic import loadUi
 
 
@@ -36,6 +36,7 @@ class ProductSaleManagementView(QFrame):
     def __wire_up_connections(self):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
         self.sell_button.clicked.connect(self.__presenter.open_make_sale_presenter)
+        self.undo_sale_button.clicked.connect(self.__presenter.undo_selected_sales)
 
     def clean_table(self):
         while self.sale_table.rowCount() > 0:
@@ -65,3 +66,37 @@ class ProductSaleManagementView(QFrame):
 
     def set_available_product_quantity(self, quantity: int):
         self.quantity_value_label.setText(str(quantity))
+
+    def ask_user_to_confirm_undo_sales(self) -> bool:
+        message_box = self.__construct_message_box()
+        pressed_button = message_box.exec()
+        return pressed_button == QMessageBox.StandardButton.Ok
+
+    def __construct_message_box(self) -> QMessageBox:
+        quantity = self.__get_selected_sale_quantity()
+        sale_word = self.__get_singular_or_plural_sale_word()
+
+        message_box = QMessageBox()
+        message_box.setIcon(QMessageBox.Icon.Question)
+        message_box.setWindowTitle('Blue POS - Deshacer {}'.format(sale_word))
+        message_box.setStandardButtons(QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
+        message_box.setText('¿Seguro que desea deshacer {} {}?'.format(quantity, sale_word))
+        return message_box
+
+    def __get_selected_sale_quantity(self) -> int:
+        return len(self.sale_table.selectionModel().selectedRows(self.SALE_ID_COLUMN))
+
+    def __get_singular_or_plural_sale_word(self):
+        sale_selected_quantity = self.__get_selected_sale_quantity()
+        if sale_selected_quantity == 1:
+            return 'venta'
+        return 'ventas'
+
+    def get_selected_sale_ids(self) -> list:
+        ids = []
+        model_indexes = self.sale_table.selectionModel().selectedRows(self.SALE_ID_COLUMN)
+        for a_model_index in model_indexes:
+            row = a_model_index.row()
+            sale_id = int(self.sale_table.item(row, self.SALE_ID_COLUMN).text())
+            ids.append(sale_id)
+        return ids

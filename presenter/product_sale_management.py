@@ -30,7 +30,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self.thread = PresenterThreadWorker(self.fill_table)
         self.thread.start()
 
-    def fill_table(self, thread: PresenterThreadWorker):
+    def fill_table(self, thread: PresenterThreadWorker = None):
         self.get_view().set_disabled_view_except_status_bar(True)
         self.get_view().set_status_bar_message('Cargando datos...')
         self.get_view().clean_table()
@@ -61,6 +61,35 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         view.set_cell_in_table(row, ProductSaleManagementView.PROFIT_COLUMN, sale.profit)
         view.set_cell_in_table(row, ProductSaleManagementView.SALE_DATE_COLUMN, sale.date)
 
+    def undo_selected_sales(self):
+        if self.get_view().ask_user_to_confirm_undo_sales():
+            self.thread = PresenterThreadWorker(self.__undo_selected_sales)
+            self.thread.when_finished.connect(self.fill_table)
+            self.thread.start()
+
+    def __update_available_product_quantity_on_gui(self):
+        # Aquí no es necesario realizar ninguna substracción porque SqlAlchemy
+        # se encarga de actualizar el valor de los atributos cada vez que son accedidos
+        self.get_view().set_available_product_quantity(self.__product.quantity)
+
+    def __undo_selected_sales(self, thread: PresenterThreadWorker = None):
+        self.get_view().set_disabled_view_except_status_bar(True)
+        self.get_view().set_status_bar_message('Procesando...')
+
+        mock_sales = self.__construct_mock_sales_to_execute_deletion()
+        for a_mock_sale in mock_sales:
+            self.__sale_repo.delete_sale(a_mock_sale)
+
+        self.__update_available_product_quantity_on_gui()
+        self.get_view().set_disabled_view_except_status_bar(False)
+
+    def __construct_mock_sales_to_execute_deletion(self):
+        sale_ids = self.get_view().get_selected_sale_ids()
+        mock_sales = []
+        for an_id in sale_ids:
+            mock_sales.append(Sale(id=an_id, product_id=self.__product.id))
+        return mock_sales
+
     def open_make_sale_presenter(self):
         data = {MakeSalePresenter.PRODUCT: self.__product}
         intent = Intent(MakeSalePresenter)
@@ -75,7 +104,5 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def __update_gui_on_new_sales_inserted(self):
         self.__execute_thread_to_fill_table()
+        self.__update_available_product_quantity_on_gui()
 
-        # Aquí no es necesario realizar ninguna substracción porque SqlAlchemy
-        # se encarga de actualizar el valor de los atributos cada vez que son accedidos
-        self.get_view().set_available_product_quantity(self.__product.quantity)
