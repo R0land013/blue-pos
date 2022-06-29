@@ -1,8 +1,5 @@
 import unittest
 from datetime import date, timedelta
-
-from numpy.lib.function_base import insert
-
 from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeProfitException
 from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException, \
     ChangeProductIdInSaleException
@@ -222,3 +219,16 @@ class TestSaleRepository(unittest.TestCase):
 
         sales_of_p1_and_p3 = sales_of_p1 + sales_of_p3
         self.assertEqual(filtered_sales, sales_of_p1_and_p3)
+
+    def test_get_sales_by_filter_using_sale_ids(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sales = SaleGenerator.generate_sales_from_product(product, 3)
+        s1, s2, s3 = sales
+        insert_sales_and_return_them(sales)
+
+        filter_by_id = SaleFilter()
+        filter_by_id.sale_id_list = [s1, s3]
+        filtered_sales = self.sale_repository.get_sales_by_filter(filter_by_id)
+
+        self.assertEqual(filtered_sales, [s1, s3])

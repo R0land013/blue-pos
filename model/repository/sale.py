@@ -18,6 +18,15 @@ class SaleFilter:
         self.__product_id_list = None
         self.__minimum_date = None
         self.__maximum_date = None
+        self.__sale_id_list = None
+
+    @property
+    def sale_id_list(self):
+        return self.__sale_id_list
+
+    @sale_id_list.setter
+    def sale_id_list(self, value: list):
+        self.__sale_id_list = value
 
     @property
     def product_id_list(self) -> list:
