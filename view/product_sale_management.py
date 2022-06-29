@@ -37,6 +37,7 @@ class ProductSaleManagementView(QFrame):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
         self.sell_button.clicked.connect(self.__presenter.open_make_sale_presenter)
         self.undo_sale_button.clicked.connect(self.__presenter.undo_selected_sales)
+        self.edit_sale_button.clicked.connect(self.__presenter.open_presenter_to_edit_sale)
 
     def clean_table(self):
         while self.sale_table.rowCount() > 0:

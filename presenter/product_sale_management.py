@@ -4,6 +4,7 @@ from easy_mvp.intent import Intent
 from model.entity.models import Sale
 from model.repository.factory import RepositoryFactory
 from model.repository.sale import SaleFilter
+from presenter.edit_sale import EditSalePresenter
 from presenter.sell_product import MakeSalePresenter
 from presenter.util.thread_worker import PresenterThreadWorker
 from view.product_sale_management import ProductSaleManagementView
@@ -106,3 +107,14 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self.__execute_thread_to_fill_table()
         self.__update_available_product_quantity_on_gui()
 
+    def open_presenter_to_edit_sale(self):
+        data = {EditSalePresenter.SALE: self.__get_selected_sale()}
+        intent = Intent(EditSalePresenter)
+        intent.set_data(data)
+        self._open_other_presenter(intent)
+
+    def __get_selected_sale(self) -> Sale:
+        sale_id = self.get_view().get_selected_sale_ids()[0]
+        filter_by_id = SaleFilter()
+        filter_by_id.product_id_list = [sale_id]
+        return self.__sale_repo.get_sales_by_filter(filter_by_id)[0]
