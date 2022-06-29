@@ -20,6 +20,8 @@ class ProductSaleManagementView(QFrame):
         loadUi('./view/ui/product_sale_management.ui', self)
         self.__set_table_format()
         self.__wire_up_connections()
+        self.edit_sale_button.setDisabled(True)
+        self.undo_sale_button.setDisabled(True)
 
     def __set_table_format(self):
         self.sale_table.setColumnCount(4)
@@ -38,6 +40,20 @@ class ProductSaleManagementView(QFrame):
         self.sell_button.clicked.connect(self.__presenter.open_make_sale_presenter)
         self.undo_sale_button.clicked.connect(self.__presenter.undo_selected_sales)
         self.edit_sale_button.clicked.connect(self.__presenter.open_presenter_to_edit_sale)
+        self.sale_table.itemSelectionChanged.connect(self.__disable_buttons_depending_on_table_selection)
+
+    def __disable_buttons_depending_on_table_selection(self):
+        selected_sale_quantity = self.__get_selected_sale_quantity()
+
+        if selected_sale_quantity == 1:
+            self.edit_sale_button.setDisabled(False)
+            self.undo_sale_button.setDisabled(False)
+        elif selected_sale_quantity >= 1:
+            self.edit_sale_button.setDisabled(True)
+            self.undo_sale_button.setDisabled(False)
+        else:
+            self.edit_sale_button.setDisabled(True)
+            self.undo_sale_button.setDisabled(True)
 
     def clean_table(self):
         while self.sale_table.rowCount() > 0:
