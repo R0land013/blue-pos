@@ -228,7 +228,7 @@ class TestSaleRepository(unittest.TestCase):
         insert_sales_and_return_them(sales)
 
         filter_by_id = SaleFilter()
-        filter_by_id.sale_id_list = [s1, s3]
+        filter_by_id.sale_id_list = [s1.id, s3.id]
         filtered_sales = self.sale_repository.get_sales_by_filter(filter_by_id)
 
         self.assertEqual(filtered_sales, [s1, s3])

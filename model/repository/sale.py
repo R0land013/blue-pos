@@ -200,4 +200,7 @@ class SaleRepository(RepositoryObserver):
         if the_filter.product_id_list is not None:
             query = query.where(Sale.product_id.in_(the_filter.product_id_list))
 
+        if the_filter.sale_id_list is not None:
+            query = query.where(Sale.id.in_(the_filter.sale_id_list))
+
         return query
