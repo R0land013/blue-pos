@@ -100,12 +100,14 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
         if result == MakeSalePresenter.NEW_SALES_RESULT:
-            self.__update_gui_on_new_sales_inserted()
+            self.__update_gui_on_new_sales_inserted(result_data)
         elif result == EditSalePresenter.UPDATED_SALE_RESULT:
             self.__update_sale_on_table(result_data)
 
-    def __update_gui_on_new_sales_inserted(self):
-        self.__execute_thread_to_fill_table()
+    def __update_gui_on_new_sales_inserted(self, result_data: dict):
+        new_sales = result_data[MakeSalePresenter.NEW_SALES]
+        for a_sale in new_sales:
+            self.__add_sale_to_table(a_sale)
         self.__update_available_product_quantity_on_gui()
 
     def __update_sale_on_table(self, result_data: dict):
