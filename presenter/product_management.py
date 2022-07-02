@@ -93,9 +93,8 @@ class ProductManagementPresenter(AbstractPresenter):
         self.__set_state_bar_message('Procesando...')
         self.__set_disabled_view_except_state_bar(True)
 
-        products = self.__get_all_selected_products()
-        for a_product in products:
-            self.__product_repo.delete_product(a_product)
+        product_id_list = self.get_view().get_all_selected_product_ids()
+        self.__product_repo.delete_products(product_id_list)
 
         self.get_view().delete_selected_products_from_table()
         self.__set_state_bar_message('Producto eliminado')
