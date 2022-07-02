@@ -11,6 +11,8 @@ class EditSaleView(QFrame):
         super().__init__()
         self.__presenter = presenter
 
+        self.set_up_gui()
+
     def set_up_gui(self):
         loadUi('./view/ui/edit_sale_form.ui', self)
         self.wire_up_gui_connections()
