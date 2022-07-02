@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from model.entity.models import Product
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
     InvalidProductQuantityException, NoPositivePriceException, NegativeProfitException
@@ -134,9 +134,6 @@ class ProductRepository(RepositoryObserver):
         self.__session.commit()
         self._notify_on_data_changed_listeners()
 
-    def delete_products(self, product_id_list: list):
-        pass
-
     def __check_product_exists(self, product) -> Product:
         found_product = self.__find_product_by_id(product.id)
         if found_product is None:
@@ -147,6 +144,23 @@ class ProductRepository(RepositoryObserver):
         return self.__session.scalars(
             select(Product).where(Product.id == product_id)
         ).first()
+
+    def delete_products(self, product_id_list: list):
+        self.__check_product_ids_exist(product_id_list)
+
+        self.__execute_product_deletion_by_id(product_id_list)
+        self.__session.commit()
+        self._notify_on_data_changed_listeners()
+
+    def __check_product_ids_exist(self, product_id_list: list):
+        for product_id in product_id_list:
+            product = self.__find_product_by_id(product_id)
+            if product is None:
+                raise NonExistentProductException(Product(id=product_id))
+
+    def __execute_product_deletion_by_id(self, product_id_list: list):
+        self.__session.execute(delete(Product)
+                               .where(Product.id.in_(product_id_list)))
 
     def update_product(self, new: Product):
         self.__check_correctness_of_quantity(new)
