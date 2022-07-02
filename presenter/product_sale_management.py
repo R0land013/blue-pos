@@ -77,9 +77,8 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self.get_view().set_disabled_view_except_status_bar(True)
         self.get_view().set_status_bar_message('Procesando...')
 
-        mock_sales = self.__construct_mock_sales_to_execute_deletion()
-        for a_mock_sale in mock_sales:
-            self.__sale_repo.delete_sale(a_mock_sale)
+        sale_id_list = self.get_view().get_selected_sale_ids()
+        self.__sale_repo.delete_sales(sale_id_list)
 
         self.__update_available_product_quantity_on_gui()
         self.get_view().set_disabled_view_except_status_bar(False)
