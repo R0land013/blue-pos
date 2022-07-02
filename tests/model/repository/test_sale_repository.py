@@ -272,3 +272,21 @@ class TestSaleRepository(unittest.TestCase):
         filtered_sales = self.sale_repository.get_sales_by_filter(filter_by_id)
 
         self.assertEqual(filtered_sales, [s1, s3])
+
+    def test_get_sales_by_filter_sorted_by_date(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sales = SaleGenerator.generate_sales_from_product(product, 4)
+        s1, s2, s3, s4 = sales
+        s4.date = self.TODAY_DATE
+        s2.date = self.TODAY_DATE - timedelta(days=1)
+        s1.date = self.TODAY_DATE - timedelta(days=1)
+        s3.date = self.TODAY_DATE - timedelta(days=2)
+        insert_sales_and_return_them(sales)
+
+        filter_sorted_by_date = SaleFilter()
+        filter_sorted_by_date.sorted_by = SaleFilter.SALE_DATE
+        filter_sorted_by_date.ascending_order = False
+        sorted_sales = self.sale_repository.get_sales_by_filter(filter_sorted_by_date)
+
+        self.assertEqual(sorted_sales, [s4, s2, s1, s3])

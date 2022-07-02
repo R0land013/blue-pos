@@ -14,11 +14,19 @@ from model.util.monetary_types import CUPMoney
 
 class SaleFilter:
 
+    ID = 'id'
+    PRODUCT_ID = 'product_id'
+    SALE_DATE = 'sale_date'
+    PRICE = 'price'
+    PROFIT = 'profit'
+
     def __init__(self):
         self.__product_id_list = None
         self.__minimum_date = None
         self.__maximum_date = None
         self.__sale_id_list = None
+        self.__sorted_by = None
+        self.__ascending_order = True
 
     @property
     def sale_id_list(self):
@@ -51,6 +59,22 @@ class SaleFilter:
     @maximum_date.setter
     def maximum_date(self, value: date):
         self.__maximum_date = value
+
+    @property
+    def sorted_by(self) -> str:
+        return self.__sorted_by
+
+    @sorted_by.setter
+    def sorted_by(self, value: str):
+        self.__sorted_by = value
+
+    @property
+    def ascending_order(self) -> bool:
+        return self.__ascending_order
+
+    @ascending_order.setter
+    def ascending_order(self, value: bool):
+        self.__ascending_order = value
 
 
 class SaleRepository(RepositoryObserver):
