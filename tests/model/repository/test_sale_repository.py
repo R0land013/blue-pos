@@ -9,7 +9,7 @@ from model.util.monetary_types import CUPMoney
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, insert_product_and_return_it, \
     get_all_sales_from_database, assert_sale_lists_are_equal_ignoring_id, get_one_product_from_database, \
     insert_sale_and_return_it, get_one_sale_from_database, insert_products_in_database_and_return_them, \
-    insert_sales_and_return_them
+    insert_sales_and_return_them, get_all_products_in_database
 from tests.util.generators.product import ProductGenerator
 from tests.util.generators.sale import SaleGenerator
 
@@ -145,6 +145,23 @@ class TestSaleRepository(unittest.TestCase):
 
         product = get_one_product_from_database()
         self.assertEqual(product.quantity, 4)
+
+    def test_deleting_sales_increases_associated_product_quantity(self):
+        products = ProductGenerator.generate_products_by_quantity(2)
+        p1, p2 = products
+        p1.quantity = 0
+        p2.quantity = 1
+        products = insert_products_in_database_and_return_them(products)
+        p1_sales = SaleGenerator.generate_sales_from_product(p1, 2)
+        p2_sales = SaleGenerator.generate_sales_from_product(p2, 2)
+        s1_p1, s2_p1 = insert_sales_and_return_them(p1_sales)
+        s3_p2, s4_p2 = insert_sales_and_return_them(p2_sales)
+
+        self.sale_repository.delete_sales([s1_p1.id, s2_p1.id,
+                                           s3_p2.id, s4_p2.id])
+
+        expected_p1, expected_p2 = get_all_products_in_database()
+        self.assertTrue(expected_p1.quantity == 2 and expected_p2.quantity == 3)
 
     def test_sale_is_updated_successfully(self):
         product = ProductGenerator.generate_one_product()
