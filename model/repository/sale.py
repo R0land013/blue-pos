@@ -135,6 +135,7 @@ class SaleRepository(RepositoryObserver):
 
     def delete_sales(self, sale_id_list: list):
         self.__check_sales_exists(sale_id_list)
+        self.__increase_quantity_of_associated_products(sale_id_list)
 
         self.__execute_sale_deletion(sale_id_list)
         self.__session.commit()
@@ -144,6 +145,14 @@ class SaleRepository(RepositoryObserver):
             sale = self.__get_sale_by_id(sale_id)
             if sale is None:
                 raise NonExistentSaleException(Sale(id=sale_id))
+
+    def __increase_quantity_of_associated_products(self, sale_id_list: list):
+        for sale_id in sale_id_list:
+            sale = self.__get_sale_by_id(sale_id)
+            product = sale.product
+            self.__session.execute(update(Product)
+                                   .where(Product.id == product.id)
+                                   .values(quantity=product.quantity + 1))
 
     def __execute_sale_deletion(self, sale_id_list: list):
         self.__session.execute(delete(Sale)
