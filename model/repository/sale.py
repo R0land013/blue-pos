@@ -134,9 +134,16 @@ class SaleRepository(RepositoryObserver):
         self._notify_on_data_changed_listeners()
 
     def delete_sales(self, sale_id_list: list):
+        self.__check_sales_exists(sale_id_list)
 
         self.__execute_sale_deletion(sale_id_list)
         self.__session.commit()
+
+    def __check_sales_exists(self, sale_id_list: list):
+        for sale_id in sale_id_list:
+            sale = self.__get_sale_by_id(sale_id)
+            if sale is None:
+                raise NonExistentSaleException(Sale(id=sale_id))
 
     def __execute_sale_deletion(self, sale_id_list: list):
         self.__session.execute(delete(Sale)
