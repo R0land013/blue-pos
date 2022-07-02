@@ -84,6 +84,18 @@ class TestSaleRepository(unittest.TestCase):
 
         self.assertRaises(NegativeProfitException, self.sale_repository.insert_sales, sale, 1)
 
+    def test_sales_are_deleted_successfully(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sales = SaleGenerator.generate_sales_from_product(product, 3)
+        s1, s2, s3 = sales
+        sales = insert_sales_and_return_them(sales)
+
+        self.sale_repository.delete_sales([s1.id, s3.id])
+
+        remaining_sales = get_all_sales_from_database()
+        self.assertEqual(remaining_sales, [s2])
+
     def test_sale_is_deleted_successfully(self):
         product = ProductGenerator.generate_one_product()
         product = insert_product_and_return_it(product)

@@ -133,6 +133,9 @@ class SaleRepository(RepositoryObserver):
         self.__session.commit()
         self._notify_on_data_changed_listeners()
 
+    def delete_sales(self, sales_id_list: list):
+        pass
+
     def __get_sale_by_id(self, sale_id: int):
         return self.__session.scalar(select(Sale).where(Sale.id == sale_id))
 
