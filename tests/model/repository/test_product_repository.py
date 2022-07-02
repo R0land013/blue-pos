@@ -86,6 +86,24 @@ class TestProductRepository(unittest.TestCase):
         self.assertRaises(NonExistentProductException, self.product_repository.delete_product,
                           product)
 
+    def test_delete_products(self):
+        products = ProductGenerator.generate_products_by_quantity(3)
+        p1, p2, p3 = products
+        insert_products_in_database_and_return_them(products)
+
+        self.product_repository.delete_products([p1.id, p3.id])
+
+        remaining_products = get_all_products_in_database()
+        self.assertEqual(remaining_products, [p2])
+
+    def test_try_to_delete_nonexistent_products_raises_exception(self):
+        products = ProductGenerator.generate_products_by_quantity(2)
+        p1, p2 = products
+        p1.id, p2.id = 1, 2
+
+        self.assertRaises(NonExistentProductException, self.product_repository.delete_products,
+                          [p1.id, p2.id])
+
     def test_product_is_updated_successfully(self):
         old_product = ProductGenerator.generate_one_product()
 

@@ -134,6 +134,9 @@ class ProductRepository(RepositoryObserver):
         self.__session.commit()
         self._notify_on_data_changed_listeners()
 
+    def delete_products(self, product_id_list: list):
+        pass
+
     def __check_product_exists(self, product) -> Product:
         found_product = self.__find_product_by_id(product.id)
         if found_product is None:
