@@ -280,8 +280,8 @@ class TestSaleRepository(unittest.TestCase):
         s1, s2, s3, s4 = sales
         s4.date = self.TODAY_DATE
         s2.date = self.TODAY_DATE - timedelta(days=1)
-        s1.date = self.TODAY_DATE - timedelta(days=1)
-        s3.date = self.TODAY_DATE - timedelta(days=2)
+        s1.date = self.TODAY_DATE - timedelta(days=2)
+        s3.date = self.TODAY_DATE - timedelta(days=3)
         insert_sales_and_return_them(sales)
 
         filter_sorted_by_date = SaleFilter()

@@ -252,4 +252,33 @@ class SaleRepository(RepositoryObserver):
         if the_filter.sale_id_list is not None:
             query = query.where(Sale.id.in_(the_filter.sale_id_list))
 
+        query = SaleRepository.__add_order_by_clause(query, the_filter)
+
         return query
+
+    @staticmethod
+    def __add_order_by_clause(query, the_filter: SaleFilter):
+        if the_filter.sorted_by is None:
+            return query
+
+        column = None
+
+        if the_filter.sorted_by == SaleFilter.ID:
+            column = Sale.id
+        elif the_filter.sorted_by == SaleFilter.PRODUCT_ID:
+            column = Sale.product_id
+        elif the_filter.sorted_by == SaleFilter.SALE_DATE:
+            column = Sale.date
+        elif the_filter.sorted_by == SaleFilter.PRODUCT_ID:
+            column = Sale.product_id
+        elif the_filter.sorted_by == SaleFilter.PRICE:
+            column = Sale.price
+        elif the_filter.sorted_by == SaleFilter.PROFIT:
+            column = Sale.profit
+
+        if the_filter.ascending_order:
+            column = column.asc()
+        else:
+            column = column.desc()
+
+        return query.order_by(column)
