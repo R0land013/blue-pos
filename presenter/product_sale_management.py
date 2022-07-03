@@ -29,6 +29,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def __execute_thread_to_fill_table(self):
         self.thread = PresenterThreadWorker(self.fill_table)
+        self.thread.finished_without_error.connect(self.__on_successful_loaded_data)
         self.thread.start()
 
     def fill_table(self, thread: PresenterThreadWorker = None):
@@ -40,9 +41,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         for a_sale in product_sales:
             self.__add_sale_to_table(a_sale)
 
-        self.get_view().resize_table_columns_to_contents()
-        self.get_view().set_disabled_view_except_status_bar(False)
-        self.get_view().set_status_bar_message('Datos cargados')
+        thread.finished_without_error.emit()
 
     def __get_sales_of_product(self):
         filter_by_product_id = SaleFilter()
@@ -61,6 +60,11 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         view.set_cell_in_table(row, ProductSaleManagementView.PAYMENT_COLUMN, sale.price)
         view.set_cell_in_table(row, ProductSaleManagementView.PROFIT_COLUMN, sale.profit)
         view.set_cell_in_table(row, ProductSaleManagementView.SALE_DATE_COLUMN, sale.date)
+
+    def __on_successful_loaded_data(self):
+        self.get_view().resize_table_columns_to_contents()
+        self.get_view().set_disabled_view_except_status_bar(False)
+        self.get_view().set_status_bar_message('Datos cargados')
 
     def undo_selected_sales(self):
         if self.get_view().ask_user_to_confirm_undo_sales():
