@@ -41,6 +41,7 @@ class ProductSaleManagementView(QFrame):
         self.undo_sale_button.clicked.connect(self.__presenter.undo_selected_sales)
         self.edit_sale_button.clicked.connect(self.__presenter.open_presenter_to_edit_sale)
         self.sale_table.itemSelectionChanged.connect(self.__disable_buttons_depending_on_table_selection)
+        self.filter_button.clicked.connect(self.__presenter.open_filter_presenter)
 
     def __disable_buttons_depending_on_table_selection(self):
         selected_sale_quantity = self.__get_selected_sale_quantity()

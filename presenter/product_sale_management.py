@@ -5,6 +5,7 @@ from model.entity.models import Sale
 from model.repository.factory import RepositoryFactory
 from model.repository.sale import SaleFilter
 from presenter.edit_sale import EditSalePresenter
+from presenter.sale_filter import SaleFilterPresenter
 from presenter.sell_product import MakeSalePresenter
 from presenter.util.thread_worker import PresenterThreadWorker
 from view.product_sale_management import ProductSaleManagementView
@@ -132,3 +133,9 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         filter_by_id = SaleFilter()
         filter_by_id.sale_id_list = [sale_id]
         return self.__sale_repo.get_sales_by_filter(filter_by_id)[0]
+
+    def open_filter_presenter(self):
+        intent = Intent(SaleFilterPresenter)
+        intent.use_new_window(True)
+        intent.use_modal(True)
+        self._open_other_presenter(intent)
