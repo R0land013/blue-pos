@@ -96,6 +96,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="filter_button">
+           <property name="text">
+            <string>Filtrar</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
