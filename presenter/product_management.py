@@ -27,6 +27,7 @@ class ProductManagementPresenter(AbstractPresenter):
 
     def __execute_thread_to_fill_table(self):
         self.thread = PresenterThreadWorker(self.fill_table)
+        self.thread.finished_without_error.connect(self.__on_success_loading_data_on_table)
         self.thread.start()
 
     def fill_table(self, thread: PresenterThreadWorker):
@@ -40,10 +41,7 @@ class ProductManagementPresenter(AbstractPresenter):
         for a_product in products:
             self.__add_product_to_table(a_product)
 
-        view.resize_table_columns_to_contents()
-
-        self.__set_disabled_view_except_state_bar(False)
-        self.__set_state_bar_message('Datos cargados')
+        thread.finished_without_error.emit()
 
     def __set_state_bar_message(self, message: str):
         self.get_view().set_state_bar_message(message)
@@ -63,6 +61,11 @@ class ProductManagementPresenter(AbstractPresenter):
         view.set_cell_in_table(row, ProductManagementView.PRICE_COLUMN, product.price)
         view.set_cell_in_table(row, ProductManagementView.PROFIT_COLUMN, product.profit)
         view.set_cell_in_table(row, ProductManagementView.QUANTITY_COLUMN, product.quantity)
+
+    def __on_success_loading_data_on_table(self):
+        self.get_view().resize_table_columns_to_contents()
+        self.__set_disabled_view_except_state_bar(False)
+        self.__set_state_bar_message('Datos cargados')
 
     def open_presenter_to_create_new_product(self):
         intent = Intent(ProductPresenter)
