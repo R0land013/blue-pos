@@ -70,7 +70,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
     def undo_selected_sales(self):
         if self.get_view().ask_user_to_confirm_undo_sales():
             self.thread = PresenterThreadWorker(self.__undo_selected_sales)
-            self.thread.when_finished.connect(self.fill_table)
+            self.thread.when_finished.connect(self.__execute_thread_to_fill_table)
             self.thread.start()
 
     def __update_available_product_quantity_on_gui(self):
