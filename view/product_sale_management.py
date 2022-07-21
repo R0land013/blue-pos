@@ -130,3 +130,17 @@ class ProductSaleManagementView(QFrame):
 
     def disable_sell_button(self, set_disabled: bool):
         self.sell_button.setDisabled(set_disabled)
+
+    def delete_selected_sales_from_table(self):
+        model_indexes = self.sale_table.selectionModel().selectedRows(self.SALE_ID_COLUMN)
+        selected_row_quantity = len(model_indexes)
+
+        while selected_row_quantity != 0:
+            a_row = model_indexes[0].row()
+            self.sale_table.removeRow(a_row)
+
+            model_indexes = self.sale_table.selectionModel().selectedRows(self.SALE_ID_COLUMN)
+            selected_row_quantity = len(model_indexes)
+
+        self.sale_table.clearSelection()
+        self.__disable_buttons_depending_on_table_selection()
