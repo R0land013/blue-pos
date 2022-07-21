@@ -121,3 +121,9 @@ class ProductSaleManagementView(QFrame):
 
     def get_selected_row_index(self) -> int:
         return self.sale_table.currentRow()
+
+    def set_filter_applied_message(self, is_filter_applied: bool):
+        if is_filter_applied:
+            self.filter_state_label.setText('Filtro aplicado')
+        else:
+            self.filter_state_label.setText('Sin Filtros')

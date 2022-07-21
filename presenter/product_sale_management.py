@@ -168,4 +168,5 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def __show_filtered_sales_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
-        self.get_view().set_status_bar_message('Filtro aplicado')
+        self.get_view().set_filter_applied_message(True)
+        self.get_view().set_status_bar_message('')
