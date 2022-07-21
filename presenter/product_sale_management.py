@@ -20,9 +20,19 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self._set_view(view)
         self.__product = self._get_intent_data()[self.PRODUCT_DATA]
         self.__sale_repo = RepositoryFactory.get_sale_repository()
+        self.__applied_sale_filter = None
 
     def close_presenter(self):
         self._close_this_presenter()
+
+    def open_filter_presenter(self):
+        intent = Intent(SaleFilterPresenter)
+        data = {SaleFilterPresenter.FILTER_BY_PRODUCT_ID_LIST_DATA: [self.__product.id]}
+        intent.set_data(data)
+
+        intent.use_new_window(True)
+        intent.use_modal(True)
+        self._open_other_presenter(intent)
 
     def on_view_shown(self):
         self.get_view().set_available_product_quantity(self.__product.quantity)
@@ -108,6 +118,8 @@ class ProductSaleManagementPresenter(AbstractPresenter):
             self.__update_gui_on_new_sales_inserted(result_data)
         elif result == EditSalePresenter.UPDATED_SALE_RESULT:
             self.__update_sale_on_table(result_data)
+        elif result == SaleFilterPresenter.NEW_FILTER_RESULT:
+            self.__execute_thread_to_apply_sale_filter(result_data)
 
     def __update_gui_on_new_sales_inserted(self, result_data: dict):
         new_sales = result_data[MakeSalePresenter.NEW_SALES]
@@ -134,8 +146,26 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         filter_by_id.sale_id_list = [sale_id]
         return self.__sale_repo.get_sales_by_filter(filter_by_id)[0]
 
-    def open_filter_presenter(self):
-        intent = Intent(SaleFilterPresenter)
-        intent.use_new_window(True)
-        intent.use_modal(True)
-        self._open_other_presenter(intent)
+    def __execute_thread_to_apply_sale_filter(self, result_data: dict):
+        self.__applied_sale_filter = result_data[SaleFilterPresenter.NEW_FILTER_DATA]
+        self.thread = PresenterThreadWorker(self.__fill_table_using_filter)
+        self.thread.when_started.connect(self.__show_message_to_demonstrate_the_filtering_is_running)
+        self.thread.finished_without_error.connect(self.__show_filtered_sales_message)
+        self.thread.start()
+
+    def __fill_table_using_filter(self, thread: PresenterThreadWorker):
+
+        filtered_sales = self.__sale_repo.get_sales_by_filter(self.__applied_sale_filter)
+        for a_sale in filtered_sales:
+            self.__add_sale_to_table(a_sale)
+
+        thread.finished_without_error.emit()
+
+    def __show_message_to_demonstrate_the_filtering_is_running(self):
+        self.get_view().set_disabled_view_except_status_bar(True)
+        self.get_view().set_status_bar_message('Filtrando ventas...')
+        self.get_view().clean_table()
+
+    def __show_filtered_sales_message(self):
+        self.get_view().set_disabled_view_except_status_bar(False)
+        self.get_view().set_status_bar_message('Filtro aplicado')
