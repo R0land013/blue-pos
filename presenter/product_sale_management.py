@@ -36,7 +36,15 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def on_view_shown(self):
         self.get_view().set_available_product_quantity(self.__product.quantity)
+        self.__set_sell_button_availability_depending_on_remaining_product_quantity()
         self.__execute_thread_to_fill_table()
+
+    def __set_sell_button_availability_depending_on_remaining_product_quantity(self):
+        if self.__product.quantity == 0:
+            self.get_view().disable_sell_button(True)
+        else:
+            self.get_view().disable_sell_button(False)
+
 
     def __execute_thread_to_fill_table(self):
         self.thread = PresenterThreadWorker(self.fill_table)
@@ -81,6 +89,8 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         if self.get_view().ask_user_to_confirm_undo_sales():
             self.thread = PresenterThreadWorker(self.__undo_selected_sales)
             self.thread.when_finished.connect(self.__execute_thread_to_fill_table)
+            self.thread.when_finished.connect(
+                self.__set_sell_button_availability_depending_on_remaining_product_quantity)
             self.thread.start()
 
     def __update_available_product_quantity_on_gui(self):
@@ -126,6 +136,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         for a_sale in new_sales:
             self.__add_sale_to_table(a_sale)
         self.__update_available_product_quantity_on_gui()
+        self.__set_sell_button_availability_depending_on_remaining_product_quantity()
 
     def __update_sale_on_table(self, result_data: dict):
         selected_row = self.get_view().get_selected_row_index()

@@ -127,3 +127,6 @@ class ProductSaleManagementView(QFrame):
             self.filter_state_label.setText('Filtro aplicado')
         else:
             self.filter_state_label.setText('Sin Filtros')
+
+    def disable_sell_button(self, set_disabled: bool):
+        self.sell_button.setDisabled(set_disabled)
