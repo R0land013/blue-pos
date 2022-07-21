@@ -14,10 +14,11 @@ class SaleFilterView(QFrame):
 
     def __set_up_gui(self):
         loadUi('./view/ui/sale_filter.ui', self)
-        self.set_date_fields_with_to_today_date()
+        self.__set_date_fields_to_today_date()
+        self.__set_date_fields_limits()
         self._wire_up_gui_connections()
 
-    def set_date_fields_with_to_today_date(self):
+    def __set_date_fields_to_today_date(self):
         q_date = QDate()
         today = date.today()
         q_date.setDate(
@@ -27,6 +28,10 @@ class SaleFilterView(QFrame):
         )
         self.initial_date_edit.setDate(q_date)
         self.final_date_edit.setDate(q_date)
+
+    def __set_date_fields_limits(self):
+        self.initial_date_edit.setMaximumDate(QDate.currentDate())
+        self.final_date_edit.setMaximumDate(QDate.currentDate())
 
     def _wire_up_gui_connections(self):
         self.cancel_button.clicked.connect(self.__presenter.close_presenter)
