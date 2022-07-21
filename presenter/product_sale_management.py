@@ -45,7 +45,6 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         else:
             self.get_view().disable_sell_button(False)
 
-
     def __execute_thread_to_fill_table(self):
         self.thread = PresenterThreadWorker(self.fill_table)
         self.thread.finished_without_error.connect(self.__on_successful_loaded_data)
@@ -166,6 +165,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def __fill_table_using_filter(self, thread: PresenterThreadWorker):
 
+        self.get_view().clean_table()
         filtered_sales = self.__sale_repo.get_sales_by_filter(self.__applied_sale_filter)
         for a_sale in filtered_sales:
             self.__add_sale_to_table(a_sale)
@@ -175,7 +175,6 @@ class ProductSaleManagementPresenter(AbstractPresenter):
     def __show_message_to_demonstrate_the_filtering_is_running(self):
         self.get_view().set_disabled_view_except_status_bar(True)
         self.get_view().set_status_bar_message('Filtrando ventas...')
-        self.get_view().clean_table()
 
     def __show_filtered_sales_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
