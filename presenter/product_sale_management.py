@@ -82,7 +82,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
     def __on_successful_loaded_data(self):
         self.get_view().resize_table_columns_to_contents()
         self.get_view().set_disabled_view_except_status_bar(False)
-        self.get_view().set_status_bar_message('Datos cargados')
+        self.get_view().set_status_bar_message('')
 
     def undo_selected_sales(self):
         if self.get_view().ask_user_to_confirm_undo_sales():
@@ -106,6 +106,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
         self.__update_available_product_quantity_on_gui()
         self.get_view().set_disabled_view_except_status_bar(False)
+        self.get_view().set_status_bar_message('')
 
     def __construct_mock_sales_to_execute_deletion(self):
         sale_ids = self.get_view().get_selected_sale_ids()
@@ -125,8 +126,10 @@ class ProductSaleManagementPresenter(AbstractPresenter):
     def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
         if result == MakeSalePresenter.NEW_SALES_RESULT:
             self.__update_gui_on_new_sales_inserted(result_data)
+
         elif result == EditSalePresenter.UPDATED_SALE_RESULT:
             self.__update_sale_on_table(result_data)
+
         elif result == SaleFilterPresenter.NEW_FILTER_RESULT:
             self.__execute_thread_to_apply_sale_filter(result_data)
 
