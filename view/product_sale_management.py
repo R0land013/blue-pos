@@ -2,6 +2,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QMessageBox
 from PyQt5.uic import loadUi
 
+from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
+
 
 class ProductSaleManagementView(QFrame):
 
@@ -20,6 +22,7 @@ class ProductSaleManagementView(QFrame):
         loadUi('./view/ui/product_sale_management.ui', self)
         self.__set_table_format()
         self.__wire_up_connections()
+        self.sale_table.setSortingEnabled(True)
         self.edit_sale_button.setDisabled(True)
         self.undo_sale_button.setDisabled(True)
         self.disable_delete_filter_button(True)
@@ -73,8 +76,12 @@ class ProductSaleManagementView(QFrame):
         return self.sale_table.rowCount() - 1
 
     def set_cell_in_table(self, row: int, column: int, data):
+
         item = QTableWidgetItem(str(data))
-        item.setData = (Qt.ItemDataRole.DisplayRole, data)
+        if column == self.PROFIT_COLUMN or column == self.PAYMENT_COLUMN:
+            item = QCUPMoneyTableItem(str(data))
+        elif column == self.SALE_ID_COLUMN:
+            item = QIntegerTableItem(str(data))
         self.sale_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.sale_table.setItem(row, column, item)
 

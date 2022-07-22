@@ -1,7 +1,7 @@
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFrame, QTableWidgetItem, QTableWidget, QMessageBox, QToolBar, QToolButton, QHBoxLayout
 from PyQt5.uic import loadUi
-from PyQt5.QtCore import Qt
+from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 
 
 class ProductManagementView(QFrame):
@@ -22,6 +22,7 @@ class ProductManagementView(QFrame):
         self.__set_table_format()
         self.__set_up_tool_bar()
         self.__wire_up_gui_connections()
+        self.product_table.setSortingEnabled(True)
         self.edit_button.setDisabled(True)
         self.delete_button.setDisabled(True)
         self.sell_button.setDisabled(True)
@@ -94,8 +95,13 @@ class ProductManagementView(QFrame):
             self.sell_button.setDisabled(True)
 
     def set_cell_in_table(self, row: int, column: int, data):
+
         item = QTableWidgetItem(str(data))
-        item.setData = (Qt.ItemDataRole.DisplayRole, data)
+        if column == self.PROFIT_COLUMN or column == self.PRICE_COLUMN:
+            item = QCUPMoneyTableItem(str(data))
+        elif column == self.QUANTITY_COLUMN or column == self.ID_COLUMN:
+            item = QIntegerTableItem(str(data))
+
         self.product_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.product_table.setItem(row, column, item)
 
