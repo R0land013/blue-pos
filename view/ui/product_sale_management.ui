@@ -103,6 +103,20 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="Line" name="line_4">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="delete_filter_button">
+           <property name="text">
+            <string>Quitar Filtro</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>

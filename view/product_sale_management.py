@@ -22,6 +22,7 @@ class ProductSaleManagementView(QFrame):
         self.__wire_up_connections()
         self.edit_sale_button.setDisabled(True)
         self.undo_sale_button.setDisabled(True)
+        self.disable_delete_filter_button(True)
 
     def __set_table_format(self):
         self.sale_table.setColumnCount(4)
@@ -42,6 +43,7 @@ class ProductSaleManagementView(QFrame):
         self.edit_sale_button.clicked.connect(self.__presenter.open_presenter_to_edit_sale)
         self.sale_table.itemSelectionChanged.connect(self.__disable_buttons_depending_on_table_selection)
         self.filter_button.clicked.connect(self.__presenter.open_filter_presenter)
+        self.delete_filter_button.clicked.connect(self.__presenter.execute_thread_to_delete_applied_filter)
 
     def __disable_buttons_depending_on_table_selection(self):
         selected_sale_quantity = self.__get_selected_sale_quantity()
@@ -55,6 +57,9 @@ class ProductSaleManagementView(QFrame):
         else:
             self.edit_sale_button.setDisabled(True)
             self.undo_sale_button.setDisabled(True)
+
+    def disable_delete_filter_button(self, set_disabled: bool):
+        self.delete_filter_button.setDisabled(set_disabled)
 
     def clean_table(self):
         while self.sale_table.rowCount() > 0:

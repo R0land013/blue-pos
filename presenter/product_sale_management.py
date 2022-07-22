@@ -37,6 +37,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
     def on_view_shown(self):
         self.get_view().set_available_product_quantity(self.__product.quantity)
         self.__set_sell_button_availability_depending_on_remaining_product_quantity()
+        self.get_view().disable_delete_filter_button(True)
         self.__execute_thread_to_fill_table()
 
     def __set_sell_button_availability_depending_on_remaining_product_quantity(self):
@@ -173,6 +174,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         for a_sale in filtered_sales:
             self.__add_sale_to_table(a_sale)
 
+        self.get_view().disable_delete_filter_button(False)
         thread.finished_without_error.emit()
 
     def __show_message_to_demonstrate_the_filtering_is_running(self):
@@ -182,4 +184,20 @@ class ProductSaleManagementPresenter(AbstractPresenter):
     def __show_filtered_sales_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
         self.get_view().set_filter_applied_message(True)
+        self.get_view().set_status_bar_message('')
+
+    def execute_thread_to_delete_applied_filter(self):
+        self.thread = PresenterThreadWorker(self.__delete_applied_filter)
+        self.thread.start()
+
+    def __delete_applied_filter(self, thread: PresenterThreadWorker):
+        self.get_view().set_disabled_view_except_status_bar(True)
+        self.get_view().set_status_bar_message('Cargando datos...')
+
+        self.__applied_sale_filter = None
+        self.fill_table(thread)
+
+        self.get_view().disable_delete_filter_button(True)
+        self.get_view().set_filter_applied_message(False)
+        self.get_view().set_disabled_view_except_status_bar(False)
         self.get_view().set_status_bar_message('')
