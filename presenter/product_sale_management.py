@@ -13,7 +13,11 @@ from view.product_sale_management import ProductSaleManagementView
 
 class ProductSaleManagementPresenter(AbstractPresenter):
 
+    MANAGED_SALES_RESULT = 'managed_sales_result'
+
     PRODUCT_DATA = 'product'
+
+    REMAINING_PRODUCT_QUANTITY = 'remaining_product_quantity'
 
     def _on_initialize(self):
         view = ProductSaleManagementView(self)
@@ -23,7 +27,8 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self.__applied_sale_filter = None
 
     def close_presenter(self):
-        self._close_this_presenter()
+        result_data = {self.REMAINING_PRODUCT_QUANTITY: self.__product.quantity}
+        self._close_this_presenter_with_result(result_data, self.MANAGED_SALES_RESULT)
 
     def open_filter_presenter(self):
         intent = Intent(SaleFilterPresenter)

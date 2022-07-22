@@ -127,6 +127,8 @@ class ProductManagementPresenter(AbstractPresenter):
             self.__add_new_product_to_table(result_data)
         if result == ProductPresenter.UPDATED_PRODUCT_RESULT:
             self.__update_product_on_table(result_data)
+        if result == ProductSaleManagementPresenter.MANAGED_SALES_RESULT:
+            self.__update_product_quantity_on_table(result_data)
 
     def __add_new_product_to_table(self, result_data: dict):
         new_product = result_data[ProductPresenter.NEW_PRODUCT]
@@ -137,6 +139,11 @@ class ProductManagementPresenter(AbstractPresenter):
         updated_product = result_data[ProductPresenter.UPDATED_PRODUCT]
         row = self.get_view().get_selected_row_index()
         self.__set_table_row_by_product(row, updated_product)
+
+    def __update_product_quantity_on_table(self, result_data: dict):
+        new_product_quantity = result_data[ProductSaleManagementPresenter.REMAINING_PRODUCT_QUANTITY]
+        row = self.get_view().get_selected_row_index()
+        self.get_view().set_cell_in_table(row, ProductManagementView.QUANTITY_COLUMN, new_product_quantity)
 
     def open_product_sale_management_presenter(self):
         selected_product = self.__get_selected_product()
