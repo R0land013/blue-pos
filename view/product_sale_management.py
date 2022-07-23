@@ -15,8 +15,8 @@ class ProductSaleManagementView(QFrame):
     def __init__(self, presenter):
         super().__init__()
         self.__presenter = presenter
-        self.__sorting_column = 0
-        self.__sorting_order = Qt.AscendingOrder
+        self.__sorting_column = self.SALE_DATE_COLUMN
+        self.__sorting_order = Qt.DescendingOrder
 
         self.set_up_gui()
 
