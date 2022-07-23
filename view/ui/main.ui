@@ -47,6 +47,67 @@
       <attribute name="title">
        <string>Reportes</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QFrame" name="frame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="day_report_button">
+            <property name="text">
+             <string>Diario</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="week_report_button">
+            <property name="text">
+             <string>Semanal</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="month_report_button">
+            <property name="text">
+             <string>Mensual</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="frame_2">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QPushButton" name="year_report_button">
+            <property name="text">
+             <string>Anual</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="custom_report_button">
+            <property name="text">
+             <string>Personalizado</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
