@@ -65,6 +65,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         for a_sale in product_sales:
             self.__add_sale_to_table(a_sale)
 
+        self.get_view().sort_table_rows()
         thread.finished_without_error.emit()
 
     def __get_sales_of_product(self):
@@ -145,11 +146,13 @@ class ProductSaleManagementPresenter(AbstractPresenter):
             self.__add_sale_to_table(a_sale)
         self.__update_available_product_quantity_on_gui()
         self.__set_sell_button_availability_depending_on_remaining_product_quantity()
+        self.get_view().sort_table_rows()
 
     def __update_sale_on_table(self, result_data: dict):
         selected_row = self.get_view().get_selected_row_index()
         updated_sale = result_data[EditSalePresenter.UPDATED_SALE]
         self.__set_table_row_by_sale(selected_row, updated_sale)
+        self.get_view().sort_table_rows()
 
     def open_presenter_to_edit_sale(self):
         data = {EditSalePresenter.SALE: self.__get_selected_sale()}
@@ -180,6 +183,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
             self.__add_sale_to_table(a_sale)
 
         self.get_view().disable_delete_filter_button(False)
+        self.get_view().sort_table_rows()
         thread.finished_without_error.emit()
 
     def __show_message_to_demonstrate_the_filtering_is_running(self):
