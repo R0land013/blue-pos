@@ -15,6 +15,8 @@ class ProductSaleManagementView(QFrame):
     def __init__(self, presenter):
         super().__init__()
         self.__presenter = presenter
+        self.__sorting_column = 0
+        self.__sorting_order = Qt.AscendingOrder
 
         self.set_up_gui()
 
@@ -22,7 +24,6 @@ class ProductSaleManagementView(QFrame):
         loadUi('./view/ui/product_sale_management.ui', self)
         self.__set_table_format()
         self.__wire_up_connections()
-        self.sale_table.setSortingEnabled(True)
         self.edit_sale_button.setDisabled(True)
         self.undo_sale_button.setDisabled(True)
         self.disable_delete_filter_button(True)
@@ -38,6 +39,7 @@ class ProductSaleManagementView(QFrame):
         self.sale_table.resizeColumnsToContents()
         self.sale_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.sale_table.setSelectionMode(QTableWidget.SelectionMode.ExtendedSelection)
+        self.sale_table.horizontalHeader().setSectionsClickable(True)
 
     def __wire_up_connections(self):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
@@ -47,6 +49,8 @@ class ProductSaleManagementView(QFrame):
         self.sale_table.itemSelectionChanged.connect(self.__disable_buttons_depending_on_table_selection)
         self.filter_button.clicked.connect(self.__presenter.open_filter_presenter)
         self.delete_filter_button.clicked.connect(self.__presenter.execute_thread_to_delete_applied_filter)
+        self.sale_table.horizontalHeader().sectionClicked.connect(self.__change_sorting_configuration)
+        self.sale_table.horizontalHeader().sectionClicked.connect(self.sort_table_rows)
 
     def __disable_buttons_depending_on_table_selection(self):
         selected_sale_quantity = self.__get_selected_sale_quantity()
@@ -60,6 +64,20 @@ class ProductSaleManagementView(QFrame):
         else:
             self.edit_sale_button.setDisabled(True)
             self.undo_sale_button.setDisabled(True)
+
+    def __change_sorting_configuration(self, clicked_header_section: int):
+        if clicked_header_section == self.__sorting_column:
+            self.__sorting_order = (Qt.AscendingOrder if self.__sorting_order == Qt.DescendingOrder
+                                    else Qt.DescendingOrder)
+        else:
+            self.__sorting_column = clicked_header_section
+            self.__sorting_order = Qt.AscendingOrder
+
+    def sort_table_rows(self):
+        horizontal_header = self.sale_table.horizontalHeader()
+        horizontal_header.setSortIndicator(self.__sorting_column, self.__sorting_order)
+        horizontal_header.setSortIndicatorShown(True)
+        self.sale_table.sortItems(self.__sorting_column, self.__sorting_order)
 
     def disable_delete_filter_button(self, set_disabled: bool):
         self.delete_filter_button.setDisabled(set_disabled)
