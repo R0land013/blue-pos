@@ -1,3 +1,4 @@
+from model.report.statistics import ReportStatistic
 
 
 class AbstractSaleReport:
@@ -6,4 +7,7 @@ class AbstractSaleReport:
         raise NotImplementedError()
 
     def get_report_as_html(self) -> str:
+        raise NotImplementedError()
+
+    def get_report_statistics(self) -> ReportStatistic:
         raise NotImplementedError()
