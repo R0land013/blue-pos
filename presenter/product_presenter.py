@@ -69,20 +69,12 @@ class ProductPresenter(AbstractPresenter):
             self.__execute_thread_to_update_product()
 
     def __execute_thread_to_insert_new_product(self):
+        self.__helper_product = self.__construct_product_instance_from_view_fields()
         self.worker = PresenterThreadWorker(self.insert_new_product)
         self.worker.when_started.connect(self.__disable_gui_and_show_operation_message)
         self.worker.error_found.connect(self.__handle_errors_on_product_fields)
         self.worker.finished_without_error.connect(self.__close_presenter_with_new_product_result)
         self.worker.start()
-
-    def insert_new_product(self, thread: PresenterThreadWorker):
-        try:
-            product = self.__construct_product_instance_from_view_fields()
-            self.__product_repo.insert_product(product)
-            self.new_product = product
-            thread.finished_without_error.emit()
-        except UniqueProductNameException as e:
-            thread.error_found.emit(e)
 
     def __construct_product_instance_from_view_fields(self):
         view = self.get_view()
@@ -99,6 +91,14 @@ class ProductPresenter(AbstractPresenter):
             profit=profit,
             quantity=quantity
         )
+
+    def insert_new_product(self, thread: PresenterThreadWorker):
+        try:
+            self.__product_repo.insert_product(self.__helper_product)
+            self.new_product = self.__helper_product
+            thread.finished_without_error.emit()
+        except UniqueProductNameException as e:
+            thread.error_found.emit(e)
 
     def __disable_gui_and_show_operation_message(self):
         self.get_view().set_disabled_view_except_state_bar(True)
