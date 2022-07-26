@@ -6,7 +6,9 @@ from model.repository.product import ProductFilter
 from model.util.monetary_types import CUPMoney
 from tests.util.generators.product import ProductGenerator
 from tests.util.general import TEST_DB_URL, get_all_products_in_database, insert_product_and_return_it, \
-    get_one_product_from_database, insert_products_in_database_and_return_them, delete_all_products_from_database
+    get_one_product_from_database, insert_products_in_database_and_return_them, delete_all_products_from_database, \
+    insert_sales_and_return_them, get_all_sales_from_database
+from tests.util.generators.sale import SaleGenerator
 
 
 class TestProductRepository(unittest.TestCase):
@@ -104,6 +106,16 @@ class TestProductRepository(unittest.TestCase):
         self.assertRaises(NonExistentProductException, self.product_repository.delete_products,
                           [p1.id, p2.id])
 
+    def test_deleting_products_also_deletes_associated_sales(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sales = SaleGenerator.generate_sales_from_product(product, 5)
+        sales = insert_sales_and_return_them(sales)
+
+        self.product_repository.delete_products([product.id])
+
+        self.assertEqual(get_all_sales_from_database(), [])
+
     def test_product_is_updated_successfully(self):
         old_product = ProductGenerator.generate_one_product()
 
@@ -118,7 +130,6 @@ class TestProductRepository(unittest.TestCase):
 
         updated_product = get_one_product_from_database()
         self.assertTrue(old_product != updated_product and new_product == updated_product)
-
 
     def test_trying_to_update_nonexistent_product_raises_exception(self):
         product = ProductGenerator.generate_one_product()
