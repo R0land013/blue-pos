@@ -52,21 +52,26 @@ class ProductSaleManagementPresenter(AbstractPresenter):
             self.get_view().disable_sell_button(False)
 
     def __execute_thread_to_fill_table(self):
-        self.thread = PresenterThreadWorker(self.fill_table)
-        self.thread.finished_without_error.connect(self.__on_successful_loaded_data)
+        self.thread = PresenterThreadWorker(self.__load_product_sales)
+        self.thread.when_started.connect(self.__disable_gui_and_show_loading_sales_message)
+        self.thread.when_finished.connect(self.__fill_table)
+        self.thread.when_finished.connect(self.__set_available_gui_and_show_no_message)
         self.thread.start()
 
-    def fill_table(self, thread: PresenterThreadWorker = None):
+    def __load_product_sales(self, thread: PresenterThreadWorker):
+        self.__product_sales = self.__get_sales_of_product()
+
+    def __disable_gui_and_show_loading_sales_message(self):
         self.get_view().set_disabled_view_except_status_bar(True)
         self.get_view().set_status_bar_message('Cargando datos...')
-        self.get_view().clean_table()
 
-        product_sales = self.__get_sales_of_product()
-        for a_sale in product_sales:
+    def __fill_table(self):
+        self.get_view().clean_table()
+        for a_sale in self.__product_sales:
             self.__add_sale_to_table(a_sale)
 
         self.get_view().sort_table_rows()
-        thread.finished_without_error.emit()
+        self.get_view().resize_table_columns_to_contents()
 
     def __get_sales_of_product(self):
         filter_by_product_id = SaleFilter()
@@ -86,8 +91,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         view.set_cell_in_table(row, ProductSaleManagementView.PROFIT_COLUMN, sale.profit)
         view.set_cell_in_table(row, ProductSaleManagementView.SALE_DATE_COLUMN, sale.date)
 
-    def __on_successful_loaded_data(self):
-        self.get_view().resize_table_columns_to_contents()
+    def __set_available_gui_and_show_no_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
         self.get_view().set_status_bar_message('')
 
@@ -204,7 +208,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self.get_view().set_status_bar_message('Cargando datos...')
 
         self.__applied_sale_filter = None
-        self.fill_table(thread)
+        self.__fill_table(thread)
 
         self.get_view().disable_delete_filter_button(True)
         self.get_view().set_filter_applied_message(False)
