@@ -13,6 +13,7 @@ class DaySaleReportPresenter(AbstractPresenter):
         self.__initialize_view()
         self.__day_report = None
         self.__sale_repo = RepositoryFactory.get_sale_repository()
+        self.__sales = None
 
     def __initialize_view(self):
         view = DaySaleReportView(self)
@@ -25,25 +26,25 @@ class DaySaleReportPresenter(AbstractPresenter):
         self.execute_thread_to_generate_report_on_gui()
 
     def execute_thread_to_generate_report_on_gui(self):
-        self.thread = PresenterThreadWorker(self.__generate_report_on_gui)
+        self.thread = PresenterThreadWorker(self.__load_report_sales)
+        self.thread.when_started.connect(self.__disable_gui_and_show_processing_message)
+        self.thread.when_finished.connect(self.__fill_table)
+        self.thread.when_finished.connect(self.__set_report_statistics)
+        self.thread.when_finished.connect(self.__set_available_gui_and_show_no_state_bar_message)
         self.thread.start()
 
-    def __generate_report_on_gui(self, thread: PresenterThreadWorker):
+    def __load_report_sales(self, thread: PresenterThreadWorker):
+        self.__day_report = DaySaleReport(day_date=self.get_view().get_date(),
+                                          repository=self.__sale_repo)
+        self.__sales = self.__day_report.get_sales()
+
+    def __disable_gui_and_show_processing_message(self):
         self.get_view().set_disabled_view_except_status_bar(True)
         self.get_view().set_state_bar_message('Creando reporte...')
 
-        self.__day_report = DaySaleReport(day_date=self.get_view().get_date(),
-                                          repository=self.__sale_repo)
-        self.get_view().clean_table()
-        self.__fill_table()
-        self.__set_report_statistics()
-
-        self.get_view().set_disabled_view_except_status_bar(False)
-        self.get_view().set_state_bar_message('')
-
     def __fill_table(self):
-        sales = self.__day_report.get_sales()
-        for a_sale in sales:
+        self.get_view().clean_table()
+        for a_sale in self.__sales:
             self.__insert_sale_on_table(a_sale)
         self.get_view().resize_table_columns_to_contents()
 
@@ -63,3 +64,7 @@ class DaySaleReportPresenter(AbstractPresenter):
         self.get_view().set_sale_quantity(report_statistics.sale_quantity())
         self.get_view().set_paid_money(str(report_statistics.paid_money()))
         self.get_view().set_profit_money(str(report_statistics.profit_money()))
+
+    def __set_available_gui_and_show_no_state_bar_message(self):
+        self.get_view().set_disabled_view_except_status_bar(False)
+        self.get_view().set_state_bar_message('')
