@@ -14,6 +14,7 @@ class ProductManagementPresenter(AbstractPresenter):
     def _on_initialize(self):
         self.__initialize_view()
         self.__product_repo = RepositoryFactory.get_product_repository()
+        self.__products = None
 
     def __initialize_view(self):
         view = ProductManagementView(self)
@@ -26,22 +27,24 @@ class ProductManagementPresenter(AbstractPresenter):
         self.__execute_thread_to_fill_table()
 
     def __execute_thread_to_fill_table(self):
-        self.thread = PresenterThreadWorker(self.fill_table)
-        self.thread.finished_without_error.connect(self.__on_success_loading_data_on_table)
+        self.thread = PresenterThreadWorker(self.__load_products)
+        self.thread.when_started.connect(self.__disable_gui_and_show_loading_products_message)
+        self.thread.when_finished.connect(self.__fill_table)
+        self.thread.when_finished.connect(self.__set_available_gui_and_show_no_message)
         self.thread.start()
 
-    def fill_table(self, thread: PresenterThreadWorker):
+    def __load_products(self, thread: PresenterThreadWorker):
+        self.__products = self.__product_repo.get_all_products()
+
+    def __fill_table(self):
         self.get_view().clean_table()
+        for a_product in self.__products:
+            self.__add_product_to_table(a_product)
+        self.get_view().resize_table_columns_to_contents()
+
+    def __disable_gui_and_show_loading_products_message(self):
         self.__set_state_bar_message('Cargando datos...')
         self.__set_disabled_view_except_state_bar(True)
-
-        view = self.get_view()
-        products = self.__product_repo.get_all_products()
-
-        for a_product in products:
-            self.__add_product_to_table(a_product)
-
-        thread.finished_without_error.emit()
 
     def __set_state_bar_message(self, message: str):
         self.get_view().set_state_bar_message(message)
@@ -62,10 +65,9 @@ class ProductManagementPresenter(AbstractPresenter):
         view.set_cell_in_table(row, ProductManagementView.PROFIT_COLUMN, product.profit)
         view.set_cell_in_table(row, ProductManagementView.QUANTITY_COLUMN, product.quantity)
 
-    def __on_success_loading_data_on_table(self):
-        self.get_view().resize_table_columns_to_contents()
+    def __set_available_gui_and_show_no_message(self):
         self.__set_disabled_view_except_state_bar(False)
-        self.__set_state_bar_message('Datos cargados')
+        self.__set_state_bar_message('')
 
     def open_presenter_to_create_new_product(self):
         intent = Intent(ProductPresenter)
