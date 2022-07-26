@@ -91,19 +91,19 @@ class ProductManagementPresenter(AbstractPresenter):
 
     def delete_selected_product(self):
         if self.get_view().ask_user_to_confirm_product_deletion():
+            self.__selected_product_id_list = self.get_view().get_all_selected_product_ids()
             self.thread = PresenterThreadWorker(self.__product_deletion)
+            self.thread.when_started.connect(self.__disable_gui_and_show_deleting_products_message)
+            self.thread.when_finished.connect(self.get_view().delete_selected_products_from_table)
+            self.thread.when_finished.connect(self.__set_available_gui_and_show_no_message)
             self.thread.start()
 
     def __product_deletion(self, thread: PresenterThreadWorker):
-        self.__set_state_bar_message('Procesando...')
+        self.__product_repo.delete_products(self.__selected_product_id_list)
+
+    def __disable_gui_and_show_deleting_products_message(self):
+        self.__set_state_bar_message('Eliminando productos...')
         self.__set_disabled_view_except_state_bar(True)
-
-        product_id_list = self.get_view().get_all_selected_product_ids()
-        self.__product_repo.delete_products(product_id_list)
-
-        self.get_view().delete_selected_products_from_table()
-        self.__set_state_bar_message('Producto eliminado')
-        self.__set_disabled_view_except_state_bar(False)
 
     def __get_selected_product(self):
         product_id = self.get_view().get_selected_product_id()
