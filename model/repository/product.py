@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from model.entity.models import Product
+from model.entity.models import Product, Sale
 from sqlalchemy import select, delete
 
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
@@ -148,6 +148,7 @@ class ProductRepository(RepositoryObserver):
     def delete_products(self, product_id_list: list):
         self.__check_product_ids_exist(product_id_list)
 
+        self.__execute_sale_deletion_by_product_ids(product_id_list)
         self.__execute_product_deletion_by_id(product_id_list)
         self.__session.commit()
         self._notify_on_data_changed_listeners()
@@ -157,6 +158,12 @@ class ProductRepository(RepositoryObserver):
             product = self.__find_product_by_id(product_id)
             if product is None:
                 raise NonExistentProductException(Product(id=product_id))
+
+    def __execute_sale_deletion_by_product_ids(self, product_id_list: list):
+        self.__session.execute(
+            delete(Sale)
+            .where(Sale.product_id.in_(product_id_list))
+        )
 
     def __execute_product_deletion_by_id(self, product_id_list: list):
         self.__session.execute(delete(Product)
