@@ -39,6 +39,7 @@ class EditSalePresenter(AbstractPresenter):
         self._close_this_presenter()
 
     def update_sale_and_close_presenter(self):
+        self.__updated_sale = self.__construct_updated_sale()
         self.thread = PresenterThreadWorker(self.__update_sale)
         self.thread.when_started.connect(self.__disable_controls_and_show_processing_message)
         self.thread.finished_without_error.connect(
@@ -46,9 +47,7 @@ class EditSalePresenter(AbstractPresenter):
         self.thread.start()
 
     def __update_sale(self, thread: PresenterThreadWorker = None):
-        self.__updated_sale = self.__construct_updated_sale()
         self.__sale_repo.update_sale(self.__updated_sale)
-
         thread.finished_without_error.emit()
 
     def __construct_updated_sale(self) -> Sale:
