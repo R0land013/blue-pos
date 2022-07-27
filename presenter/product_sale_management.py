@@ -121,7 +121,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
     def __undo_selected_sales(self, thread: PresenterThreadWorker = None):
         self.__sale_repo.delete_sales(self.__selected_sale_id_list)
 
-    def __sat_gui_available_and_show_no_message(self):
+    def __set_gui_available_and_show_no_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
         self.get_view().set_status_bar_message('')
 
@@ -180,43 +180,51 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def __execute_thread_to_apply_sale_filter(self, result_data: dict):
         self.__applied_sale_filter = result_data[SaleFilterPresenter.NEW_FILTER_DATA]
-        self.thread = PresenterThreadWorker(self.__fill_table_using_filter)
-        self.thread.when_started.connect(self.__show_message_to_demonstrate_the_filtering_is_running)
-        self.thread.finished_without_error.connect(self.__show_filtered_sales_message)
+        self.thread = PresenterThreadWorker(self.__load_sale_using_filter)
+
+        self.thread.when_started.connect(self.__disable_gui_and_show_filtering_message)
+
+        self.thread.when_finished.connect(self.__fill_table_with_filtered_sales)
+        self.thread.when_finished.connect(self.get_view().sort_table_rows)
+        self.thread.when_finished.connect(self.__set_delete_filter_button_available)
+        self.thread.when_finished.connect(
+            self.__set_gui_available_and_show_filtered_sales_message)
         self.thread.start()
 
-    def __fill_table_using_filter(self, thread: PresenterThreadWorker):
+    def __load_sale_using_filter(self, thread: PresenterThreadWorker):
+        self.__filtered_sales = self.__sale_repo.get_sales_by_filter(self.__applied_sale_filter)
 
+    def __fill_table_with_filtered_sales(self):
         self.get_view().clean_table()
-        filtered_sales = self.__sale_repo.get_sales_by_filter(self.__applied_sale_filter)
-        for a_sale in filtered_sales:
+        for a_sale in self.__filtered_sales:
             self.__add_sale_to_table(a_sale)
 
-        self.get_view().disable_delete_filter_button(False)
-        self.get_view().sort_table_rows()
-        thread.finished_without_error.emit()
-
-    def __show_message_to_demonstrate_the_filtering_is_running(self):
+    def __disable_gui_and_show_filtering_message(self):
         self.get_view().set_disabled_view_except_status_bar(True)
         self.get_view().set_status_bar_message('Filtrando ventas...')
 
-    def __show_filtered_sales_message(self):
+    def __set_gui_available_and_show_filtered_sales_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
         self.get_view().set_filter_applied_message(True)
         self.get_view().set_status_bar_message('')
 
+    def __set_delete_filter_button_available(self):
+        self.get_view().disable_delete_filter_button(False)
+
     def execute_thread_to_delete_applied_filter(self):
-        self.thread = PresenterThreadWorker(self.__delete_applied_filter)
+        self.__applied_sale_filter = None
+        self.thread = PresenterThreadWorker(self.__load_product_sales)
+
+        self.thread.when_started.connect(self.__disable_gui_and_show_loading_sales_message)
+
+        self.thread.when_finished.connect(self.__fill_table)
+        self.thread.when_finished.connect(self.__set_delete_filter_button_disabled)
+        self.thread.when_finished.connect(self.__show_no_filter_applied_message)
+        self.thread.when_finished.connect(self.__set_gui_available_and_show_no_message)
         self.thread.start()
 
-    def __delete_applied_filter(self, thread: PresenterThreadWorker):
-        self.get_view().set_disabled_view_except_status_bar(True)
-        self.get_view().set_status_bar_message('Cargando datos...')
-
-        self.__applied_sale_filter = None
-        self.__fill_table(thread)
-
+    def __set_delete_filter_button_disabled(self):
         self.get_view().disable_delete_filter_button(True)
+
+    def __show_no_filter_applied_message(self):
         self.get_view().set_filter_applied_message(False)
-        self.get_view().set_disabled_view_except_status_bar(False)
-        self.get_view().set_status_bar_message('')
