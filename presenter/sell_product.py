@@ -37,6 +37,8 @@ class MakeSalePresenter(AbstractPresenter):
         self.get_view().set_profit(str(profit_money.amount))
 
     def make_sales_and_close_presenter(self):
+        self.__sale_quantity = self.get_view().get_sale_quantity()
+        self.__mock_sale = self.__create_mock_sale_from_product()
         self.thread = PresenterThreadWorker(self.__do_sales)
         self.thread.when_started.connect(self.__show_message_and_disable_controls)
         self.thread.finished_without_error.connect(
@@ -44,11 +46,7 @@ class MakeSalePresenter(AbstractPresenter):
         self.thread.start()
 
     def __do_sales(self, thread: PresenterThreadWorker):
-
-        sale_quantity = self.get_view().get_sale_quantity()
-        mock_sale = self.__create_mock_sale_from_product()
-        self.__new_sales = self.__sale_repo.insert_sales(mock_sale, sale_quantity)
-
+        self.__new_sales = self.__sale_repo.insert_sales(self.__mock_sale, self.__sale_quantity)
         thread.finished_without_error.emit()
 
     def __show_message_and_disable_controls(self):

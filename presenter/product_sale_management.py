@@ -52,21 +52,26 @@ class ProductSaleManagementPresenter(AbstractPresenter):
             self.get_view().disable_sell_button(False)
 
     def __execute_thread_to_fill_table(self):
-        self.thread = PresenterThreadWorker(self.fill_table)
-        self.thread.finished_without_error.connect(self.__on_successful_loaded_data)
+        self.thread = PresenterThreadWorker(self.__load_product_sales)
+        self.thread.when_started.connect(self.__disable_gui_and_show_loading_sales_message)
+        self.thread.when_finished.connect(self.__fill_table)
+        self.thread.when_finished.connect(self.__set_available_gui_and_show_no_message)
         self.thread.start()
 
-    def fill_table(self, thread: PresenterThreadWorker = None):
+    def __load_product_sales(self, thread: PresenterThreadWorker):
+        self.__product_sales = self.__get_sales_of_product()
+
+    def __disable_gui_and_show_loading_sales_message(self):
         self.get_view().set_disabled_view_except_status_bar(True)
         self.get_view().set_status_bar_message('Cargando datos...')
-        self.get_view().clean_table()
 
-        product_sales = self.__get_sales_of_product()
-        for a_sale in product_sales:
+    def __fill_table(self):
+        self.get_view().clean_table()
+        for a_sale in self.__product_sales:
             self.__add_sale_to_table(a_sale)
 
         self.get_view().sort_table_rows()
-        thread.finished_without_error.emit()
+        self.get_view().resize_table_columns_to_contents()
 
     def __get_sales_of_product(self):
         filter_by_product_id = SaleFilter()
@@ -86,18 +91,27 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         view.set_cell_in_table(row, ProductSaleManagementView.PROFIT_COLUMN, sale.profit)
         view.set_cell_in_table(row, ProductSaleManagementView.SALE_DATE_COLUMN, sale.date)
 
-    def __on_successful_loaded_data(self):
-        self.get_view().resize_table_columns_to_contents()
+    def __set_available_gui_and_show_no_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
         self.get_view().set_status_bar_message('')
 
     def undo_selected_sales(self):
         if self.get_view().ask_user_to_confirm_undo_sales():
+            self.__selected_sale_id_list = self.get_view().get_selected_sale_ids()
+
             self.thread = PresenterThreadWorker(self.__undo_selected_sales)
+
+            self.thread.when_started.connect(self.__disable_gui_and_show_undoing_sales_message)
             self.thread.when_finished.connect(self.get_view().delete_selected_sales_from_table)
+            self.thread.when_finished.connect(self.__update_available_product_quantity_on_gui)
             self.thread.when_finished.connect(
                 self.__set_sell_button_availability_depending_on_remaining_product_quantity)
+            self.thread.when_finished.connect(self.__set_available_gui_and_show_no_message)
             self.thread.start()
+
+    def __disable_gui_and_show_undoing_sales_message(self):
+        self.get_view().set_disabled_view_except_status_bar(True)
+        self.get_view().set_status_bar_message('Deshaciendo ventas...')
 
     def __update_available_product_quantity_on_gui(self):
         # Aquí no es necesario realizar ninguna substracción porque SqlAlchemy
@@ -105,13 +119,9 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self.get_view().set_available_product_quantity(self.__product.quantity)
 
     def __undo_selected_sales(self, thread: PresenterThreadWorker = None):
-        self.get_view().set_disabled_view_except_status_bar(True)
-        self.get_view().set_status_bar_message('Procesando...')
+        self.__sale_repo.delete_sales(self.__selected_sale_id_list)
 
-        sale_id_list = self.get_view().get_selected_sale_ids()
-        self.__sale_repo.delete_sales(sale_id_list)
-
-        self.__update_available_product_quantity_on_gui()
+    def __set_gui_available_and_show_no_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
         self.get_view().set_status_bar_message('')
 
@@ -170,43 +180,51 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def __execute_thread_to_apply_sale_filter(self, result_data: dict):
         self.__applied_sale_filter = result_data[SaleFilterPresenter.NEW_FILTER_DATA]
-        self.thread = PresenterThreadWorker(self.__fill_table_using_filter)
-        self.thread.when_started.connect(self.__show_message_to_demonstrate_the_filtering_is_running)
-        self.thread.finished_without_error.connect(self.__show_filtered_sales_message)
+        self.thread = PresenterThreadWorker(self.__load_sale_using_filter)
+
+        self.thread.when_started.connect(self.__disable_gui_and_show_filtering_message)
+
+        self.thread.when_finished.connect(self.__fill_table_with_filtered_sales)
+        self.thread.when_finished.connect(self.get_view().sort_table_rows)
+        self.thread.when_finished.connect(self.__set_delete_filter_button_available)
+        self.thread.when_finished.connect(
+            self.__set_gui_available_and_show_filtered_sales_message)
         self.thread.start()
 
-    def __fill_table_using_filter(self, thread: PresenterThreadWorker):
+    def __load_sale_using_filter(self, thread: PresenterThreadWorker):
+        self.__filtered_sales = self.__sale_repo.get_sales_by_filter(self.__applied_sale_filter)
 
+    def __fill_table_with_filtered_sales(self):
         self.get_view().clean_table()
-        filtered_sales = self.__sale_repo.get_sales_by_filter(self.__applied_sale_filter)
-        for a_sale in filtered_sales:
+        for a_sale in self.__filtered_sales:
             self.__add_sale_to_table(a_sale)
 
-        self.get_view().disable_delete_filter_button(False)
-        self.get_view().sort_table_rows()
-        thread.finished_without_error.emit()
-
-    def __show_message_to_demonstrate_the_filtering_is_running(self):
+    def __disable_gui_and_show_filtering_message(self):
         self.get_view().set_disabled_view_except_status_bar(True)
         self.get_view().set_status_bar_message('Filtrando ventas...')
 
-    def __show_filtered_sales_message(self):
+    def __set_gui_available_and_show_filtered_sales_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
         self.get_view().set_filter_applied_message(True)
         self.get_view().set_status_bar_message('')
 
+    def __set_delete_filter_button_available(self):
+        self.get_view().disable_delete_filter_button(False)
+
     def execute_thread_to_delete_applied_filter(self):
-        self.thread = PresenterThreadWorker(self.__delete_applied_filter)
+        self.__applied_sale_filter = None
+        self.thread = PresenterThreadWorker(self.__load_product_sales)
+
+        self.thread.when_started.connect(self.__disable_gui_and_show_loading_sales_message)
+
+        self.thread.when_finished.connect(self.__fill_table)
+        self.thread.when_finished.connect(self.__set_delete_filter_button_disabled)
+        self.thread.when_finished.connect(self.__show_no_filter_applied_message)
+        self.thread.when_finished.connect(self.__set_gui_available_and_show_no_message)
         self.thread.start()
 
-    def __delete_applied_filter(self, thread: PresenterThreadWorker):
-        self.get_view().set_disabled_view_except_status_bar(True)
-        self.get_view().set_status_bar_message('Cargando datos...')
-
-        self.__applied_sale_filter = None
-        self.fill_table(thread)
-
+    def __set_delete_filter_button_disabled(self):
         self.get_view().disable_delete_filter_button(True)
+
+    def __show_no_filter_applied_message(self):
         self.get_view().set_filter_applied_message(False)
-        self.get_view().set_disabled_view_except_status_bar(False)
-        self.get_view().set_status_bar_message('')
