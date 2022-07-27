@@ -97,11 +97,21 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def undo_selected_sales(self):
         if self.get_view().ask_user_to_confirm_undo_sales():
+            self.__selected_sale_id_list = self.get_view().get_selected_sale_ids()
+
             self.thread = PresenterThreadWorker(self.__undo_selected_sales)
+
+            self.thread.when_started.connect(self.__disable_gui_and_show_undoing_sales_message)
             self.thread.when_finished.connect(self.get_view().delete_selected_sales_from_table)
+            self.thread.when_finished.connect(self.__update_available_product_quantity_on_gui)
             self.thread.when_finished.connect(
                 self.__set_sell_button_availability_depending_on_remaining_product_quantity)
+            self.thread.when_finished.connect(self.__set_available_gui_and_show_no_message)
             self.thread.start()
+
+    def __disable_gui_and_show_undoing_sales_message(self):
+        self.get_view().set_disabled_view_except_status_bar(True)
+        self.get_view().set_status_bar_message('Deshaciendo ventas...')
 
     def __update_available_product_quantity_on_gui(self):
         # Aquí no es necesario realizar ninguna substracción porque SqlAlchemy
@@ -109,13 +119,9 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self.get_view().set_available_product_quantity(self.__product.quantity)
 
     def __undo_selected_sales(self, thread: PresenterThreadWorker = None):
-        self.get_view().set_disabled_view_except_status_bar(True)
-        self.get_view().set_status_bar_message('Procesando...')
+        self.__sale_repo.delete_sales(self.__selected_sale_id_list)
 
-        sale_id_list = self.get_view().get_selected_sale_ids()
-        self.__sale_repo.delete_sales(sale_id_list)
-
-        self.__update_available_product_quantity_on_gui()
+    def __sat_gui_available_and_show_no_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
         self.get_view().set_status_bar_message('')
 
