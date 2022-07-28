@@ -27,6 +27,7 @@ class DaySaleReportPresenter(AbstractPresenter):
 
     def on_view_shown(self):
         self.execute_thread_to_generate_report_on_gui()
+        self.get_view().sort_table_rows()
 
     def execute_thread_to_generate_report_on_gui(self):
         self.thread = PresenterThreadWorker(self.__load_report_sales)

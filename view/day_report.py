@@ -1,7 +1,7 @@
 import os.path
 from datetime import date
 
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QFileDialog
 from PyQt5.uic import loadUi
 
@@ -19,6 +19,8 @@ class DaySaleReportView(QFrame):
     def __init__(self, presenter):
         super().__init__()
         self.__presenter = presenter
+        self.__sorting_column = self.SALE_ID_COLUMN
+        self.__sorting_order = Qt.DescendingOrder
 
         self.__setup_gui()
 
@@ -40,6 +42,7 @@ class DaySaleReportView(QFrame):
         ])
         self.sale_report_table.resizeColumnsToContents()
         self.sale_report_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.sale_report_table.horizontalHeader().setSectionsClickable(True)
 
     def __set_up_date_edit(self):
         self.day_date_edit.setDate(QDate.currentDate())
@@ -50,6 +53,22 @@ class DaySaleReportView(QFrame):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
         self.day_date_edit.dateChanged.connect(self.__presenter.execute_thread_to_generate_report_on_gui)
         self.export_as_button.clicked.connect(self.__presenter.ask_user_to_export_report)
+        self.sale_report_table.horizontalHeader().sectionClicked.connect(self.__change_sorting_configuration)
+        self.sale_report_table.horizontalHeader().sectionClicked.connect(self.sort_table_rows)
+
+    def __change_sorting_configuration(self, clicked_header_section: int):
+        if clicked_header_section == self.__sorting_column:
+            self.__sorting_order = (Qt.AscendingOrder if self.__sorting_order == Qt.DescendingOrder
+                                    else Qt.DescendingOrder)
+        else:
+            self.__sorting_column = clicked_header_section
+            self.__sorting_order = Qt.AscendingOrder
+
+    def sort_table_rows(self):
+        horizontal_header = self.sale_report_table.horizontalHeader()
+        horizontal_header.setSortIndicator(self.__sorting_column, self.__sorting_order)
+        horizontal_header.setSortIndicatorShown(True)
+        self.sale_report_table.sortItems(self.__sorting_column, self.__sorting_order)
 
     def get_date(self):
         q_date = self.day_date_edit.date()
