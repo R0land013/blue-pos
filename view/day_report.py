@@ -1,7 +1,8 @@
+import os.path
 from datetime import date
 
 from PyQt5.QtCore import QDate
-from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QFileDialog
 from PyQt5.uic import loadUi
 
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
@@ -48,6 +49,7 @@ class DaySaleReportView(QFrame):
     def __wire_up_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
         self.day_date_edit.dateChanged.connect(self.__presenter.execute_thread_to_generate_report_on_gui)
+        self.export_as_button.clicked.connect(self.__presenter.ask_user_to_export_report)
 
     def get_date(self):
         q_date = self.day_date_edit.date()
@@ -93,3 +95,12 @@ class DaySaleReportView(QFrame):
 
     def resize_table_columns_to_contents(self):
         self.sale_report_table.resizeColumnsToContents()
+
+    def ask_user_to_save_report_as(self, suggested_file_name: str) -> tuple:
+        user_home_directory = os.path.expanduser('~')
+        return QFileDialog.getSaveFileName(
+            parent=self.window(),
+            directory=os.path.join(user_home_directory, suggested_file_name),
+            caption='Exportar como',
+            filter='PDF (*.pdf);;Página web (*.html *mhtml)'
+        )
