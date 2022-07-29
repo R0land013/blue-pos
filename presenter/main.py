@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from model.entity.models import Base
 from model.repository.factory import DB_URL
 from presenter.day_report import DaySaleReportPresenter
+from presenter.month_report import MonthSaleReportPresenter
 from presenter.product_management import ProductManagementPresenter
 from view.main import MainView
 
@@ -29,4 +30,8 @@ class MainPresenter(AbstractPresenter):
 
     def open_day_sale_report_presenter(self):
         intent = Intent(DaySaleReportPresenter)
+        self._open_other_presenter(intent)
+
+    def open_month_sale_report_presenter(self):
+        intent = Intent(MonthSaleReportPresenter)
         self._open_other_presenter(intent)
