@@ -5,6 +5,7 @@ from jinja2.nodes import Template
 
 from model.economy import calculate_total_profit, calculate_collected_money
 from model.report.abstract_report import AbstractSaleReport
+from model.report.statistics import ReportStatistic
 from model.repository.sale import SaleRepository, SaleFilter
 
 
@@ -41,3 +42,14 @@ class YearSaleReport(AbstractSaleReport):
             autoescape=select_autoescape()
         )
         return env.get_template('year_report.html')
+
+    def get_report_statistics(self) -> ReportStatistic:
+        first_date_of_year = date(day=1, month=1, year=self.__year_date.year)
+        last_date_of_year = date(day=31, month=12, year=self.__year_date.year)
+        sales = self.get_sales()
+        profit_money = calculate_total_profit(sales)
+        collected_money = calculate_collected_money(sales)
+
+        return ReportStatistic(sale_quantity=len(sales), paid_money=collected_money,
+                               profit_money=profit_money, initial_date=first_date_of_year,
+                               final_date=last_date_of_year)
