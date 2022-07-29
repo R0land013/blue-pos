@@ -3,6 +3,7 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 from jinja2.nodes import Template
 from model.economy import calculate_total_profit, calculate_collected_money
 from model.report.abstract_report import AbstractSaleReport
+from model.report.statistics import ReportStatistic
 from model.repository.sale import SaleRepository, SaleFilter
 
 
@@ -47,3 +48,15 @@ class MonthSaleReport(AbstractSaleReport):
             month = self.__month_date.month + 1
         first_date_next_month = date(day=1, month=month, year=self.__month_date.year)
         return first_date_next_month - timedelta(1)
+
+    def get_report_statistics(self) -> ReportStatistic:
+        first_date_of_month = date(day=1,
+                                   month=self.__month_date.month,
+                                   year=self.__month_date.year)
+        sales = self.get_sales()
+        profit_money = calculate_total_profit(sales)
+        collected_money = calculate_collected_money(sales)
+
+        return ReportStatistic(sale_quantity=len(sales), paid_money=collected_money,
+                               profit_money=profit_money, initial_date=first_date_of_month,
+                               final_date=self.__get_last_date_of_month())
