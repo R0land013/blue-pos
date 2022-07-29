@@ -23,6 +23,7 @@ class MonthSaleReportPresenter(AbstractPresenter):
         self.thread = PresenterThreadWorker(self.__load_report_sales)
         self.thread.when_started.connect(self.__disable_gui_and_show_processing_message)
         self.thread.when_finished.connect(self.__fill_table)
+        self.thread.when_finished.connect(self.__set_report_statistics)
         self.thread.when_finished.connect(self.__set_available_gui_and_show_no_state_bar_message)
         self.thread.start()
 
@@ -52,6 +53,12 @@ class MonthSaleReportPresenter(AbstractPresenter):
         view.set_cell_on_table(row, MonthSaleReportView.SALE_PRICE_COLUMN, str(sale.price))
         view.set_cell_on_table(row, MonthSaleReportView.SALE_PROFIT_COLUMN, str(sale.profit))
         view.set_cell_on_table(row, MonthSaleReportView.SALE_DATE_COLUMN, str(sale.date))
+
+    def __set_report_statistics(self):
+        report_statistics = self.__month_report.get_report_statistics()
+        self.get_view().set_sale_quantity(report_statistics.sale_quantity())
+        self.get_view().set_paid_money(str(report_statistics.paid_money()))
+        self.get_view().set_profit_money(str(report_statistics.profit_money()))
 
     def __set_available_gui_and_show_no_state_bar_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
