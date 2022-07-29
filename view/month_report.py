@@ -1,11 +1,9 @@
 from datetime import date
-
 from PyQt5.QtCore import Qt, QDate
-from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QFileDialog
 from PyQt5.uic import loadUi
-
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
-
+import os
 
 class MonthSaleReportView(QFrame):
 
@@ -27,6 +25,7 @@ class MonthSaleReportView(QFrame):
         self.__wire_up_gui_connections()
         self.__setup_date_edit()
         self.__setup_table()
+        self.__disable_export_as_button()
 
     def __setup_table(self):
         self.sale_report_table.setColumnCount(6)
@@ -48,6 +47,15 @@ class MonthSaleReportView(QFrame):
     def __wire_up_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
         self.create_report_button.clicked.connect(self.__presenter.execute_thread_to_generate_report_on_gui)
+        self.create_report_button.clicked.connect(self.__set_available_export_as_button)
+        self.export_as_button.clicked.connect(self.__presenter.ask_user_to_export_report)
+        self.month_date_edit.dateChanged.connect(self.__disable_export_as_button)
+
+    def __set_available_export_as_button(self):
+        self.export_as_button.setDisabled(False)
+
+    def __disable_export_as_button(self):
+        self.export_as_button.setDisabled(True)
 
     def get_date(self):
         q_date = self.month_date_edit.date()
@@ -93,3 +101,12 @@ class MonthSaleReportView(QFrame):
 
     def resize_table_columns_to_contents(self):
         self.sale_report_table.resizeColumnsToContents()
+
+    def ask_user_to_save_report_as(self, suggested_file_name: str) -> tuple:
+        user_home_directory = os.path.expanduser('~')
+        return QFileDialog.getSaveFileName(
+            parent=self.window(),
+            directory=os.path.join(user_home_directory, suggested_file_name),
+            caption='Exportar como',
+            filter='PDF (*.pdf);;Página web (*.html *mhtml)'
+        )
