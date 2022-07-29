@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>635</width>
+    <width>538</width>
     <height>565</height>
    </rect>
   </property>
@@ -126,13 +126,6 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Mes</string>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="1">
              <widget class="QDateEdit" name="month_date_edit">
               <property name="currentSection">
@@ -146,17 +139,24 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="QLabel" name="payment_money_label">
-              <property name="text">
-               <string>CUP 0</string>
-              </property>
-             </widget>
-            </item>
             <item row="2" column="0">
              <widget class="QLabel" name="label_4">
               <property name="text">
                <string>Dinero Obtenido:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Mes</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLabel" name="payment_money_label">
+              <property name="text">
+               <string>CUP 0</string>
               </property>
              </widget>
             </item>
@@ -171,6 +171,13 @@
              <widget class="QLabel" name="profit_money_label">
               <property name="text">
                <string>CUP 0</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QPushButton" name="create_report_button">
+              <property name="text">
+               <string>Crear Reporte</string>
               </property>
              </widget>
             </item>
