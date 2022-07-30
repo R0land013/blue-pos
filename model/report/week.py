@@ -51,4 +51,10 @@ class WeekSaleReport(AbstractSaleReport):
         return env.get_template('week_report.html')
 
     def get_report_statistics(self) -> ReportStatistic:
-        pass
+        sales = self.get_sales()
+        profit_money = calculate_total_profit(sales)
+        collected_money = calculate_collected_money(sales)
+
+        return ReportStatistic(sale_quantity=len(sales), paid_money=collected_money,
+                               profit_money=profit_money, initial_date=self.__get_monday_date(),
+                               final_date=self.__get_sunday_date())
