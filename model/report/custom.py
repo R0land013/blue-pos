@@ -5,7 +5,8 @@ from model.repository.sale import SaleFilter, SaleRepository
 
 class CustomSaleReport(AbstractSaleReport):
 
-    def __init__(self, sale_filter: SaleFilter, sale_repository: SaleRepository):
+    def __init__(self, sale_filter: SaleFilter, sale_repository: SaleRepository,
+                 name: str = None, description: str = None):
         self.__custom_sale_filter = sale_filter
         self.__sale_repo = sale_repository
 
