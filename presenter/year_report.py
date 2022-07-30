@@ -23,6 +23,7 @@ class YearSaleReportPresenter(AbstractPresenter):
         self.thread = PresenterThreadWorker(self.__load_report_sales)
         self.thread.when_started.connect(self.__disable_gui_and_show_processing_message)
         self.thread.when_finished.connect(self.__fill_table)
+        self.thread.when_finished.connect(self.get_view().sort_table_rows)
         self.thread.when_finished.connect(self.__set_report_statistics)
         self.thread.when_finished.connect(self.__set_available_gui_and_show_no_state_bar_message)
         self.thread.start()
