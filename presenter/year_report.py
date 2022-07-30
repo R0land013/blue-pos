@@ -1,6 +1,9 @@
+from pathlib import Path
+
 from easy_mvp.abstract_presenter import AbstractPresenter
 
 from model.entity.models import Sale
+from model.report.generators import generate_pdf_file, generate_html_file
 from model.report.year import YearSaleReport
 from model.repository.factory import RepositoryFactory
 from presenter.util.thread_worker import PresenterThreadWorker
@@ -60,3 +63,28 @@ class YearSaleReportPresenter(AbstractPresenter):
     def __set_available_gui_and_show_no_state_bar_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
         self.get_view().set_state_bar_message('')
+
+    def ask_user_to_export_report(self):
+        suggested_filename = self.__suggested_report_filename_using_date()
+        self.__path, self.__file_type = self.get_view().ask_user_to_save_report_as(suggested_filename)
+        self.__execute_thread_to_generate_report_file()
+
+    def __suggested_report_filename_using_date(self) -> str:
+        report_date = self.get_view().get_date()
+        return 'Reporte ventas {}'.format(report_date.year)
+
+    def __execute_thread_to_generate_report_file(self):
+        self.thread = PresenterThreadWorker(self.__export_report_to_specified_path)
+        self.thread.when_started.connect(self.__disable_gui_and_show_exporting_message)
+        self.thread.when_finished.connect(self.__set_available_gui_and_show_no_state_bar_message)
+        self.thread.start()
+
+    def __export_report_to_specified_path(self, thread: PresenterThreadWorker):
+        if 'pdf' in self.__file_type:
+            generate_pdf_file(Path(self.__path), self.__year_report)
+        elif 'html' in self.__file_type:
+            generate_html_file(Path(self.__path), self.__year_report)
+
+    def __disable_gui_and_show_exporting_message(self):
+        self.get_view().set_disabled_view_except_status_bar(True)
+        self.get_view().set_state_bar_message('Exportando reporte...')

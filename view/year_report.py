@@ -1,10 +1,11 @@
 from datetime import date
 
 from PyQt5.QtCore import QDate
-from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QFileDialog
 from PyQt5.uic import loadUi
 
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
+import os
 
 
 class YearSaleReportView(QFrame):
@@ -51,12 +52,22 @@ class YearSaleReportView(QFrame):
         self.create_report_button.clicked.connect(self.__presenter.execute_thread_to_generate_report_on_gui)
         self.create_report_button.clicked.connect(self.__set_available_export_as_button)
         self.year_date_edit.dateChanged.connect(self.__disable_export_as_button)
+        self.export_as_button.clicked.connect(self.__presenter.ask_user_to_export_report)
 
     def __set_available_export_as_button(self):
         self.export_as_button.setDisabled(False)
 
     def __disable_export_as_button(self):
         self.export_as_button.setDisabled(True)
+
+    def ask_user_to_save_report_as(self, suggested_file_name: str) -> tuple:
+        user_home_directory = os.path.expanduser('~')
+        return QFileDialog.getSaveFileName(
+            parent=self.window(),
+            directory=os.path.join(user_home_directory, suggested_file_name),
+            caption='Exportar como',
+            filter='PDF (*.pdf);;Página web (*.html *mhtml)'
+        )
 
     def get_date(self):
         q_date = self.year_date_edit.date()
@@ -102,3 +113,4 @@ class YearSaleReportView(QFrame):
 
     def resize_table_columns_to_contents(self):
         self.sale_report_table.resizeColumnsToContents()
+
