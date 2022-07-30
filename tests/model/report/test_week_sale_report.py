@@ -1,7 +1,7 @@
 import unittest
 from datetime import date, timedelta
 
-from model.report.generators import generate_html_file
+from model.report.generators import generate_html_file, generate_pdf_file
 from model.report.week import WeekSaleReport
 from model.repository.factory import RepositoryFactory
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, \
@@ -22,6 +22,7 @@ class TestWeekSaleReport(unittest.TestCase):
         self.MONDAY_DATE_NEXT_WEEK = self.__get_monday_date_next_week()
 
         self.HTML_WEEK_REPORT_PATH = TEST_REPORT_PATH.joinpath('week_report.html')
+        self.PDF_WEEK_REPORT_PATH = TEST_REPORT_PATH.joinpath('week_report.pdf')
 
     @staticmethod
     def __get_monday_date_of_this_week() -> date:
@@ -94,3 +95,22 @@ class TestWeekSaleReport(unittest.TestCase):
 
         week_report = WeekSaleReport(self.WEDNESDAY_DATE_THIS_WEEK, self.sale_repository)
         generate_html_file(self.HTML_WEEK_REPORT_PATH, week_report)
+
+    def test_pdf_report_is_correctly_generated(self):
+        products = ProductGenerator.generate_products_by_quantity(2)
+        p1, p2 = insert_products_in_database_and_return_them(products)
+        sales_of_p1 = SaleGenerator.generate_sales_from_product(p1, 3)
+        sales_of_p2 = SaleGenerator.generate_sales_from_product(p2, 3)
+        s1, s2, s3 = sales_of_p1
+        s4, s5, s6 = sales_of_p2
+        s1.date = self.SUNDAY_DATE_PREVIOUS_WEEK
+        s2.date = self.MONDAY_DATE_THIS_WEEK
+        s3.date = self.WEDNESDAY_DATE_THIS_WEEK
+        s4.date = self.WEDNESDAY_DATE_THIS_WEEK
+        s5.date = self.SUNDAY_DATE_THIS_WEEK
+        s6.date = self.MONDAY_DATE_NEXT_WEEK
+        s1, s2, s3 = insert_sales_and_return_them(sales_of_p1)
+        s4, s5, s6 = insert_sales_and_return_them(sales_of_p2)
+
+        week_report = WeekSaleReport(self.WEDNESDAY_DATE_THIS_WEEK, self.sale_repository)
+        generate_pdf_file(self.PDF_WEEK_REPORT_PATH, week_report)
