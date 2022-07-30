@@ -20,6 +20,7 @@ class MainView(QFrame):
         self.product_management_button.clicked.connect(self.__presenter.open_product_management)
         self.day_report_button.clicked.connect(self.__presenter.open_day_sale_report_presenter)
         self.month_report_button.clicked.connect(self.__presenter.open_month_sale_report_presenter)
+        self.year_report_button.clicked.connect(self.__presenter.open_year_sale_report_presenter)
 
     def __set_window_minimum_size_to_half_of_screen(self):
         q_screen_size = QApplication.primaryScreen().size()

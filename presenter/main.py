@@ -6,6 +6,7 @@ from model.repository.factory import DB_URL
 from presenter.day_report import DaySaleReportPresenter
 from presenter.month_report import MonthSaleReportPresenter
 from presenter.product_management import ProductManagementPresenter
+from presenter.year_report import YearSaleReportPresenter
 from view.main import MainView
 
 
@@ -34,4 +35,8 @@ class MainPresenter(AbstractPresenter):
 
     def open_month_sale_report_presenter(self):
         intent = Intent(MonthSaleReportPresenter)
+        self._open_other_presenter(intent)
+
+    def open_year_sale_report_presenter(self):
+        intent = Intent(YearSaleReportPresenter)
         self._open_other_presenter(intent)
