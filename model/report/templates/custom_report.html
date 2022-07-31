@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reporte Personalizado</title>
+
+    <style>
+            table{
+                border-collapse: collapse;
+                border:solid 1px black;
+            }
+            td, th{
+                border-collapse: collapse;
+                text-align: center;
+                vertical-align: middle;
+                padding: 5px;
+                border:solid 1px black;
+            }
+        </style>
+
+</head>
+
+<body>
+{% if report_name %}
+    <h1>Nombre del Reporte:</h1>
+    <h1>{{ report_name }}</h1>
+{% endif %}
+
+{% if initial_date %}
+    <h2>Fecha Inicial: {{ initial_date.day }}-{{ initial_date.month }}-{{ initial_date.year }}</h2>
+{% endif %}
+
+{% if final_date %}
+    <h2>Fecha Inicial: {{ final_date.day }}-{{ final_date.month }}-{{ final_date.year }}</h2>
+{% endif %}
+
+{% if description %}
+    <h1>Descripción</h1>
+    <p>{{ description }}</p>
+{% endif %}
+
+<h3>Cantidad de ventas: {{ sale_quantity }}</h3>
+<h3>Ganancias Totales: {{ total_profit }}</h3>
+<h3>Dinero Recolectado: {{ total_collected_money }}</h3>
+
+<table>
+    <thead>
+        <th>Id. Venta</th>
+        <th>Producto</th>
+        <th>Id. Producto</th>
+        <th>Precio</th>
+        <th>Ganancia por unidad</th>
+        <th>Fecha</th>
+    </thead>
+    <tbody>
+    {% for a_sale in sales %}
+    <tr>
+        <td>{{ a_sale.id }}</td>
+        <td>{{ a_sale.product.name }}</td>
+        <td>{{ a_sale.product_id }}</td>
+        <td>{{ a_sale.price }}</td>
+        <td>{{ a_sale.profit }}</td>
+        <td>{{ a_sale.date }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+
+</html>

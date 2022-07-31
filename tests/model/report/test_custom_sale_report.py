@@ -44,7 +44,7 @@ class TestCustomSaleReport(unittest.TestCase):
         custom_filter.product_id_list = [p1.id]
         custom_filter.minimum_date = self.TODAY_DATE
         report_name = 'Ventas de Juan'
-        description = 'Los productos que se vendieron hoy y que eran propiedad de juanito.'
+        description = 'Los productos {} que se vendieron hoy y que eran propiedad de juanito.'.format(p1.name)
         custom_report = CustomSaleReport(custom_filter, self.sale_repository, report_name, description)
 
         generate_html_file(self.HTML_CUSTOM_REPORT_PATH, custom_report)
