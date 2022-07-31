@@ -41,4 +41,10 @@ class CustomSaleReport(AbstractSaleReport):
         return env.get_template('custom_report.html')
 
     def get_report_statistics(self) -> ReportStatistic:
-        pass
+        sales = self.get_sales()
+        profit_money = calculate_total_profit(sales)
+        collected_money = calculate_collected_money(sales)
+
+        return ReportStatistic(sale_quantity=len(sales), paid_money=collected_money,
+                               profit_money=profit_money, initial_date=self.__custom_sale_filter.minimum_date,
+                               final_date=self.__custom_sale_filter.maximum_date)
