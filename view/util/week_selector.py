@@ -1,7 +1,7 @@
 from datetime import date, timedelta
-from PyQt5.QtGui import QPalette, QTextCharFormat
+from PyQt5.QtGui import QPalette, QTextCharFormat, QPainter, QBrush, QColor
 from PyQt5.QtWidgets import QCalendarWidget
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, QRect, Qt
 
 
 class QWeekCalendarSelectorWidget(QCalendarWidget):
@@ -18,6 +18,8 @@ class QWeekCalendarSelectorWidget(QCalendarWidget):
         self.clicked.connect(self.__change_selected_week)
         self.selectionChanged.connect(self.__change_selected_week)
         self.__change_selected_week(self.selectedDate())
+
+        self.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
 
     def setDateRange(self, minimum_date: QDate, maximum_date: QDate):
         super().setDateRange(minimum_date, maximum_date)
@@ -79,3 +81,18 @@ class QWeekCalendarSelectorWidget(QCalendarWidget):
     @staticmethod
     def __to_qdate(py_date: date) -> QDate:
         return QDate(py_date.year, py_date.month, py_date.day)
+
+    def paintCell(self, painter: QPainter, rect: QRect, qdate: QDate):
+
+        if self.__first_date_of_week <= qdate <= self.__last_date_of_week:
+            self.__paint_selected_week_cell(painter, rect, qdate)
+        else:
+            super().paintCell(painter, rect, qdate)
+
+    @staticmethod
+    def __paint_selected_week_cell(painter: QPainter, rect: QRect, qdate: QDate):
+        painter.fillRect(rect, QColor(102, 178, 255))
+        painter.save()
+        painter.setPen(Qt.white)
+        painter.drawText(rect, Qt.AlignCenter, str(qdate.day()))
+        painter.restore()
