@@ -1,11 +1,12 @@
 from datetime import date
 
 from PyQt5.QtCore import QDate, Qt
-from PyQt5.QtWidgets import QFrame, QHBoxLayout, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QFrame, QHBoxLayout, QTableWidget, QTableWidgetItem, QFileDialog
 from PyQt5.uic import loadUi
 
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 from view.util.week_selector import QWeekCalendarSelectorWidget
+import os
 
 
 class WeekSaleReportView(QFrame):
@@ -30,6 +31,7 @@ class WeekSaleReportView(QFrame):
         self.__setup_week_calendar_selector()
         self.__setup_table()
         self.__wire_up_gui_connections()
+        self.__disable_export_as_button()
 
     def __setup_week_calendar_selector(self):
         self.__week_calendar_selector = QWeekCalendarSelectorWidget()
@@ -54,8 +56,14 @@ class WeekSaleReportView(QFrame):
     def __wire_up_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
         self.create_report_button.clicked.connect(self.__presenter.execute_thread_to_generate_report_on_gui)
+        self.create_report_button.clicked.connect(self.__set_available_export_as_button)
+        self.export_as_button.clicked.connect(self.__presenter.ask_user_to_export_report)
         self.sale_report_table.horizontalHeader().sectionClicked.connect(self.__change_sorting_configuration)
         self.sale_report_table.horizontalHeader().sectionClicked.connect(self.sort_table_rows)
+        self.__week_calendar_selector.week_changed.connect(self.__disable_export_as_button)
+
+    def __set_available_export_as_button(self):
+        self.export_as_button.setDisabled(False)
 
     def __change_sorting_configuration(self, clicked_header_section: int):
         if clicked_header_section == self.__sorting_column:
@@ -70,6 +78,9 @@ class WeekSaleReportView(QFrame):
         horizontal_header.setSortIndicator(self.__sorting_column, self.__sorting_order)
         horizontal_header.setSortIndicatorShown(True)
         self.sale_report_table.sortItems(self.__sorting_column, self.__sorting_order)
+
+    def __disable_export_as_button(self):
+        self.export_as_button.setDisabled(True)
 
     def get_limit_dates_of_week(self) -> tuple:
         initial_qdate, final_qdate = self.__week_calendar_selector.get_selected_date_range()
@@ -133,3 +144,12 @@ class WeekSaleReportView(QFrame):
 
     def resize_table_columns_to_contents(self):
         self.sale_report_table.resizeColumnsToContents()
+
+    def ask_user_to_save_report_as(self, suggested_file_name: str) -> tuple:
+        user_home_directory = os.path.expanduser('~')
+        return QFileDialog.getSaveFileName(
+            parent=self.window(),
+            directory=os.path.join(user_home_directory, suggested_file_name),
+            caption='Exportar como',
+            filter='PDF (*.pdf);;Página web (*.html *mhtml)'
+        )

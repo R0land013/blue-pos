@@ -1,10 +1,13 @@
 from datetime import date, timedelta
-from PyQt5.QtGui import QPalette, QTextCharFormat, QPainter, QBrush, QColor
+from PyQt5.QtGui import QPainter, QColor, QTextCharFormat, QPalette
 from PyQt5.QtWidgets import QCalendarWidget
-from PyQt5.QtCore import QDate, QRect, Qt
+from PyQt5.QtCore import QDate, QRect, Qt, pyqtSignal
 
 
 class QWeekCalendarSelectorWidget(QCalendarWidget):
+
+    week_changed = pyqtSignal(QDate, QDate)
+
     def __init__(self):
         super().__init__()
         self.__first_date_of_week = None
@@ -46,10 +49,14 @@ class QWeekCalendarSelectorWidget(QCalendarWidget):
 
         self.__set_calendar_format(self.__RESET_CALENDAR_FORMAT)
 
+        initial_date = self.__first_date_of_week
+        final_date = self.__last_date_of_week
+
         self.__first_date_of_week = self.__get_first_qdate_of_week(qdate)
         self.__last_date_of_week = self.__get_last_qdate_of_week(qdate)
 
         self.__set_calendar_format(self.__HIGHLIGHTED_CALENDAR_FORMAT)
+        self.__notify_listeners_if_week_is_changed(initial_date, final_date)
 
     def __get_first_qdate_of_week(self, qdate: QDate) -> QDate:
         py_date = self.__to_python_date(qdate)
@@ -88,6 +95,10 @@ class QWeekCalendarSelectorWidget(QCalendarWidget):
             self.__paint_selected_week_cell(painter, rect, qdate)
         else:
             super().paintCell(painter, rect, qdate)
+
+    def __notify_listeners_if_week_is_changed(self, initial_date: QDate, final_date: QDate):
+        if initial_date != self.__first_date_of_week and final_date != self.__last_date_of_week:
+            self.week_changed.emit(self.__first_date_of_week, self.__last_date_of_week)
 
     @staticmethod
     def __paint_selected_week_cell(painter: QPainter, rect: QRect, qdate: QDate):
