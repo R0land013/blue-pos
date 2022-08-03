@@ -1,8 +1,10 @@
 from easy_mvp.abstract_presenter import AbstractPresenter
+from easy_mvp.intent import Intent
 
 from model.entity.models import Product
 from model.repository.factory import RepositoryFactory
 from model.repository.sale import SaleFilter
+from presenter.product_selection import ProductSelectionPresenter
 from presenter.util.thread_worker import PresenterThreadWorker
 from view.custom_report import CustomSaleReportView
 
@@ -56,7 +58,6 @@ class CustomSaleReportPresenter(AbstractPresenter):
             return SaleFilter.PROFIT
         return SaleFilter.SALE_DATE
 
-
     def execute_thread_to_insert_all_products_on_table(self):
         self.thread = PresenterThreadWorker(self.__load_all_products)
         self.thread.when_started.connect(self.__disable_gui_and_show_loading_products_message)
@@ -89,3 +90,9 @@ class CustomSaleReportPresenter(AbstractPresenter):
     def __set_all_gui_available_and_hide_state_bar(self):
         self.get_view().disable_all_gui(False)
         self.get_view().hide_state_bar()
+
+    def open_product_selection_presenter(self):
+        intent = Intent(ProductSelectionPresenter)
+        intent.use_new_window(True)
+        intent.use_modal(True)
+        self._open_other_presenter(intent)

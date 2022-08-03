@@ -67,6 +67,7 @@ class CustomSaleReportView(QFrame):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
         self.create_report_button.clicked.connect(self.__presenter.open_custom_report_visualizer_presenter)
         self.include_all_button.clicked.connect(self.__presenter.execute_thread_to_insert_all_products_on_table)
+        self.edit_button.clicked.connect(self.__presenter.open_product_selection_presenter)
 
     def get_report_name(self) -> str:
         return self.name_line_edit.text().lstrip().strip()
