@@ -95,4 +95,10 @@ class CustomSaleReportPresenter(AbstractPresenter):
         intent = Intent(ProductSelectionPresenter)
         intent.use_new_window(True)
         intent.use_modal(True)
+        intent.set_data({ProductSelectionPresenter.SELECTED_PRODUCTS_DATA: self.__selected_products})
         self._open_other_presenter(intent)
+
+    def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
+        if result == ProductSelectionPresenter.NEW_SELECTED_PRODUCTS_RESULT:
+            self.__selected_products = result_data[ProductSelectionPresenter.NEW_SELECTED_PRODUCTS_DATA]
+            self.__fill_product_table()
