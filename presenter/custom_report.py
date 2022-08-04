@@ -4,6 +4,7 @@ from easy_mvp.intent import Intent
 from model.entity.models import Product
 from model.repository.factory import RepositoryFactory
 from model.repository.sale import SaleFilter
+from presenter.custom_report_visualization import CustomReportVisualizationPresenter
 from presenter.product_selection import ProductSelectionPresenter
 from presenter.util.thread_worker import PresenterThreadWorker
 from view.custom_report import CustomSaleReportView
@@ -18,26 +19,6 @@ class CustomSaleReportPresenter(AbstractPresenter):
 
     def close_presenter(self):
         self._close_this_presenter()
-
-    def open_custom_report_visualizer_presenter(self):
-        sale_filter = self.__create_sale_filter()
-        print("""
-        name: '{}',
-        description: '{}',
-        minimum_date: {},
-        maximum_date: {},
-        product_id_list: {},
-        sorted_by: {},
-        ascending_order: {}
-        """.format(
-            self.get_view().get_report_name(),
-            self.get_view().get_report_description(),
-            sale_filter.minimum_date,
-            sale_filter.maximum_date,
-            sale_filter.product_id_list,
-            sale_filter.sorted_by,
-            sale_filter.ascending_order
-        ))
 
     def __create_sale_filter(self) -> SaleFilter:
         sale_filter = SaleFilter()
@@ -102,3 +83,7 @@ class CustomSaleReportPresenter(AbstractPresenter):
         if result == ProductSelectionPresenter.NEW_SELECTED_PRODUCTS_RESULT:
             self.__selected_products = result_data[ProductSelectionPresenter.NEW_SELECTED_PRODUCTS_DATA]
             self.__fill_product_table()
+
+    def open_custom_report_visualization_presenter(self):
+        intent = Intent(CustomReportVisualizationPresenter)
+        self._open_other_presenter(intent)
