@@ -1,6 +1,6 @@
 import unittest
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
-    InvalidProductQuantityException, NoPositivePriceException, NegativeProfitException
+    InvalidProductQuantityException, NoPositivePriceException, NegativeProfitException, TooMuchProfitException
 from model.repository.factory import RepositoryFactory
 from model.repository.product import ProductFilter
 from model.util.monetary_types import CUPMoney
@@ -70,6 +70,14 @@ class TestProductRepository(unittest.TestCase):
         product.profit = CUPMoney('-1.00')
 
         self.assertRaises(NegativeProfitException, self.product_repository.insert_product,
+                          product)
+
+    def test_insert_product_with_higher_profit_than_price_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        product.price = CUPMoney('10.00')
+        product.profit = CUPMoney('11.00')
+
+        self.assertRaises(TooMuchProfitException, self.product_repository.insert_product,
                           product)
 
     def test_product_is_deleted_successfully(self):
