@@ -98,7 +98,7 @@ class ProductRepository(RepositoryObserver):
         self.__check_correctness_of_quantity(product)
         self.__check_correctness_of_price(product)
         self.__check_correctness_of_profit(product)
-        self.__check_profit_is_equal_or_lower_than_price(product)
+        self.__check_profit_is_not_higher_than_price(product)
         self.__check_name_is_not_used(product)
 
         self.__session.add(product)
@@ -117,7 +117,7 @@ class ProductRepository(RepositoryObserver):
         if product.profit < CUPMoney('0.00'):
             raise NegativeProfitException()
 
-    def __check_profit_is_equal_or_lower_than_price(self, product: Product):
+    def __check_profit_is_not_higher_than_price(self, product: Product):
         if product.profit > product.price:
             raise TooMuchProfitException(product.price, product.profit)
 
@@ -178,6 +178,7 @@ class ProductRepository(RepositoryObserver):
         self.__check_correctness_of_quantity(new)
         self.__check_correctness_of_price(new)
         self.__check_correctness_of_profit(new)
+        self.__check_profit_is_not_higher_than_price(new)
         old = self.__check_product_exists(new)
         self.__check_name_can_be_used(old, new)
 
