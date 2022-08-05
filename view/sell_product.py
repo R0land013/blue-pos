@@ -15,11 +15,12 @@ class MakeSaleView(QFrame):
 
     def __set_up_gui(self):
         loadUi('./view/ui/make_sale_form.ui', self)
-        self.set_date_to_today()
+        self.__setup_date_edit()
         self.__wire_up_gui_connections()
 
-    def set_date_to_today(self):
+    def __setup_date_edit(self):
         self.sale_date_edit.setDate(QDate.currentDate())
+        self.sale_date_edit.setMaximumDate(QDate.currentDate())
 
     def __wire_up_gui_connections(self):
         self.sale_quantity_spin_box.valueChanged.connect(

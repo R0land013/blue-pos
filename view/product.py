@@ -8,8 +8,17 @@ class ProductView(QFrame):
         super().__init__()
         self.__presenter = presenter
 
+        self.__setup_gui()
+
+    def __setup_gui(self):
         loadUi('./view/ui/product_form.ui', self)
+        self.__setup_price_and_profit_spin_boxes()
         self.__wire_up_gui_connections()
+
+    def __setup_price_and_profit_spin_boxes(self):
+        self.profit_spin_box.setMaximum(self.price_spin_box.value())
+        self.price_spin_box.valueChanged.connect(
+            lambda value: self.profit_spin_box.setMaximum(value))
 
     def __wire_up_gui_connections(self):
         self.save_button.clicked.connect(self.__presenter.save_product)

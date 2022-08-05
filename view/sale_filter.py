@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtWidgets import QFrame
 from PyQt5.uic import loadUi
 from datetime import date
@@ -14,24 +14,30 @@ class SaleFilterView(QFrame):
 
     def __set_up_gui(self):
         loadUi('./view/ui/sale_filter.ui', self)
-        self.__set_date_fields_to_today_date()
-        self.__set_date_fields_limits()
+        self.__setup_date_fields()
         self._wire_up_gui_connections()
 
-    def __set_date_fields_to_today_date(self):
-        q_date = QDate()
-        today = date.today()
-        q_date.setDate(
-            today.year,
-            today.month,
-            today.day
-        )
-        self.initial_date_edit.setDate(q_date)
-        self.final_date_edit.setDate(q_date)
+    def __setup_date_fields(self):
+        self.initial_date_edit.setDate(QDate.currentDate())
+        self.final_date_edit.setDate(QDate.currentDate())
 
-    def __set_date_fields_limits(self):
-        self.initial_date_edit.setMaximumDate(QDate.currentDate())
         self.final_date_edit.setMaximumDate(QDate.currentDate())
+        self.initial_date_edit.setMaximumDate(QDate.currentDate())
+
+        self.final_date_edit.dateChanged.connect(
+            lambda new_date: self.initial_date_edit.setMaximumDate(new_date))
+        self.final_sale_date_check_box.stateChanged.connect(
+            self.__set_initial_maximum_date_to_today_if_final_date_edit_is_unchecked
+        )
+
+    def __set_initial_maximum_date_to_today_if_final_date_edit_is_unchecked(self, state):
+        if state == Qt.Unchecked:
+            self.initial_date_edit.setMaximumDate(QDate.currentDate())
+        else:
+            self.initial_date_edit.setMaximumDate(self.final_date_edit.date())
+
+    def __set_initial_date_edit_maximum_date(self, new_date: QDate = None):
+        self.initial_date_edit.setMaximumDate(new_date)
 
     def _wire_up_gui_connections(self):
         self.cancel_button.clicked.connect(self.__presenter.close_presenter)

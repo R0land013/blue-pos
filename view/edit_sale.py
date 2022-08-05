@@ -15,7 +15,14 @@ class EditSaleView(QFrame):
 
     def set_up_gui(self):
         loadUi('./view/ui/edit_sale_form.ui', self)
+        self.__setup_price_and_profit_spin_boxes()
+        self.sale_date_edit.setMaximumDate(QDate.currentDate())
         self.wire_up_gui_connections()
+
+    def __setup_price_and_profit_spin_boxes(self):
+        self.profit_money_spin_box.setMaximum(self.paid_money_spin_box.value())
+        self.paid_money_spin_box.valueChanged.connect(
+            lambda value: self.profit_money_spin_box.setMaximum(value))
 
     def wire_up_gui_connections(self):
         self.cancel_button.clicked.connect(self.__presenter.close_presenter)
