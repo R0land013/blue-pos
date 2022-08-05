@@ -3,7 +3,7 @@ from model.entity.models import Product, Sale
 from sqlalchemy import select, delete
 
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
-    InvalidProductQuantityException, NoPositivePriceException, NegativeProfitException
+    InvalidProductQuantityException, NoPositivePriceException, NegativeProfitException, TooMuchProfitException
 from model.repository.observer import RepositoryObserver
 from model.util.monetary_types import CUPMoney
 
@@ -98,6 +98,7 @@ class ProductRepository(RepositoryObserver):
         self.__check_correctness_of_quantity(product)
         self.__check_correctness_of_price(product)
         self.__check_correctness_of_profit(product)
+        self.__check_profit_is_equal_or_lower_than_price(product)
         self.__check_name_is_not_used(product)
 
         self.__session.add(product)
@@ -115,6 +116,10 @@ class ProductRepository(RepositoryObserver):
     def __check_correctness_of_profit(self, product: Product):
         if product.profit < CUPMoney('0.00'):
             raise NegativeProfitException()
+
+    def __check_profit_is_equal_or_lower_than_price(self, product: Product):
+        if product.profit > product.price:
+            raise TooMuchProfitException(product.price, product.profit)
 
     def __check_name_is_not_used(self, product: Product):
         found_product = self.__find_product_by_name(product.name)
