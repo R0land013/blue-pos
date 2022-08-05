@@ -1,6 +1,6 @@
 from datetime import date
 
-from sqlalchemy import insert, update, select, delete
+from sqlalchemy import insert, update, select, delete, cast, Numeric, type_coerce, asc, desc
 
 from model.entity.models import Product, Sale
 from sqlalchemy.orm import Session
@@ -262,6 +262,7 @@ class SaleRepository(RepositoryObserver):
             return query
 
         column = None
+        is_money_column = False
 
         if the_filter.sorted_by == SaleFilter.ID:
             column = Sale.id
@@ -273,8 +274,15 @@ class SaleRepository(RepositoryObserver):
             column = Sale.product_id
         elif the_filter.sorted_by == SaleFilter.PRICE:
             column = Sale.price
+            is_money_column = True
         elif the_filter.sorted_by == SaleFilter.PROFIT:
             column = Sale.profit
+            is_money_column = True
+
+        if is_money_column:
+            if the_filter.ascending_order:
+                return query.order_by(asc(cast(column, Numeric)))
+            return query.order_by(desc(cast(column, Numeric)))
 
         if the_filter.ascending_order:
             column = column.asc()

@@ -306,5 +306,5 @@ class TestSaleRepository(unittest.TestCase):
         filter_sorted_by_date.sorted_by = SaleFilter.PRICE
         filter_sorted_by_date.ascending_order = False
         sorted_sales = self.sale_repository.get_sales_by_filter(filter_sorted_by_date)
-        print(sorted_sales)
+
         self.assertEqual(sorted_sales, [s4, s2, s1, s3])
