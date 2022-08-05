@@ -205,6 +205,15 @@ class TestProductRepository(unittest.TestCase):
         self.assertRaises(NegativeProfitException, self.product_repository.update_product,
                           product)
 
+    def test_update_product_with_profit_higher_than_price_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        product.price = CUPMoney('10.00')
+        product.profit = CUPMoney('11.00')
+
+        self.assertRaises(TooMuchProfitException, self.product_repository.update_product,
+                          product)
+
     def test_get_all_products_returns_empty_list(self):
         empty_list = []
 
