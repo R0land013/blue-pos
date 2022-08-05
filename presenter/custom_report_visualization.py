@@ -1,7 +1,10 @@
+from pathlib import Path
+
 from easy_mvp.abstract_presenter import AbstractPresenter
 
 from model.entity.models import Sale
 from model.report.custom import CustomSaleReport
+from model.report.generators import generate_pdf_file, generate_html_file
 from model.repository.factory import RepositoryFactory
 from model.repository.sale import SaleFilter
 from presenter.util.thread_worker import PresenterThreadWorker
@@ -79,3 +82,41 @@ class CustomReportVisualizationPresenter(AbstractPresenter):
         view.set_sale_quantity(report_statistics.sale_quantity())
         view.set_paid_money(str(report_statistics.paid_money()))
         view.set_profit_money(str(report_statistics.profit_money()))
+
+    def ask_user_to_export_report(self):
+        suggested_filename = self.__suggested_report_filename_using_date()
+        self.__path, self.__file_type = self.get_view().ask_user_to_save_report_as(suggested_filename)
+        self.__execute_thread_to_generate_report_file()
+
+    def __suggested_report_filename_using_date(self) -> str:
+        initial_date = self.__custom_report.get_report_statistics().initial_date()
+        final_date = self.__custom_report.get_report_statistics().final_date()
+        if self.__name == '':
+            return 'Reporte ventas {}-{}-{}  {}-{}-{}'.format(
+                initial_date.year,
+                initial_date.month,
+                initial_date.day,
+                final_date.year,
+                final_date.month,
+                final_date.day,
+            )
+        else:
+            return 'Reporte {}'.format(self.__name)
+
+    def __execute_thread_to_generate_report_file(self):
+        self.thread = PresenterThreadWorker(self.__export_report_to_specified_path)
+        self.thread.when_started.connect(self.__disable_gui_and_show_exporting_message)
+        self.thread.when_finished.connect(lambda: self.get_view().set_state_bar_hidden(True))
+        self.thread.when_finished.connect(lambda: self.get_view().disable_all_gui(False))
+        self.thread.start()
+
+    def __export_report_to_specified_path(self, thread: PresenterThreadWorker):
+        if 'pdf' in self.__file_type:
+            generate_pdf_file(Path(self.__path), self.__custom_report)
+        elif 'html' in self.__file_type:
+            generate_html_file(Path(self.__path), self.__custom_report)
+
+    def __disable_gui_and_show_exporting_message(self):
+        self.get_view().disable_all_gui(True)
+        self.get_view().set_state_bar_hidden(False)
+        self.get_view().set_state_bar_message('Exportando reporte...')

@@ -1,9 +1,8 @@
 from datetime import date
-
-from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QFileDialog
 from PyQt5.uic import loadUi
-
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
+import os
 
 
 class CustomReportVisualizationView(QFrame):
@@ -42,6 +41,7 @@ class CustomReportVisualizationView(QFrame):
 
     def __wire_up_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
+        self.export_as_button.clicked.connect(self.__presenter.ask_user_to_export_report)
 
     def disable_all_gui(self, disable: bool):
         self.main_content_frame.setDisabled(disable)
@@ -107,3 +107,12 @@ class CustomReportVisualizationView(QFrame):
 
     def set_profit_money(self, profit: str):
         self.profit_money_label.setText(profit)
+
+    def ask_user_to_save_report_as(self, suggested_file_name: str) -> tuple:
+        user_home_directory = os.path.expanduser('~')
+        return QFileDialog.getSaveFileName(
+            parent=self.window(),
+            directory=os.path.join(user_home_directory, suggested_file_name),
+            caption='Exportar como',
+            filter='PDF (*.pdf);;Página web (*.html *mhtml)'
+        )
