@@ -5,7 +5,8 @@ from sqlalchemy import insert, update, select, delete, cast, Numeric, type_coerc
 from model.entity.models import Product, Sale
 from sqlalchemy.orm import Session
 
-from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeProfitException
+from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeProfitException, \
+    TooMuchProfitException
 from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException, \
     ChangeProductIdInSaleException
 from model.repository.observer import RepositoryObserver
@@ -87,6 +88,7 @@ class SaleRepository(RepositoryObserver):
         self.__check_quantity_is_positive(quantity)
         self.__check_price_is_positive(sale)
         self.__check_profit_is_not_negative(sale)
+        self.__check_profit_is_no_higher_than_price(sale)
         self.__check_product_exists(sale)
         self.__check_there_are_enough_products(sale, quantity)
 
@@ -107,6 +109,10 @@ class SaleRepository(RepositoryObserver):
     def __check_profit_is_not_negative(self, sale: Sale):
         if sale.profit < CUPMoney('0.00'):
             raise NegativeProfitException()
+
+    def __check_profit_is_no_higher_than_price(self, sale: Sale):
+        if sale.profit > sale.price:
+            raise TooMuchProfitException(sale.price, sale.profit)
 
     def __get_product_by_id(self, product_id: int) -> Product:
         return self.__session.scalar(select(Product).where(Product.id == product_id))
@@ -202,6 +208,7 @@ class SaleRepository(RepositoryObserver):
     def update_sale(self, sale: Sale):
         self.__check_price_is_positive(sale)
         self.__check_profit_is_not_negative(sale)
+        self.__check_profit_is_no_higher_than_price(sale)
         self.__check_sale_exists(sale)
         self.__check_product_id_is_not_changed_in_sale(sale)
 
