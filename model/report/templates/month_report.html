@@ -34,6 +34,7 @@
             <th>Id. Producto</th>
             <th>Precio</th>
             <th>Ganancia por unidad</th>
+            <th>Fecha</th>
         </thead>
             <tbody>
             {% for a_sale in sales %}
@@ -43,6 +44,7 @@
                     <td>{{ a_sale.product_id }}</td>
                     <td>{{ a_sale.price }}</td>
                     <td>{{ a_sale.profit }}</td>
+                    <td>{{ a_sale.date }}</td>
                 </tr>
             {% endfor %}
             </tbody>
