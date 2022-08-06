@@ -27,6 +27,7 @@ class DaySaleReport(AbstractSaleReport):
 
         template = self.get_template()
         return template.render(date=self.__day_date,
+                               sale_quantity=len(sales),
                                sales=sales,
                                total_profit=total_profit,
                                total_collected_money=total_collected_money)

@@ -20,6 +20,7 @@ class MonthSaleReport(AbstractSaleReport):
 
         template = self.get_template()
         return template.render(date=self.__month_date,
+                               sale_quantity=len(sales),
                                sales=sales,
                                total_profit=total_profit,
                                total_collected_money=total_collected_money)

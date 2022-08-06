@@ -32,6 +32,7 @@ class YearSaleReport(AbstractSaleReport):
 
         template = self.get_template()
         return template.render(date=self.__year_date,
+                               sale_quantity=len(sales),
                                sales=sales,
                                total_profit=total_profit,
                                total_collected_money=total_collected_money)
