@@ -96,6 +96,7 @@ class ProductManagementPresenter(AbstractPresenter):
             self.thread.when_started.connect(self.__disable_gui_and_show_deleting_products_message)
             self.thread.when_finished.connect(self.get_view().delete_selected_products_from_table)
             self.thread.when_finished.connect(self.__set_available_gui_and_show_no_message)
+            self.thread.when_finished.connect(self.get_view().resize_table_columns_to_contents)
             self.thread.start()
 
     def __product_deletion(self, thread: PresenterThreadWorker):

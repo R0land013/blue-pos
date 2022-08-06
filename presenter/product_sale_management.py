@@ -106,6 +106,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
             self.thread.when_finished.connect(self.__update_available_product_quantity_on_gui)
             self.thread.when_finished.connect(
                 self.__set_sell_button_availability_depending_on_remaining_product_quantity)
+            self.thread.when_finished.connect(self.get_view().resize_table_columns_to_contents)
             self.thread.when_finished.connect(self.__set_available_gui_and_show_no_message)
             self.thread.start()
 
@@ -152,16 +153,23 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def __update_gui_on_new_sales_inserted(self, result_data: dict):
         new_sales = result_data[MakeSalePresenter.NEW_SALES]
+
+        self.__disable_gui_and_show_loading_sales_message()
+
         for a_sale in new_sales:
             self.__add_sale_to_table(a_sale)
+
         self.__update_available_product_quantity_on_gui()
         self.__set_sell_button_availability_depending_on_remaining_product_quantity()
+        self.__set_available_gui_and_show_no_message()
+        self.get_view().resize_table_columns_to_contents()
         self.get_view().sort_table_rows()
 
     def __update_sale_on_table(self, result_data: dict):
         selected_row = self.get_view().get_selected_row_index()
         updated_sale = result_data[EditSalePresenter.UPDATED_SALE]
         self.__set_table_row_by_sale(selected_row, updated_sale)
+        self.get_view().resize_table_columns_to_contents()
         self.get_view().sort_table_rows()
 
     def open_presenter_to_edit_sale(self):
@@ -187,6 +195,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self.thread.when_finished.connect(self.__fill_table_with_filtered_sales)
         self.thread.when_finished.connect(self.get_view().sort_table_rows)
         self.thread.when_finished.connect(self.__set_delete_filter_button_available)
+        self.thread.when_finished.connect(self.get_view().resize_table_columns_to_contents)
         self.thread.when_finished.connect(
             self.__set_gui_available_and_show_filtered_sales_message)
         self.thread.start()
