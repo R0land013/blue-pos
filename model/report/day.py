@@ -17,6 +17,8 @@ class DaySaleReport(AbstractSaleReport):
         sale_filter = SaleFilter()
         sale_filter.minimum_date = self.__day_date
         sale_filter.maximum_date = self.__day_date
+        sale_filter.sorted_by = SaleFilter.PRICE
+        sale_filter.ascending_order = False
 
         return self.__sale_repository.get_sales_by_filter(sale_filter)
 
