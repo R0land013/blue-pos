@@ -1,0 +1,107 @@
+QFrame{
+    background-color: white
+}
+
+QLabel{
+    color: black;
+    font-family: Arial;
+    font-weight: bold;
+    font: 10pt;
+}
+
+QLineEdit, QPlainTextEdit{
+    background: white;
+    border: 2px solid rgb(91, 131, 247);
+    border-radius: 10px;
+    font-family: Arial;
+    padding: 3px;
+    font-weight: bold;
+    font: 8pt;
+}
+
+QLineEdit:focus, QPlainTextEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus{
+    border: 2px solid rgb(190, 19, 240);
+    background: rgb(231, 237, 254);
+}
+
+QPushButton{
+    border-style: none;
+    padding: 11px;
+    border-radius: 10px;
+    background-color: rgb(27, 88, 241);
+    font-weight: bold;
+    color: white;
+}
+
+QPushButton:hover{
+    background-color: rgb(115, 151, 247);
+}
+
+QPushButton:disabled{
+    background-color: #908C9E;
+}
+
+QPushButton:pressed{
+    background-color: rgb(180, 33, 255);
+}
+
+/*-----------------Personalizando los spin boxes-----------------------*/
+QSpinBox, QDoubleSpinBox{
+    padding-right: 30em;
+    padding-top: 2em;
+    padding-bottom: 2em;
+    padding: 50px;
+    background: white;
+    border: 2px solid rgb(91, 131, 247);
+    font-family: Arial;
+    padding: 3px;
+    font: 8pt;
+    border-radius: 10px;
+}
+
+QSpinBox::up-button, QDoubleSpinBox::up-button{
+    subcontrol-origin: border;
+    subcontrol-position: top right; /* position at the top right corner */
+
+    width: 1em;
+    height: 1em;
+    background-color: blue;
+    image: url("view/ui/images/up_arrow.png");
+    margin-right: 0.5em;
+}
+
+QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover {
+    image: url("./view/ui/images/hovered_up_arrow.png");
+}
+
+QSpinBox::up-button:pressed, QDoubleSpinBox::up-button:pressed {
+    image: url("./view/ui/images/pressed_up_arrow.png");
+}
+
+
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+    subcontrol-origin: border;
+    subcontrol-position: bottom right; /* position at the top right corner */
+
+
+    width: 1em;
+    height: 1em;
+    image: url("view/ui/images/down_arrow.png");
+    margin-right: 0.5em;
+}
+
+QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {
+    image: url("./view/ui/images/hovered_down_arrow.png");
+}
+
+QSpinBox::down-button:pressed, QDoubleSpinBox::down-button:pressed{
+    image: url("./view/ui/images/pressed_down_arrow.png");
+}
+
+QSpinBox:disabled{
+    background-color: #908C9E;
+    border: 2px solid #908C9E;
+    color: white;
+}
+
+/*---------------------------------------------------------------------*/
