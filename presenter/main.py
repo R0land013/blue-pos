@@ -1,3 +1,4 @@
+from PyQt5.QtWidgets import QApplication
 from easy_mvp.abstract_presenter import AbstractPresenter
 from easy_mvp.intent import Intent
 from sqlalchemy import create_engine
@@ -17,6 +18,7 @@ class MainPresenter(AbstractPresenter):
     def _on_initialize(self):
         self.__initialize_view()
         self.__create_database()
+        self.__set_app_style()
 
     def __initialize_view(self):
         view = MainView(self)
@@ -26,6 +28,12 @@ class MainPresenter(AbstractPresenter):
     def __create_database():
         engine = create_engine(DB_URL, future=True)
         Base.metadata.create_all(engine)
+
+    @staticmethod
+    def __set_app_style():
+        with open('./view/style/blue.qss', 'r') as f:
+            style = f.read()
+            QApplication.instance().setStyleSheet(style)
 
     def open_product_management(self):
         intent = Intent(ProductManagementPresenter)
