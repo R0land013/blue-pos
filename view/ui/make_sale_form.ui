@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>242</height>
+    <height>254</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -156,6 +156,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="confirm_button">
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="text">
            <string>Confirmar Venta</string>
           </property>
@@ -163,6 +166,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="cancel_button">
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
           <property name="text">
            <string>Cancelar</string>
           </property>

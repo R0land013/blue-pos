@@ -109,6 +109,9 @@
         <property name="enabled">
          <bool>false</bool>
         </property>
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
         <property name="text">
          <string>Filtrar</string>
         </property>
@@ -116,6 +119,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="cancel_button">
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
         <property name="text">
          <string>Cancelar</string>
         </property>
