@@ -1,5 +1,6 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QMessageBox
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QMessageBox, QToolButton, QToolBar, QHBoxLayout
 from PyQt5.uic import loadUi
 
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
@@ -22,11 +23,48 @@ class ProductSaleManagementView(QFrame):
 
     def set_up_gui(self):
         loadUi('./view/ui/product_sale_management.ui', self)
+        self.__setup_tool_bar()
         self.__set_table_format()
         self.__wire_up_connections()
         self.edit_sale_button.setDisabled(True)
         self.undo_sale_button.setDisabled(True)
         self.disable_delete_filter_button(True)
+
+    def __setup_tool_bar(self):
+        self.__define_tool_bar_buttons()
+        self.tool_bar = QToolBar()
+        self.tool_bar_frame.setLayout(QHBoxLayout())
+        self.tool_bar_frame.layout().setContentsMargins(0, 0, 0, 0)
+        self.tool_bar_frame.layout().setMenuBar(self.tool_bar)
+
+        self.tool_bar.addWidget(self.back_button)
+        self.tool_bar.addSeparator()
+        self.tool_bar.addWidget(self.sell_button)
+        self.tool_bar.addWidget(self.undo_sale_button)
+        self.tool_bar.addWidget(self.edit_sale_button)
+        self.tool_bar.addSeparator()
+        self.tool_bar.addWidget(self.filter_button)
+        self.tool_bar.addWidget(self.delete_filter_button)
+
+    def __define_tool_bar_buttons(self):
+        self.back_button = QToolButton()
+        self.back_button.setIcon(QIcon('./view/ui/images/back.png'))
+        self.back_button.setToolTip('Regresar')
+        self.sell_button = QToolButton()
+        self.sell_button.setIcon(QIcon('./view/ui/images/make_sale.png'))
+        self.sell_button.setToolTip('Vender')
+        self.undo_sale_button = QToolButton()
+        self.undo_sale_button.setIcon(QIcon('./view/ui/images/undo_sale.png'))
+        self.undo_sale_button.setToolTip('Deshacer venta')
+        self.edit_sale_button = QToolButton()
+        self.edit_sale_button.setIcon(QIcon('./view/ui/images/edit.png'))
+        self.edit_sale_button.setToolTip('Editar venta')
+        self.filter_button = QToolButton()
+        self.filter_button.setIcon(QIcon('./view/ui/images/filter.png'))
+        self.filter_button.setToolTip('Filtrar ventas')
+        self.delete_filter_button = QToolButton()
+        self.delete_filter_button.setIcon(QIcon('./view/ui/images/delete_filter.png'))
+        self.delete_filter_button.setToolTip('Quitar filtro')
 
     def __set_table_format(self):
         self.sale_table.setColumnCount(4)
