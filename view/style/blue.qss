@@ -105,3 +105,13 @@ QSpinBox:disabled{
 }
 
 /*---------------------------------------------------------------------*/
+
+/***************Headers de la vista principal*******************************/
+QLabel#management_label, QLabel#reports_label {
+    color: black;
+    font-family: Arial;
+    font-weight: bold;
+    font: 28pt;
+}
+
+/***************************************************************************/
