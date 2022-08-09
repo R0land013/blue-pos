@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>255</height>
+    <height>292</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -172,6 +172,9 @@
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
@@ -190,6 +193,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="update_button">
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
            <property name="text">
             <string>Actualizar</string>
            </property>
@@ -197,6 +203,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="cancel_button">
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
            <property name="text">
             <string>Cancelar</string>
            </property>
