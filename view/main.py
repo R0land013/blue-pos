@@ -24,7 +24,6 @@ class MainView(QFrame):
         self.__setup_next_navigation_label_animations()
         self.__setup_previous_navigation_label_animations()
         self.wire_up_gui_connections()
-        self.__set_window_minimum_size_to_half_of_screen()
 
     def __set_available_mouse_tracking(self):
         self.setMouseTracking(True)
@@ -84,12 +83,6 @@ class MainView(QFrame):
         self.previous_label.hide()
         self.next_label.show()
         self.stacked_widget.setCurrentWidget(self.management_widget)
-
-    def __set_window_minimum_size_to_half_of_screen(self):
-        q_screen_size = QApplication.primaryScreen().size()
-        new_width = q_screen_size.width() // 2
-        new_height = q_screen_size.height() // 2
-        self.window().setMinimumSize(QSize(new_width, new_height))
 
     def paintEvent(self, event: QPaintEvent):
         super().paintEvent(event)
