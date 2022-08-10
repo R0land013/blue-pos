@@ -45,7 +45,7 @@ QPushButton:pressed{
     background-color: rgb(180, 33, 255);
 }
 
-/*-----------------Personalizando los spin boxes-----------------------*/
+/*-----------------Personalizando QSpinBox, QDoubleSpinBox, QDateEdit, QComboBox-----------------------*/
 QSpinBox, QDoubleSpinBox, QDateEdit, QComboBox{
     padding-top: 2em;
     padding-bottom: 2em;
@@ -138,6 +138,77 @@ QLabel#management_label, QLabel#reports_label {
     font-family: Arial;
     font-weight: bold;
     font: 28pt;
+}
+
+/***************************************************************************/
+
+
+
+
+
+/**********************QCheckBox********************************************/
+
+QCheckBox::indicator {
+    width: 2em;
+    height: 1.5em;
+}
+
+
+QCheckBox::indicator:unchecked {
+    image: url("./view/ui/images/unchecked.png");
+}
+
+QCheckBox::indicator:checked {
+    image: url("./view/ui/images/checked.png");
+}
+/***************************************************************************/
+
+
+
+
+
+
+/*****************QRadioButton**********************************************/
+QRadioButton::indicator {
+    width: 1em;
+    height: 1em;
+}
+
+QRadioButton::indicator::unchecked {
+    image: url("./view/ui/images/unchecked_radio.png");
+}
+
+QRadioButton::indicator::checked {
+    image: url("./view/ui/images/checked_radio.png");
+}
+
+QRadioButton{
+    color: black;
+    font-family: Arial;
+    font-weight: bold;
+    font: 10pt;
+}
+/***************************************************************************/
+
+
+
+
+
+/*****************QGroupBox*************************************************/
+QGroupBox {
+    margin-top: 1em;
+    border: 2px solid rgb(91, 131, 247);
+    border-radius: 10px;
+    color: black;
+    font-family: Arial;
+    font-weight: bold;
+    font: 9pt;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top center; /* position at the top center */
+    padding-top: 5px;
 }
 
 /***************************************************************************/
