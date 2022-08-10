@@ -50,6 +50,7 @@ class WeekSaleReportView(QFrame):
 
     def __setup_week_calendar_selector(self):
         self.__week_calendar_selector = QWeekCalendarSelectorWidget()
+        self.__week_calendar_selector.setMaximumDate(QDate.currentDate())
         self.__week_calendar_selector.setSelectedDate(QDate.currentDate())
         self.calendar_frame.setLayout(QHBoxLayout())
         self.calendar_frame.layout().addWidget(self.__week_calendar_selector)

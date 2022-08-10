@@ -24,24 +24,6 @@ class QWeekCalendarSelectorWidget(QCalendarWidget):
 
         self.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
 
-    def setDateRange(self, minimum_date: QDate, maximum_date: QDate):
-        super().setDateRange(minimum_date, maximum_date)
-        self.__change_selected_week(self.selectedDate())
-
-    def get_selected_date_range(self) -> tuple:
-        """Returns a tuple containing two elements. The first is the first
-        date of the week, and the second one the last date of the week."""
-        return self.__first_date_of_week, self.__last_date_of_week
-
-    def __set_calendar_format(self, a_format: QTextCharFormat):
-        if self.__first_date_of_week and self.__last_date_of_week:
-            initial_date = self.__first_date_of_week
-            final_date = self.__last_date_of_week
-
-            while initial_date <= final_date:
-                self.setDateTextFormat(initial_date, a_format)
-                initial_date = initial_date.addDays(1)
-
     def __change_selected_week(self, qdate: QDate = None):
         # Si este método es llamado por la señal selectionChanged
         if qdate is None:
@@ -88,6 +70,32 @@ class QWeekCalendarSelectorWidget(QCalendarWidget):
     @staticmethod
     def __to_qdate(py_date: date) -> QDate:
         return QDate(py_date.year, py_date.month, py_date.day)
+
+    def setDateRange(self, minimum_date: QDate, maximum_date: QDate):
+        super().setDateRange(minimum_date, maximum_date)
+        self.__change_selected_week(self.selectedDate())
+
+    def setMaximumDate(self, maximum_date: QDate):
+        super().setMaximumDate(maximum_date)
+        self.__change_selected_week(self.selectedDate())
+
+    def setMinimumDate(self, minimum_date: QDate):
+        super().setMinimumDate(minimum_date)
+        self.__change_selected_week(self.selectedDate())
+
+    def get_selected_date_range(self) -> tuple:
+        """Returns a tuple containing two elements. The first is the first
+        date of the week, and the second one the last date of the week."""
+        return self.__first_date_of_week, self.__last_date_of_week
+
+    def __set_calendar_format(self, a_format: QTextCharFormat):
+        if self.__first_date_of_week and self.__last_date_of_week:
+            initial_date = self.__first_date_of_week
+            final_date = self.__last_date_of_week
+
+            while initial_date <= final_date:
+                self.setDateTextFormat(initial_date, a_format)
+                initial_date = initial_date.addDays(1)
 
     def paintCell(self, painter: QPainter, rect: QRect, qdate: QDate):
 
