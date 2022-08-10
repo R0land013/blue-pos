@@ -1,7 +1,8 @@
 from datetime import date
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QFileDialog
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QFileDialog, QToolButton, QToolBar, QHBoxLayout
 from PyQt5.uic import loadUi
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 import os
@@ -26,8 +27,22 @@ class CustomReportVisualizationView(QFrame):
 
     def __setup_gui(self):
         loadUi('./view/ui/custom_report_visualization.ui', self)
+        self.__setup_tool_bar()
         self.__setup_table()
         self.__wire_up_gui_connections()
+
+    def __setup_tool_bar(self):
+        self.set_up_tool_buttons()
+        self.tool_bar = QToolBar()
+        self.tool_bar_frame.setLayout(QHBoxLayout())
+        self.tool_bar_frame.layout().setContentsMargins(0, 0, 0, 0)
+        self.tool_bar_frame.layout().setMenuBar(self.tool_bar)
+
+        self.tool_bar.addWidget(self.back_button)
+
+    def set_up_tool_buttons(self):
+        self.back_button = QToolButton()
+        self.back_button.setIcon(QIcon('./view/ui/images/back.png'))
 
     def __setup_table(self):
         self.sale_report_table.setColumnCount(6)

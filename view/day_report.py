@@ -2,7 +2,8 @@ import os.path
 from datetime import date
 
 from PyQt5.QtCore import QDate, Qt
-from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QFileDialog
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QFileDialog, QToolButton, QHBoxLayout, QToolBar
 from PyQt5.uic import loadUi
 
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
@@ -26,10 +27,24 @@ class DaySaleReportView(QFrame):
 
     def __setup_gui(self):
         loadUi('./view/ui/day_sale_report.ui', self)
+        self.__setup_tool_bar()
         self.__set_up_table_format()
         self.__set_up_date_edit()
 
         self.__wire_up_gui_connections()
+
+    def __setup_tool_bar(self):
+        self.set_up_tool_buttons()
+        self.tool_bar = QToolBar()
+        self.tool_bar_frame.setLayout(QHBoxLayout())
+        self.tool_bar_frame.layout().setContentsMargins(0, 0, 0, 0)
+        self.tool_bar_frame.layout().setMenuBar(self.tool_bar)
+
+        self.tool_bar.addWidget(self.back_button)
+
+    def set_up_tool_buttons(self):
+        self.back_button = QToolButton()
+        self.back_button.setIcon(QIcon('./view/ui/images/back.png'))
 
     def __set_up_table_format(self):
         self.sale_report_table.setColumnCount(5)
