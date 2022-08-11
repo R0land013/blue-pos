@@ -11,6 +11,7 @@ class MainView(QFrame):
 
     clicked_on_next_frame = pyqtSignal()
     clicked_on_previous_frame = pyqtSignal()
+    clicked_on_about_label = pyqtSignal()
 
     def __init__(self, presenter):
         super().__init__()
@@ -35,6 +36,7 @@ class MainView(QFrame):
         self.custom_report_button.clicked.connect(self.__presenter.open_custom_sale_report_presenter)
         self.clicked_on_next_frame.connect(self.__show_reports_widget)
         self.clicked_on_previous_frame.connect(self.__show_management_widget)
+        self.clicked_on_about_label.connect(self.__presenter.open_about_presenter)
 
     def __show_reports_widget(self):
         self.next_frame.hide()
@@ -81,3 +83,5 @@ class MainView(QFrame):
             self.clicked_on_next_frame.emit()
         elif self.previous_frame.underMouse():
             self.clicked_on_previous_frame.emit()
+        elif self.about_label.underMouse():
+            self.clicked_on_about_label.emit()

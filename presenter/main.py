@@ -4,6 +4,7 @@ from easy_mvp.intent import Intent
 from sqlalchemy import create_engine
 from model.entity.models import Base
 from model.repository.factory import DB_URL
+from presenter.about import AboutPresenter
 from presenter.custom_report import CustomSaleReportPresenter
 from presenter.day_report import DaySaleReportPresenter
 from presenter.month_report import MonthSaleReportPresenter
@@ -57,4 +58,8 @@ class MainPresenter(AbstractPresenter):
 
     def open_custom_sale_report_presenter(self):
         intent = Intent(CustomSaleReportPresenter)
+        self._open_other_presenter(intent)
+
+    def open_about_presenter(self):
+        intent = Intent(AboutPresenter)
         self._open_other_presenter(intent)
