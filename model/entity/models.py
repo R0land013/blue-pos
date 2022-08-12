@@ -57,9 +57,9 @@ class Sale(Base):
     product = relationship('Product', backref=backref('sales', cascade='all,delete'))
 
 
-class Expenditure(Base):
+class Expense(Base):
 
-    __tablename__ = 'expenditure'
+    __tablename__ = 'expenses'
     id = Column(Integer, primary_key=True)
     name = Column(String(length=100), nullable=False, unique=True)
     description = Column(String(length=600), nullable=True, default='')
