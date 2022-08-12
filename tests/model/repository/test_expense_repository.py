@@ -2,7 +2,7 @@ import unittest
 from datetime import date, timedelta
 
 from model.repository.exc.expense import UniqueExpenseNameException, EmptyExpenseNameException, \
-    NonNegativeExpenseMoneyException
+    NonNegativeExpenseMoneyException, NonExistentExpenseException
 from model.repository.factory import RepositoryFactory
 from model.util.monetary_types import CUPMoney
 from tests.util.general import TEST_DB_URL, delete_all_expenses_from_database, get_all_expenses_from_database, \
@@ -59,6 +59,9 @@ class TestExpenseRepository(unittest.TestCase):
 
         remaining_expenses = get_all_expenses_from_database()
         self.assertEqual(remaining_expenses, [expenses[1]])
+
+    def test_delete_expense_with_no_assigned_id_raises_exception(self):
+        self.assertRaises(NonExistentExpenseException, self.expense_repo.delete_expenses, [1])
 
     def test_update_expense(self):
         expense = ExpenseGenerator.generate_one_expense()

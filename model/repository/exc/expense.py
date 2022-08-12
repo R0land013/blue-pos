@@ -29,3 +29,15 @@ class NonNegativeExpenseMoneyException(Exception):
 
     def get_expense_money(self):
         return self.__money
+
+
+class NonExistentExpenseException(Exception):
+
+    MSG = 'The expense with id \'{}\' does not exists.'
+
+    def __init__(self, expense_id: int):
+        super().__init__(self.MSG.format(expense_id))
+        self.__expense_id = expense_id
+
+    def get_expense_id(self) -> int:
+        return self.__expense_id
