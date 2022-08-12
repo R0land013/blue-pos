@@ -1,6 +1,6 @@
 import unittest
 
-from model.repository.exc.expense import UniqueExpenseNameException
+from model.repository.exc.expense import UniqueExpenseNameException, EmptyExpenseNameException
 from model.repository.factory import RepositoryFactory
 from tests.util.general import TEST_DB_URL, delete_all_expenses_from_database, get_all_expenses_from_database, \
     insert_one_expense_in_database
@@ -32,3 +32,9 @@ class TestExpenseRepository(unittest.TestCase):
 
         expense.name = 'cOmPrA dE sIlLaS'
         self.assertRaises(UniqueExpenseNameException, self.expense_repo.insert_expense, expense)
+
+    def test_insert_expense_with_empty_name_raises_exception(self):
+        expense = ExpenseGenerator.generate_one_expense()
+        expense.name = '   '
+
+        self.assertRaises(EmptyExpenseNameException, self.expense_repo.insert_expense, expense)
