@@ -123,4 +123,5 @@ def get_all_expenses_from_database() -> list:
 def insert_one_expense_in_database(an_expense: Expense) -> Expense:
     with create_test_session() as session:
         session.add(an_expense)
+        session.commit()
         return an_expense
