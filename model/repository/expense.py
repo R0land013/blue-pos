@@ -62,6 +62,7 @@ class ExpenseRepository:
         )
 
     def update_expense(self, updated_expense: Expense):
+        self.__check_expense_ids_are_assigned_in_database([updated_expense.id])
         old_expense = self.__get_expense_from_database(updated_expense)
         old_expense.name = updated_expense.name
         old_expense.description = updated_expense.description

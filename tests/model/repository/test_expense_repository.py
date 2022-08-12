@@ -76,3 +76,10 @@ class TestExpenseRepository(unittest.TestCase):
 
         updated_expense_in_database = get_all_expenses_from_database()[0]
         self.assertEqual(updated_expense_in_database, updated_expense)
+
+    def test_update_expense_with_unassigned_id_raises_exception(self):
+        expense = ExpenseGenerator.generate_one_expense()
+        expense.id = 1
+        expense.name = 'Comprar tubos LED'
+
+        self.assertRaises(NonExistentExpenseException, self.expense_repo.update_expense, expense)
