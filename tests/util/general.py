@@ -118,3 +118,9 @@ def delete_all_expenses_from_database():
 def get_all_expenses_from_database() -> list:
     with create_test_session() as session:
         return session.query(Expense).all()
+
+
+def insert_one_expense_in_database(an_expense: Expense) -> Expense:
+    with create_test_session() as session:
+        session.add(an_expense)
+        return an_expense
