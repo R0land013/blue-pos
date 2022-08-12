@@ -1,5 +1,5 @@
 from money import Money
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 from model.entity.models import Expense
 from model.repository.exc.expense import UniqueExpenseNameException, EmptyExpenseNameException, \
@@ -37,7 +37,14 @@ class ExpenseRepository:
             raise UniqueExpenseNameException(name)
 
     def delete_expenses(self, expense_ids: list):
-        pass
+        self.__execute_delete_statement(expense_ids)
+        self.__session.commit()
+
+    def __execute_delete_statement(self, expenses_ids: list):
+        self.__session.execute(
+            delete(Expense)
+            .where(Expense.id.in_(expenses_ids))
+        )
 
     def update_expense(self, updated_expense: Expense):
         pass

@@ -5,7 +5,7 @@ from model.repository.exc.expense import UniqueExpenseNameException, EmptyExpens
 from model.repository.factory import RepositoryFactory
 from model.util.monetary_types import CUPMoney
 from tests.util.general import TEST_DB_URL, delete_all_expenses_from_database, get_all_expenses_from_database, \
-    insert_one_expense_in_database
+    insert_one_expense_in_database, insert_expenses_in_database
 from tests.util.generators.expense import ExpenseGenerator
 
 
@@ -46,3 +46,15 @@ class TestExpenseRepository(unittest.TestCase):
         expense.spent_money = CUPMoney('0.00')
 
         self.assertRaises(NonNegativeExpenseMoneyException, self.expense_repo.insert_expense, expense)
+
+    def test_delete_expenses(self):
+        expenses = ExpenseGenerator.generate_expenses_by_quantity(3)
+        insert_expenses_in_database(expenses)
+
+        self.expense_repo.delete_expenses([
+            expenses[0].id,
+            expenses[2].id
+        ])
+
+        remaining_expenses = get_all_expenses_from_database()
+        self.assertEqual(remaining_expenses, [expenses[1]])

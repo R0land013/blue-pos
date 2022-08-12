@@ -125,3 +125,10 @@ def insert_one_expense_in_database(an_expense: Expense) -> Expense:
         session.add(an_expense)
         session.commit()
         return an_expense
+
+
+def insert_expenses_in_database(expenses: list) -> list:
+    with create_test_session() as session:
+        session.add_all(expenses)
+        session.commit()
+        return expenses
