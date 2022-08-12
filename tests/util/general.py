@@ -113,3 +113,8 @@ def delete_all_expenses_from_database():
         for an_expense in session.scalars(statement):
             session.delete(an_expense)
         session.commit()
+
+
+def get_all_expenses_from_database() -> list:
+    with create_test_session() as session:
+        return session.query(Expense).all()
