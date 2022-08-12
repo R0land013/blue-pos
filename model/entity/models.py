@@ -59,6 +59,17 @@ class Sale(Base):
 
 class Expense(Base):
 
+    def __repr__(self):
+        return 'Expense(id: {}, name: {}, description: {}, spent_money: {}, date: {})'\
+            .format(self.id, self.name, self.description, self.spent_money, self.date)
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __eq__(self, other):
+        return (self.id == self.id and self.name == other.name and self.description == other.description
+                and self.spent_money == other.spent_money and self.date == other.date)
+
     __tablename__ = 'expenses'
     id = Column(Integer, primary_key=True)
     name = Column(String(length=100), nullable=False, unique=True)

@@ -9,7 +9,8 @@ class ExpenseRepository:
         self.__session = session
 
     def insert_expense(self, new_expense: Expense):
-        pass
+        self.__session.add(new_expense)
+        self.__session.commit()
 
     def delete_expenses(self, expense_ids: list):
         pass
