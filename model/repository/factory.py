@@ -1,5 +1,4 @@
-from model.entity.models import Expense
-from model.repository.expenditure import ExpenseRepository
+from model.repository.expense import ExpenseRepository
 from model.repository.product import ProductRepository
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
@@ -46,7 +45,7 @@ class RepositoryFactory:
         return RepositoryFactory.__sale_repository
 
     @staticmethod
-    def get_expenditure_repository(url: str = DB_URL) -> ExpenseRepository:
+    def get_expense_repository(url: str = DB_URL) -> ExpenseRepository:
         RepositoryFactory.__create_session_if_necessary(url)
 
         if RepositoryFactory.__expense_repository is None:

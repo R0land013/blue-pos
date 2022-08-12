@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import create_engine, select
-from model.entity.models import Product, Sale
+from model.entity.models import Product, Sale, Expense
 from pathlib import Path
 
 
@@ -105,3 +105,11 @@ def assert_sale_lists_are_equal_ignoring_id(list_1: list, list_2):
         sale_1 = list_1[sale_index]
         sale_2 = list_2[sale_index]
         assert __are_sales_equal_ignoring_id(sale_1, sale_2), '{} != {}'.format(sale_1, sale_2)
+
+
+def delete_all_expenses_from_database():
+    with create_test_session() as session:
+        statement = select(Expense)
+        for an_expense in session.scalars(statement):
+            session.delete(an_expense)
+        session.commit()
