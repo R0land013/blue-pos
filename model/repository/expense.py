@@ -56,6 +56,7 @@ class ExpenseRepository:
 
     def update_expense(self, updated_expense: Expense):
         self.__check_name_is_not_empty_or_whitespaces(updated_expense.name)
+        self.__check_money_is_negative(updated_expense.spent_money)
         self.__check_expense_ids_are_assigned_in_database([updated_expense.id])
 
         old_expense = self.__get_expense_from_database(updated_expense)

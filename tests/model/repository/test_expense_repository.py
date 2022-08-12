@@ -82,3 +82,10 @@ class TestExpenseRepository(unittest.TestCase):
         expense.name = '    '
 
         self.assertRaises(EmptyExpenseNameException, self.expense_repo.update_expense, expense)
+
+    def test_update_expense_with_non_negative_money_raises_exception(self):
+        expense = ExpenseGenerator.generate_one_expense()
+        insert_one_expense_in_database(expense)
+        expense.spent_money = CUPMoney('0.00')
+
+        self.assertRaises(NonNegativeExpenseMoneyException, self.expense_repo.update_expense, expense)
