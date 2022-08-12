@@ -75,3 +75,10 @@ class TestExpenseRepository(unittest.TestCase):
         expense.name = 'Comprar tubos LED'
 
         self.assertRaises(NonExistentExpenseException, self.expense_repo.update_expense, expense)
+
+    def test_update_expense_with_empty_name_raises_exception(self):
+        expense = ExpenseGenerator.generate_one_expense()
+        insert_one_expense_in_database(expense)
+        expense.name = '    '
+
+        self.assertRaises(EmptyExpenseNameException, self.expense_repo.update_expense, expense)
