@@ -28,14 +28,6 @@ class TestExpenseRepository(unittest.TestCase):
         inserted_expenses = get_all_expenses_from_database()
         self.assertEqual(inserted_expenses, expenses)
 
-    def test_insert_expense_with_already_assigned_name_ignoring_case_raises_exception(self):
-        expense = ExpenseGenerator.generate_one_expense()
-        expense.name = 'Compra de sillas'
-        insert_one_expense_in_database(expense)
-
-        expense.name = 'cOmPrA dE sIlLaS'
-        self.assertRaises(UniqueExpenseNameException, self.expense_repo.insert_expense, expense)
-
     def test_insert_expense_with_empty_name_raises_exception(self):
         expense = ExpenseGenerator.generate_one_expense()
         expense.name = '   '
