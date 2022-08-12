@@ -47,7 +47,19 @@ class ExpenseRepository:
         )
 
     def update_expense(self, updated_expense: Expense):
-        pass
+        old_expense = self.__get_expense_from_database(updated_expense)
+        old_expense.name = updated_expense.name
+        old_expense.description = updated_expense.description
+        old_expense.spent_money = updated_expense.spent_money
+        old_expense.date = updated_expense.date
+
+        self.__session.flush()
+        self.__session.commit()
+
+    def __get_expense_from_database(self, updated_expense: Expense) -> Expense:
+        return self.__session.scalars(
+            select(Expense).where(Expense.id == updated_expense.id)
+        ).first()
 
     def get_all_expenses(self) -> list:
         pass

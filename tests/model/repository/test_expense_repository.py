@@ -1,4 +1,5 @@
 import unittest
+from datetime import date, timedelta
 
 from model.repository.exc.expense import UniqueExpenseNameException, EmptyExpenseNameException, \
     NonNegativeExpenseMoneyException
@@ -58,3 +59,17 @@ class TestExpenseRepository(unittest.TestCase):
 
         remaining_expenses = get_all_expenses_from_database()
         self.assertEqual(remaining_expenses, [expenses[1]])
+
+    def test_update_expense(self):
+        expense = ExpenseGenerator.generate_one_expense()
+        insert_one_expense_in_database(expense)
+        updated_expense = expense
+        updated_expense.name = 'sillas compradas'
+        updated_expense.description = 'Eran para los nuevos trabajadores'
+        updated_expense.spent_money = CUPMoney('-500.00')
+        updated_expense.date = date.today() - timedelta(days=1)  # yesterday
+
+        self.expense_repo.update_expense(updated_expense)
+
+        updated_expense_in_database = get_all_expenses_from_database()[0]
+        self.assertEqual(updated_expense_in_database, updated_expense)
