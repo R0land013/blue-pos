@@ -55,3 +55,13 @@ class Sale(Base):
     price = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
     profit = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
     product = relationship('Product', backref=backref('sales', cascade='all,delete'))
+
+
+class Expenditure(Base):
+
+    __tablename__ = 'expenditure'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(length=100), nullable=False, unique=True)
+    description = Column(String(length=600), nullable=True, default='')
+    spent_money = Column(MoneyColumn(), nullable=False, default=CUPMoney('-1.00'))
+    date = Column(Date, nullable=False, default=date.today())
