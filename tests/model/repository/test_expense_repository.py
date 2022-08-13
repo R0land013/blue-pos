@@ -3,6 +3,7 @@ from datetime import date, timedelta
 
 from model.repository.exc.expense import UniqueExpenseNameException, EmptyExpenseNameException, \
     NonNegativeExpenseMoneyException, NonExistentExpenseException
+from model.repository.expense import ExpenseFilter
 from model.repository.factory import RepositoryFactory
 from model.util.monetary_types import CUPMoney
 from tests.util.general import TEST_DB_URL, delete_all_expenses_from_database, get_all_expenses_from_database, \
@@ -89,3 +90,21 @@ class TestExpenseRepository(unittest.TestCase):
         expense.spent_money = CUPMoney('0.00')
 
         self.assertRaises(NonNegativeExpenseMoneyException, self.expense_repo.update_expense, expense)
+
+    def test_get_expenses_by_filter_using_date_filtering(self):
+        expenses = ExpenseGenerator.generate_expenses_by_quantity(5)
+        exp1, exp2, exp3, exp4, exp5 = expenses
+        today = date.today()
+        exp1.date = today - timedelta(days=2)
+        exp2.date = today - timedelta(days=1)
+        exp3.date = today
+        exp4.date = today + timedelta(days=1)
+        exp5.date = today + timedelta(days=2)
+        insert_expenses_in_database(expenses)
+
+        date_filter = ExpenseFilter()
+        date_filter.minimum_date = today - timedelta(days=1)
+        date_filter.maximum_date = today + timedelta(days=1)
+        filtered_expense = self.expense_repo.get_expenses_by_filter(date_filter)
+
+        self.assertEqual(filtered_expense, [exp2, exp3, exp4])

@@ -7,6 +7,29 @@ from model.repository.exc.expense import UniqueExpenseNameException, EmptyExpens
 from model.util.monetary_types import CUPMoney
 
 
+class ExpenseFilter:
+
+    def __init__(self):
+        self.__minimum_date = None
+        self.__maximum_date = None
+
+    @property
+    def minimum_date(self):
+        return self.__minimum_date
+
+    @minimum_date.setter
+    def minimum_date(self, value):
+        self.__minimum_date = value
+
+    @property
+    def maximum_date(self):
+        return self.__maximum_date
+
+    @maximum_date.setter
+    def maximum_date(self, value):
+        self.__maximum_date = value
+
+
 class ExpenseRepository:
 
     def __init__(self, session: Session):
@@ -47,7 +70,6 @@ class ExpenseRepository:
             if an_expense_id not in found_ids:
                 raise NonExistentExpenseException(an_expense_id)
 
-
     def __execute_delete_statement(self, expenses_ids: list):
         self.__session.execute(
             delete(Expense)
@@ -75,3 +97,18 @@ class ExpenseRepository:
 
     def get_all_expenses(self) -> list:
         return self.__session.scalars(select(Expense)).all()
+
+    def get_expenses_by_filter(self, the_filter: ExpenseFilter):
+        filter_query = self.__create_filter_query(the_filter)
+        return self.__session.scalars(filter_query).all()
+
+    @staticmethod
+    def __create_filter_query(the_filter: ExpenseFilter):
+        query = select(Expense)
+
+        if the_filter.minimum_date is not None:
+            query = query.where(Expense.date >= the_filter.minimum_date)
+        if the_filter.maximum_date is not None:
+            query = query.where(Expense.date <= the_filter.maximum_date)
+
+        return query
