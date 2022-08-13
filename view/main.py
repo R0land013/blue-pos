@@ -37,6 +37,7 @@ class MainView(QFrame):
         self.clicked_on_next_frame.connect(self.__show_reports_widget)
         self.clicked_on_previous_frame.connect(self.__show_management_widget)
         self.clicked_on_about_label.connect(self.__presenter.open_about_presenter)
+        self.expenses_button.clicked.connect(self.__presenter.open_expense_management_presenter)
 
     def __show_reports_widget(self):
         self.next_frame.hide()
