@@ -74,4 +74,4 @@ class ExpenseRepository:
         ).first()
 
     def get_all_expenses(self) -> list:
-        pass
+        return self.__session.scalars(select(Expense)).all()
