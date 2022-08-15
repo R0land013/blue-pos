@@ -9,7 +9,7 @@ fake = Faker()
 
 class ExpenseGenerator:
 
-    DEFAULT_SPENT_MONEY = CUPMoney('-1.00')
+    DEFAULT_SPENT_MONEY = CUPMoney('1.00')
 
     @staticmethod
     def generate_expenses_by_quantity(quantity: int) -> list:

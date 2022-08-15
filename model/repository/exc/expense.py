@@ -19,9 +19,9 @@ class EmptyExpenseNameException(Exception):
         super().__init__('The name of an expense can not be empty or empty spaces')
 
 
-class NonNegativeExpenseMoneyException(Exception):
+class NonPositiveExpenseMoneyException(Exception):
 
-    MSG = 'Expense money must be negative. Current value: {}'
+    MSG = 'Expense money must be positive. Current value: {}'
 
     def __init__(self, money: Money):
         super().__init__(self.MSG.format(money))

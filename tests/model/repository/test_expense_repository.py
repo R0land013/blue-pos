@@ -2,7 +2,7 @@ import unittest
 from datetime import date, timedelta
 
 from model.repository.exc.expense import UniqueExpenseNameException, EmptyExpenseNameException, \
-    NonNegativeExpenseMoneyException, NonExistentExpenseException
+    NonPositiveExpenseMoneyException, NonExistentExpenseException
 from model.repository.expense import ExpenseFilter
 from model.repository.factory import RepositoryFactory
 from model.util.monetary_types import CUPMoney
@@ -35,11 +35,11 @@ class TestExpenseRepository(unittest.TestCase):
 
         self.assertRaises(EmptyExpenseNameException, self.expense_repo.insert_expense, expense)
 
-    def test_insert_expense_with_non_negative_money_raises_exception(self):
+    def test_insert_expense_with_non_positive_money_raises_exception(self):
         expense = ExpenseGenerator.generate_one_expense()
         expense.spent_money = CUPMoney('0.00')
 
-        self.assertRaises(NonNegativeExpenseMoneyException, self.expense_repo.insert_expense, expense)
+        self.assertRaises(NonPositiveExpenseMoneyException, self.expense_repo.insert_expense, expense)
 
     def test_delete_expenses(self):
         expenses = ExpenseGenerator.generate_expenses_by_quantity(3)
@@ -62,7 +62,7 @@ class TestExpenseRepository(unittest.TestCase):
         updated_expense = expense
         updated_expense.name = 'sillas compradas'
         updated_expense.description = 'Eran para los nuevos trabajadores'
-        updated_expense.spent_money = CUPMoney('-500.00')
+        updated_expense.spent_money = CUPMoney('500.00')
         updated_expense.date = date.today() - timedelta(days=1)  # yesterday
 
         self.expense_repo.update_expense(updated_expense)
@@ -84,12 +84,12 @@ class TestExpenseRepository(unittest.TestCase):
 
         self.assertRaises(EmptyExpenseNameException, self.expense_repo.update_expense, expense)
 
-    def test_update_expense_with_non_negative_money_raises_exception(self):
+    def test_update_expense_with_non_positive_money_raises_exception(self):
         expense = ExpenseGenerator.generate_one_expense()
         insert_one_expense_in_database(expense)
         expense.spent_money = CUPMoney('0.00')
 
-        self.assertRaises(NonNegativeExpenseMoneyException, self.expense_repo.update_expense, expense)
+        self.assertRaises(NonPositiveExpenseMoneyException, self.expense_repo.update_expense, expense)
 
     def test_get_expenses_by_filter_using_date_filtering(self):
         expenses = ExpenseGenerator.generate_expenses_by_quantity(5)
