@@ -1,7 +1,9 @@
 from easy_mvp.abstract_presenter import AbstractPresenter
+from easy_mvp.intent import Intent
 
 from model.entity.models import Expense
 from model.repository.factory import RepositoryFactory
+from presenter.expense_form import ExpenseFormPresenter
 from presenter.util.thread_worker import PresenterThreadWorker
 from view.expense_management import ExpenseManagementView
 
@@ -53,3 +55,9 @@ class ExpenseManagementPresenter(AbstractPresenter):
     def __set_view_available_and_show_no_message(self):
         self.get_view().disable_all_gui(False)
         self.get_view().set_status_bar_message('')
+
+    def open_expense_form_presenter_to_add_new_expense(self):
+        intent = Intent(ExpenseFormPresenter)
+        intent.use_new_window(True)
+        intent.use_modal(True)
+        self._open_other_presenter(intent)

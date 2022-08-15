@@ -79,6 +79,8 @@ class ExpenseManagementView(QFrame):
 
     def __setup_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
+        self.new_button.clicked.connect(
+            self.__presenter.open_expense_form_presenter_to_add_new_expense)
 
     def set_status_bar_message(self, message: str):
         self.state_bar_label.setText(message)
