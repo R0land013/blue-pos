@@ -24,6 +24,8 @@ class ExpenseManagementView(QFrame):
         self.__setup_table()
 
         self.__setup_gui_connections()
+        self.edit_button.setDisabled(True)
+        self.delete_button.setDisabled(True)
 
     def __set_up_tool_bar(self):
         self.set_up_tool_buttons()
@@ -81,6 +83,24 @@ class ExpenseManagementView(QFrame):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
         self.new_button.clicked.connect(
             self.__presenter.open_expense_form_presenter_to_add_new_expense)
+        self.edit_button.clicked.connect(self.__presenter.open_expense_form_presenter_to_update_expense)
+        self.expense_table.itemSelectionChanged.connect(
+            self.__disable_edit_and_delete_buttons_depending_on_row_selection)
+        self.expense_table.itemDoubleClicked.connect(
+            self.__presenter.open_expense_form_presenter_to_update_expense)
+
+    def __disable_edit_and_delete_buttons_depending_on_row_selection(self):
+        selected_row_quantity = len(self.expense_table.selectionModel().selectedRows(self.ID_COLUMN))
+
+        if selected_row_quantity == 1:
+            self.edit_button.setDisabled(False)
+            self.delete_button.setDisabled(False)
+        elif selected_row_quantity >= 1:
+            self.edit_button.setDisabled(True)
+            self.delete_button.setDisabled(False)
+        else:
+            self.edit_button.setDisabled(True)
+            self.delete_button.setDisabled(True)
 
     def set_status_bar_message(self, message: str):
         self.state_bar_label.setText(message)
@@ -108,3 +128,15 @@ class ExpenseManagementView(QFrame):
 
     def resize_table_columns_to_contents(self):
         self.expense_table.resizeColumnsToContents()
+
+    def get_selected_row_index(self) -> int:
+        return self.expense_table.currentRow()
+
+    def get_all_selected_expense_ids(self) -> list:
+        ids = []
+        model_indexes = self.expense_table.selectionModel().selectedRows(self.ID_COLUMN)
+        for a_model_index in model_indexes:
+            row = a_model_index.row()
+            expense_id = int(self.expense_table.item(row, self.ID_COLUMN).text())
+            ids.append(expense_id)
+        return ids

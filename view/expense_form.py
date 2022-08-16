@@ -37,20 +37,35 @@ class ExpenseFormView(QFrame):
     def set_status_bar_message(self, message: str):
         self.status_bar_label.setText(message)
 
+    def set_expense_id(self, id_value: int):
+        self.id_value_label.setText(str(id_value))
+
     def get_expense_name(self) -> str:
         return self.name_line_edit.text().lstrip().rstrip()
+
+    def set_expense_name(self, name: str):
+        self.name_line_edit.setText(name)
 
     def get_expense_description(self) -> str:
         return self.description_plain_text_edit.toPlainText().lstrip().rstrip()
 
+    def set_expense_description(self, description: str):
+        self.description_plain_text_edit.setPlainText(description)
+
     def get_spent_money(self) -> str:
         return self.spent_money_spin_box.cleanText().split()[0]
+
+    def set_spent_money(self, money: float):
+        self.spent_money_spin_box.setValue(money)
 
     def get_date(self) -> date:
         qdate = self.date_edit.date()
         return date(day=qdate.day(),
                     month=qdate.month(),
                     year=qdate.year())
+
+    def set_date(self, a_date: date):
+        self.date_edit.setDate(QDate(a_date.year, a_date.month, a_date.day))
 
     def disable_all_gui(self, disable: bool):
         self.main_content_frame.setDisabled(disable)

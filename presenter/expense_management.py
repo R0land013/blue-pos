@@ -2,6 +2,7 @@ from easy_mvp.abstract_presenter import AbstractPresenter
 from easy_mvp.intent import Intent
 
 from model.entity.models import Expense
+from model.repository.expense import ExpenseFilter
 from model.repository.factory import RepositoryFactory
 from presenter.expense_form import ExpenseFormPresenter
 from presenter.util.thread_worker import PresenterThreadWorker
@@ -66,8 +67,31 @@ class ExpenseManagementPresenter(AbstractPresenter):
     def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
         if result == ExpenseFormPresenter.NEW_EXPENSE_CREATED_RESULT:
             self.__add_new_expense_to_table(result_data)
+        elif result == ExpenseFormPresenter.UPDATED_EXPENSE_RESULT:
+            self.__update_expense_on_table(result_data)
 
     def __add_new_expense_to_table(self, result_data: dict):
         new_expense = result_data[ExpenseFormPresenter.NEW_EXPENSE_RESULT_DATA]
         self.__add_expense_to_table(new_expense)
+        self.get_view().resize_table_columns_to_contents()
+
+    def open_expense_form_presenter_to_update_expense(self):
+        intent = Intent(ExpenseFormPresenter)
+        expense_to_update = self.__get_selected_expense_to_update()
+        data = {ExpenseFormPresenter.EXPENSE_TO_UPDATE: expense_to_update}
+        intent.set_data(data)
+        intent.set_action(ExpenseFormPresenter.UPDATE_EXPENSE_ACTION)
+        intent.use_new_window(True)
+        intent.use_modal(True)
+        self._open_other_presenter(intent)
+
+    def __get_selected_expense_to_update(self) -> Expense:
+        the_filter = ExpenseFilter()
+        the_filter.id_list = self.get_view().get_all_selected_expense_ids()
+        return self.__expense_repo.get_expenses_by_filter(the_filter)[0]
+
+    def __update_expense_on_table(self, result_data: dict):
+        row = self.get_view().get_selected_row_index()
+        updated_expense = result_data[ExpenseFormPresenter.UPDATED_EXPENSE_RESULT_DATA]
+        self.__set_table_row_by_expense(row, updated_expense)
         self.get_view().resize_table_columns_to_contents()

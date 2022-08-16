@@ -12,6 +12,7 @@ class ExpenseFilter:
     def __init__(self):
         self.__minimum_date = None
         self.__maximum_date = None
+        self.__id_list = None
 
     @property
     def minimum_date(self):
@@ -28,6 +29,14 @@ class ExpenseFilter:
     @maximum_date.setter
     def maximum_date(self, value):
         self.__maximum_date = value
+
+    @property
+    def id_list(self):
+        return self.__id_list
+
+    @id_list.setter
+    def id_list(self, value: list):
+        self.__id_list = value
 
 
 class ExpenseRepository:
@@ -110,5 +119,8 @@ class ExpenseRepository:
             query = query.where(Expense.date >= the_filter.minimum_date)
         if the_filter.maximum_date is not None:
             query = query.where(Expense.date <= the_filter.maximum_date)
+
+        if the_filter.id_list is not None:
+            query = query.where(Expense.id.in_(the_filter.id_list))
 
         return query
