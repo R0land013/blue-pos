@@ -58,6 +58,16 @@ class ExpenseManagementPresenter(AbstractPresenter):
 
     def open_expense_form_presenter_to_add_new_expense(self):
         intent = Intent(ExpenseFormPresenter)
+        intent.set_action(ExpenseFormPresenter.CREATE_NEW_EXPENSE_ACTION)
         intent.use_new_window(True)
         intent.use_modal(True)
         self._open_other_presenter(intent)
+
+    def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
+        if result == ExpenseFormPresenter.NEW_EXPENSE_CREATED_RESULT:
+            self.__add_new_expense_to_table(result_data)
+
+    def __add_new_expense_to_table(self, result_data: dict):
+        new_expense = result_data[ExpenseFormPresenter.NEW_EXPENSE_RESULT_DATA]
+        self.__add_expense_to_table(new_expense)
+        self.get_view().resize_table_columns_to_contents()
