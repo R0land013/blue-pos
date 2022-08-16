@@ -1,5 +1,5 @@
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFrame, QToolBar, QHBoxLayout, QToolButton, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QFrame, QToolBar, QHBoxLayout, QToolButton, QTableWidget, QTableWidgetItem, QMessageBox
 from qtpy.uic import loadUi
 
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
@@ -88,6 +88,7 @@ class ExpenseManagementView(QFrame):
             self.__disable_edit_and_delete_buttons_depending_on_row_selection)
         self.expense_table.itemDoubleClicked.connect(
             self.__presenter.open_expense_form_presenter_to_update_expense)
+        self.delete_button.clicked.connect(self.__presenter.execute_thread_to_delete_selected_expenses)
 
     def __disable_edit_and_delete_buttons_depending_on_row_selection(self):
         selected_row_quantity = len(self.expense_table.selectionModel().selectedRows(self.ID_COLUMN))
@@ -140,3 +141,42 @@ class ExpenseManagementView(QFrame):
             expense_id = int(self.expense_table.item(row, self.ID_COLUMN).text())
             ids.append(expense_id)
         return ids
+
+    def delete_selected_rows_from_table(self):
+        model_indexes = self.expense_table.selectionModel().selectedRows(self.ID_COLUMN)
+        selected_row_quantity = len(model_indexes)
+
+        while selected_row_quantity != 0:
+            a_row = model_indexes[0].row()
+            self.expense_table.removeRow(a_row)
+
+            model_indexes = self.expense_table.selectionModel().selectedRows(self.ID_COLUMN)
+            selected_row_quantity = len(model_indexes)
+
+        self.expense_table.clearSelection()
+        self.__disable_edit_and_delete_buttons_depending_on_row_selection()
+
+    def ask_user_to_confirm_deleting_expenses(self) -> bool:
+        message_box = self.__construct_message_box()
+        pressed_button = message_box.exec()
+        return pressed_button == QMessageBox.StandardButton.Ok
+
+    def __construct_message_box(self) -> QMessageBox:
+        quantity = self.__get_selected_expenses_quantity()
+        expense_word = self.__get_singular_or_plural_expense_word()
+
+        message_box = QMessageBox()
+        message_box.setIcon(QMessageBox.Icon.Question)
+        message_box.setWindowTitle('Blue POS - Eliminar {}'.format(expense_word))
+        message_box.setStandardButtons(QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
+        message_box.setText('¿Seguro que desea eliminar {} {}?'.format(quantity, expense_word))
+        return message_box
+
+    def __get_selected_expenses_quantity(self) -> int:
+        return len(self.expense_table.selectionModel().selectedRows(self.ID_COLUMN))
+
+    def __get_singular_or_plural_expense_word(self):
+        expense_selected_quantity = self.__get_selected_expenses_quantity()
+        if expense_selected_quantity == 1:
+            return 'gasto'
+        return 'gastos'

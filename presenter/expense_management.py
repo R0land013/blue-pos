@@ -95,3 +95,20 @@ class ExpenseManagementPresenter(AbstractPresenter):
         updated_expense = result_data[ExpenseFormPresenter.UPDATED_EXPENSE_RESULT_DATA]
         self.__set_table_row_by_expense(row, updated_expense)
         self.get_view().resize_table_columns_to_contents()
+
+    def execute_thread_to_delete_selected_expenses(self):
+        if self.get_view().ask_user_to_confirm_deleting_expenses():
+            self.thread = PresenterThreadWorker(self.__delete_selected_expenses)
+
+            self.thread.when_started.connect(lambda: self.get_view().disable_all_gui(True))
+            self.thread.when_started.connect(lambda: self.get_view().set_status_bar_message('Procesando...'))
+
+            self.thread.when_finished.connect(lambda: self.get_view().delete_selected_rows_from_table())
+            self.thread.when_finished.connect(lambda: self.get_view().disable_all_gui(False))
+            self.thread.when_finished.connect(lambda: self.get_view().set_status_bar_message(''))
+
+            self.thread.start()
+
+    def __delete_selected_expenses(self, thread: PresenterThreadWorker):
+        selected_ids = self.get_view().get_all_selected_expense_ids()
+        self.__expense_repo.delete_expenses(selected_ids)
