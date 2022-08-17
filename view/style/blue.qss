@@ -99,7 +99,8 @@ QDateEdit::drop-down:pressed, QComboBox::drop-down:pressed{
     image: url("./view/ui/images/pressed_down_arrow.png");
 }
 
-QSpinBox:disabled, QDoubleSpinBox:disabled, QDateEdit:disabled, QComboBox:disabled{
+QSpinBox:disabled, QDoubleSpinBox:disabled, QDateEdit:disabled, QComboBox:disabled,
+QLineEdit:disabled, QPlainTextEdit:disabled{
     background-color: #908C9E;
     border: 2px solid #908C9E;
     color: white;
