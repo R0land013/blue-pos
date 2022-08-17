@@ -109,7 +109,7 @@ class ExpenseFormPresenter(AbstractPresenter):
             self.__expense_repo.update_expense(self.__constructed_expense)
             thread.finished_without_error.emit()
         except EmptyExpenseNameException as e:
-            thread.error_found.emit()
+            thread.error_found.emit(e)
 
     def __close_this_presenter_and_notify_expense_was_updated(self):
         result_data = {self.UPDATED_EXPENSE_RESULT_DATA: self.__constructed_expense}

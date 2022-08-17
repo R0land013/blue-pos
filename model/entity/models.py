@@ -72,7 +72,7 @@ class Expense(Base):
 
     __tablename__ = 'expenses'
     id = Column(Integer, primary_key=True)
-    name = Column(String(length=100), nullable=False, unique=True)
+    name = Column(String(length=100), nullable=False)
     description = Column(String(length=600), nullable=True, default='')
     spent_money = Column(MoneyColumn(), nullable=False, default=CUPMoney('-1.00'))
     date = Column(Date, nullable=False, default=date.today())
