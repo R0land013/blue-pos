@@ -98,6 +98,7 @@ class ExpenseManagementPresenter(AbstractPresenter):
 
     def execute_thread_to_delete_selected_expenses(self):
         if self.get_view().ask_user_to_confirm_deleting_expenses():
+            self.__selected_ids = self.get_view().get_all_selected_expense_ids()
             self.thread = PresenterThreadWorker(self.__delete_selected_expenses)
 
             self.thread.when_started.connect(lambda: self.get_view().disable_all_gui(True))
@@ -110,5 +111,4 @@ class ExpenseManagementPresenter(AbstractPresenter):
             self.thread.start()
 
     def __delete_selected_expenses(self, thread: PresenterThreadWorker):
-        selected_ids = self.get_view().get_all_selected_expense_ids()
-        self.__expense_repo.delete_expenses(selected_ids)
+        self.__expense_repo.delete_expenses(self.__selected_ids)
