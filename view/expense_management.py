@@ -89,6 +89,7 @@ class ExpenseManagementView(QFrame):
         self.expense_table.itemDoubleClicked.connect(
             self.__presenter.open_expense_form_presenter_to_update_expense)
         self.delete_button.clicked.connect(self.__presenter.execute_thread_to_delete_selected_expenses)
+        self.filter_button.clicked.connect(self.__presenter.open_expense_filter_presenter)
 
     def __disable_edit_and_delete_buttons_depending_on_row_selection(self):
         selected_row_quantity = len(self.expense_table.selectionModel().selectedRows(self.ID_COLUMN))

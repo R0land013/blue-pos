@@ -4,6 +4,7 @@ from easy_mvp.intent import Intent
 from model.entity.models import Expense
 from model.repository.expense import ExpenseFilter
 from model.repository.factory import RepositoryFactory
+from presenter.expense_filter import ExpenseFilterPresenter
 from presenter.expense_form import ExpenseFormPresenter
 from presenter.util.thread_worker import PresenterThreadWorker
 from view.expense_management import ExpenseManagementView
@@ -112,3 +113,9 @@ class ExpenseManagementPresenter(AbstractPresenter):
 
     def __delete_selected_expenses(self, thread: PresenterThreadWorker):
         self.__expense_repo.delete_expenses(self.__selected_ids)
+
+    def open_expense_filter_presenter(self):
+        intent = Intent(ExpenseFilterPresenter)
+        intent.use_new_window(True)
+        intent.use_modal(True)
+        self._open_other_presenter(intent)
