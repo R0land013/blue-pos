@@ -1,5 +1,5 @@
 from money import Money
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, or_
 from sqlalchemy.orm import Session
 from model.entity.models import Expense
 from model.repository.exc.expense import UniqueExpenseNameException, EmptyExpenseNameException, \
@@ -13,6 +13,7 @@ class ExpenseFilter:
         self.__minimum_date = None
         self.__maximum_date = None
         self.__id_list = None
+        self.__phrase = None
 
     @property
     def minimum_date(self):
@@ -37,6 +38,14 @@ class ExpenseFilter:
     @id_list.setter
     def id_list(self, value: list):
         self.__id_list = value
+
+    @property
+    def phrase(self):
+        return self.__phrase
+
+    @phrase.setter
+    def phrase(self, value):
+        self.__phrase = value
 
 
 class ExpenseRepository:
@@ -122,5 +131,12 @@ class ExpenseRepository:
 
         if the_filter.id_list is not None:
             query = query.where(Expense.id.in_(the_filter.id_list))
+
+        if the_filter.phrase is not None:
+            query = query.filter(
+                or_(
+                    Expense.name.ilike('%{}%'.format(the_filter.phrase)),
+                    Expense.description.ilike('%{}%'.format(the_filter.phrase))
+                ))
 
         return query

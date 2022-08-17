@@ -108,3 +108,37 @@ class TestExpenseRepository(unittest.TestCase):
         filtered_expense = self.expense_repo.get_expenses_by_filter(date_filter)
 
         self.assertEqual(filtered_expense, [exp2, exp3, exp4])
+
+    def test_get_expense_by_filter_find_expense_with_phrase_in_name(self):
+        expenses = ExpenseGenerator.generate_expenses_by_quantity(3)
+        exp1, exp2, exp3 = expenses
+        exp1.name = 'Las sillas blancas'
+        exp1.description = ''
+        exp2.name = 'Los bombillos ahorradores'
+        exp2.description = ''
+        exp3.name = 'La blanca pintura'
+        exp3.description = ''
+        insert_expenses_in_database(expenses)
+
+        phrase_filter = ExpenseFilter()
+        phrase_filter.phrase = 'blanca'
+        filtered_expenses = self.expense_repo.get_expenses_by_filter(phrase_filter)
+
+        self.assertEqual(filtered_expenses, [exp1, exp3])
+
+    def test_get_expenses_by_filter_find_expense_with_phrase_in_description(self):
+        expenses = ExpenseGenerator.generate_expenses_by_quantity(3)
+        exp1, exp2, exp3 = expenses
+        exp1.name = 'AA'
+        exp1.description = 'Los bombillos eran ahorradores'
+        exp2.name = 'BB'
+        exp2.description = 'El salario que estaba atrasado'
+        exp3.name = 'CC'
+        exp3.description = 'Pagado el útimo bombillo'
+        insert_expenses_in_database(expenses)
+
+        phrase_filter = ExpenseFilter()
+        phrase_filter.phrase = 'bombillo'
+        filtered_expenses = self.expense_repo.get_expenses_by_filter(phrase_filter)
+
+        self.assertEqual(filtered_expenses, [exp1, exp3])
