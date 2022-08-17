@@ -1,3 +1,4 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFrame, QToolBar, QHBoxLayout, QToolButton, QTableWidget, QTableWidgetItem, QMessageBox
 from qtpy.uic import loadUi
@@ -22,10 +23,10 @@ class ExpenseManagementView(QFrame):
         loadUi('./view/ui/expense_management.ui', self)
         self.__set_up_tool_bar()
         self.__setup_table()
+        self.__sorting_column = self.DATE_COLUMN
+        self.__sorting_order = Qt.DescendingOrder
 
         self.__setup_gui_connections()
-        self.edit_button.setDisabled(True)
-        self.delete_button.setDisabled(True)
 
     def __set_up_tool_bar(self):
         self.set_up_tool_buttons()
@@ -54,10 +55,12 @@ class ExpenseManagementView(QFrame):
         self.edit_button = QToolButton()
         self.edit_button.setIcon(QIcon('./view/ui/images/edit.png'))
         self.edit_button.setToolTip('Editar gasto')
+        self.edit_button.setDisabled(True)
 
         self.delete_button = QToolButton()
         self.delete_button.setIcon(QIcon('./view/ui/images/delete.png'))
         self.delete_button.setToolTip('Eliminar gasto')
+        self.delete_button.setDisabled(True)
 
         self.filter_button = QToolButton()
         self.filter_button.setIcon(QIcon('./view/ui/images/filter.png'))
@@ -79,6 +82,7 @@ class ExpenseManagementView(QFrame):
         self.expense_table.resizeColumnsToContents()
         self.expense_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.expense_table.setSelectionMode(QTableWidget.SelectionMode.ExtendedSelection)
+        self.expense_table.horizontalHeader().setSectionsClickable(True)
 
     def __setup_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
@@ -93,6 +97,8 @@ class ExpenseManagementView(QFrame):
         self.filter_button.clicked.connect(self.__presenter.open_expense_filter_presenter)
         self.delete_filter_button.clicked.connect(
             self.__presenter.execute_thread_to_delete_applied_filter)
+        self.expense_table.horizontalHeader().sectionClicked.connect(self.__change_sorting_configuration)
+        self.expense_table.horizontalHeader().sectionClicked.connect(self.sort_table_rows)
 
     def __disable_edit_and_delete_buttons_depending_on_row_selection(self):
         selected_row_quantity = len(self.expense_table.selectionModel().selectedRows(self.ID_COLUMN))
@@ -106,6 +112,20 @@ class ExpenseManagementView(QFrame):
         else:
             self.edit_button.setDisabled(True)
             self.delete_button.setDisabled(True)
+
+    def __change_sorting_configuration(self, clicked_header_section: int):
+        if clicked_header_section == self.__sorting_column:
+            self.__sorting_order = (Qt.AscendingOrder if self.__sorting_order == Qt.DescendingOrder
+                                    else Qt.DescendingOrder)
+        else:
+            self.__sorting_column = clicked_header_section
+            self.__sorting_order = Qt.AscendingOrder
+
+    def sort_table_rows(self):
+        horizontal_header = self.expense_table.horizontalHeader()
+        horizontal_header.setSortIndicator(self.__sorting_column, self.__sorting_order)
+        horizontal_header.setSortIndicatorShown(True)
+        self.expense_table.sortItems(self.__sorting_column, self.__sorting_order)
 
     def set_status_bar_message(self, message: str):
         self.state_bar_label.setText(message)

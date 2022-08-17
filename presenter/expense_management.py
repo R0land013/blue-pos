@@ -26,9 +26,13 @@ class ExpenseManagementPresenter(AbstractPresenter):
 
     def __execute_thread_to_fill_table(self):
         self.thread = PresenterThreadWorker(self.__load_expenses)
+
         self.thread.when_started.connect(self.__disable_view_and_show_loading_message)
+
         self.thread.when_finished.connect(self.__fill_table)
+        self.thread.when_finished.connect(self.get_view().sort_table_rows)
         self.thread.when_finished.connect(self.__set_view_available_and_show_no_message)
+
         self.thread.start()
 
     def __load_expenses(self, thread: PresenterThreadWorker):
@@ -79,6 +83,7 @@ class ExpenseManagementPresenter(AbstractPresenter):
     def __add_new_expense_to_table(self, result_data: dict):
         new_expense = result_data[ExpenseFormPresenter.NEW_EXPENSE_RESULT_DATA]
         self.__add_expense_to_table(new_expense)
+        self.get_view().sort_table_rows()
         self.get_view().resize_table_columns_to_contents()
 
     def open_expense_form_presenter_to_update_expense(self):
@@ -100,6 +105,7 @@ class ExpenseManagementPresenter(AbstractPresenter):
         row = self.get_view().get_selected_row_index()
         updated_expense = result_data[ExpenseFormPresenter.UPDATED_EXPENSE_RESULT_DATA]
         self.__set_table_row_by_expense(row, updated_expense)
+        self.get_view().sort_table_rows()
         self.get_view().resize_table_columns_to_contents()
 
     def execute_thread_to_delete_selected_expenses(self):
@@ -136,6 +142,7 @@ class ExpenseManagementPresenter(AbstractPresenter):
 
         self.thread.when_finished.connect(self.get_view().clean_table)
         self.thread.when_finished.connect(self.__fill_table)
+        self.thread.when_finished.connect(self.get_view().sort_table_rows)
         self.thread.when_finished.connect(lambda: self.get_view().set_applied_filter_message(True))
         self.thread.when_finished.connect(lambda: self.get_view().set_status_bar_message(''))
         self.thread.when_finished.connect(lambda: self.get_view().disable_all_gui(False))
@@ -155,6 +162,7 @@ class ExpenseManagementPresenter(AbstractPresenter):
 
         self.thread.when_finished.connect(self.get_view().clean_table)
         self.thread.when_finished.connect(self.__fill_table)
+        self.thread.when_finished.connect(self.get_view().sort_table_rows)
         self.thread.when_finished.connect(lambda: self.get_view().set_applied_filter_message(False))
         self.thread.when_finished.connect(lambda: self.get_view().set_status_bar_message(''))
         self.thread.when_finished.connect(lambda: self.get_view().disable_all_gui(False))
