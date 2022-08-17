@@ -38,7 +38,11 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="phrase_line_edit"/>
+       <widget class="QLineEdit" name="phrase_line_edit">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item row="2" column="0">
        <widget class="QCheckBox" name="final_date_check_box">
@@ -49,6 +53,9 @@
       </item>
       <item row="1" column="1">
        <widget class="QDateEdit" name="initial_date_edit">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="calendarPopup">
          <bool>true</bool>
         </property>
@@ -56,6 +63,9 @@
       </item>
       <item row="2" column="1">
        <widget class="QDateEdit" name="final_date_edit">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="calendarPopup">
          <bool>true</bool>
         </property>

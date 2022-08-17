@@ -16,6 +16,7 @@ class ExpenseManagementPresenter(AbstractPresenter):
         self._set_view(ExpenseManagementView(self))
         self.__expense_repo = RepositoryFactory.get_expense_repository()
         self.__expenses = []
+        self.__expense_filter = None
 
     def close_presenter(self):
         self._close_this_presenter()
@@ -68,8 +69,12 @@ class ExpenseManagementPresenter(AbstractPresenter):
     def on_view_discovered_with_result(self, action: str, result_data: dict, result: str):
         if result == ExpenseFormPresenter.NEW_EXPENSE_CREATED_RESULT:
             self.__add_new_expense_to_table(result_data)
+
         elif result == ExpenseFormPresenter.UPDATED_EXPENSE_RESULT:
             self.__update_expense_on_table(result_data)
+
+        elif result == ExpenseFilterPresenter.CREATED_EXPENSE_FILTER_RESULT:
+            self.__execute_thread_to_filter_expenses(result_data)
 
     def __add_new_expense_to_table(self, result_data: dict):
         new_expense = result_data[ExpenseFormPresenter.NEW_EXPENSE_RESULT_DATA]
@@ -116,6 +121,44 @@ class ExpenseManagementPresenter(AbstractPresenter):
 
     def open_expense_filter_presenter(self):
         intent = Intent(ExpenseFilterPresenter)
+        data = {ExpenseFilterPresenter.EXPENSE_FILTER_DATA: self.__expense_filter}
+        intent.set_data(data)
         intent.use_new_window(True)
         intent.use_modal(True)
         self._open_other_presenter(intent)
+
+    def __execute_thread_to_filter_expenses(self, result_data: dict):
+        self.__expense_filter = result_data[ExpenseFilterPresenter.CREATED_EXPENSE_FILTER_DATA]
+        self.thread = PresenterThreadWorker(self.__filter_expenses)
+
+        self.thread.when_started.connect(lambda: self.get_view().set_status_bar_message('Filtrando...'))
+        self.thread.when_started.connect(lambda: self.get_view().disable_all_gui(True))
+
+        self.thread.when_finished.connect(self.get_view().clean_table)
+        self.thread.when_finished.connect(self.__fill_table)
+        self.thread.when_finished.connect(lambda: self.get_view().set_applied_filter_message(True))
+        self.thread.when_finished.connect(lambda: self.get_view().set_status_bar_message(''))
+        self.thread.when_finished.connect(lambda: self.get_view().disable_all_gui(False))
+        self.thread.when_finished.connect(lambda: self.get_view().set_delete_filter_disabled(False))
+
+        self.thread.start()
+
+    def __filter_expenses(self, thread: PresenterThreadWorker):
+        self.__expenses = self.__expense_repo.get_expenses_by_filter(self.__expense_filter)
+
+    def execute_thread_to_delete_applied_filter(self):
+        self.__expense_filter = None
+        self.thread = PresenterThreadWorker(self.__load_expenses)
+
+        self.thread.when_started.connect(lambda: self.get_view().set_status_bar_message('Cargando Datos'))
+        self.thread.when_started.connect(lambda: self.get_view().disable_all_gui(True))
+
+        self.thread.when_finished.connect(self.get_view().clean_table)
+        self.thread.when_finished.connect(self.__fill_table)
+        self.thread.when_finished.connect(lambda: self.get_view().set_applied_filter_message(False))
+        self.thread.when_finished.connect(lambda: self.get_view().set_status_bar_message(''))
+        self.thread.when_finished.connect(lambda: self.get_view().disable_all_gui(False))
+        self.thread.when_finished.connect(lambda: self.get_view().set_delete_filter_disabled(True))
+
+        self.thread.start()
+

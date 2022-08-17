@@ -66,6 +66,7 @@ class ExpenseManagementView(QFrame):
         self.delete_filter_button = QToolButton()
         self.delete_filter_button.setIcon(QIcon('./view/ui/images/delete_filter.png'))
         self.delete_filter_button.setToolTip('Quitar filtro')
+        self.delete_filter_button.setDisabled(True)
 
     def __setup_table(self):
         self.expense_table.setColumnCount(4)
@@ -90,6 +91,8 @@ class ExpenseManagementView(QFrame):
             self.__presenter.open_expense_form_presenter_to_update_expense)
         self.delete_button.clicked.connect(self.__presenter.execute_thread_to_delete_selected_expenses)
         self.filter_button.clicked.connect(self.__presenter.open_expense_filter_presenter)
+        self.delete_filter_button.clicked.connect(
+            self.__presenter.execute_thread_to_delete_applied_filter)
 
     def __disable_edit_and_delete_buttons_depending_on_row_selection(self):
         selected_row_quantity = len(self.expense_table.selectionModel().selectedRows(self.ID_COLUMN))
@@ -181,3 +184,16 @@ class ExpenseManagementView(QFrame):
         if expense_selected_quantity == 1:
             return 'gasto'
         return 'gastos'
+
+    def set_applied_filter_message(self, applied: bool):
+        if applied:
+            self.filter_state_label.setText('Filtro aplicado')
+        else:
+            self.filter_state_label.setText('Sin filtros')
+
+    def set_delete_filter_disabled(self, disabled: bool):
+        self.delete_filter_button.setDisabled(disabled)
+
+    def clean_table(self):
+        while self.expense_table.rowCount() > 0:
+            self.expense_table.removeRow(0)
