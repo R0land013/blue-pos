@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from model.entity.models import Product, Sale
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, cast, Float
 
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
     InvalidProductQuantityException, NoPositivePriceException, EmptyProductNameException
@@ -49,7 +49,6 @@ class ProductFilter:
 
     @less_than_profit.setter
     def less_than_profit(self, value: CUPMoney):
-        self.__check_profit_correctness(value)
         self.__less_than_profit = value
 
     @property
@@ -58,7 +57,6 @@ class ProductFilter:
 
     @more_than_profit.setter
     def more_than_profit(self, value: CUPMoney):
-        self.__check_profit_correctness(value)
         self.__more_than_profit = value
 
     @property
@@ -192,10 +190,10 @@ class ProductRepository(RepositoryObserver):
         return self.__session.scalars(select(Product)).all()
 
     def get_products_by_filter(self, the_filter: ProductFilter) -> list:
-        filter_query = self.__create_query(the_filter)
+        filter_query = self.__create_filter_query(the_filter)
         return self.__session.scalars(filter_query).all()
 
-    def __create_query(self, the_filter: ProductFilter):
+    def __create_filter_query(self, the_filter: ProductFilter):
         query = select(Product)
         if the_filter.id is not None:
             query = query.where(Product.id == the_filter.id)
@@ -212,9 +210,11 @@ class ProductRepository(RepositoryObserver):
             query = query.where(Product.price <= the_filter.less_than_price)
 
         if the_filter.more_than_profit is not None:
-            query = query.where(Product.profit >= the_filter.more_than_profit)
+            more_than_profit = float(the_filter.more_than_profit.amount)
+            query = query.where(cast(Product.price, Float) - cast(Product.cost, Float) >= more_than_profit)
         if the_filter.less_than_profit is not None:
-            query = query.where(Product.profit <= the_filter.less_than_profit)
+            less_than_profit = float(the_filter.less_than_profit.amount)
+            query = query.where(cast(Product.price, Float) - cast(Product.cost, Float) <= less_than_profit)
 
         if the_filter.more_than_quantity is not None:
             query = query.where(Product.quantity >= the_filter.more_than_quantity)

@@ -1,6 +1,5 @@
-from sqlalchemy import TypeDecorator, Text, type_coerce, Numeric, NUMERIC
+from sqlalchemy import TypeDecorator, Text
 from money import Money
-from sqlalchemy.sql import operators
 
 
 class MoneyColumn(TypeDecorator):
@@ -8,11 +7,6 @@ class MoneyColumn(TypeDecorator):
     impl = Text
 
     cache_ok = True
-
-    # comparator_factory = MoneyComparator
-
-    # def coerce_compared_value(self, op, value):
-    #     return type_coerce(value, NUMERIC)
 
     def process_bind_param(self, money: Money, dialect):
         return '{}'.format(money.amount)

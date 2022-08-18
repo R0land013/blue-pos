@@ -267,18 +267,18 @@ class TestProductRepository(unittest.TestCase):
     def test_get_products_by_filter_using_profit_range(self):
         products = ProductGenerator.generate_products_by_quantity(4)
         product_0, product_1, product_2, product_3 = products
-        product_0.profit = CUPMoney('13')
-        product_1.profit = CUPMoney('17')
-        product_2.profit = CUPMoney('18')
-        product_3.profit = CUPMoney('23')
+        product_0.price, product_0.cost = CUPMoney('20'), CUPMoney('13')  # profit 7
+        product_1.price, product_1.cost = CUPMoney('20'), CUPMoney('12')  # profit 8
+        product_2.price, product_2.cost = CUPMoney('20'), CUPMoney('11')  # profit 9
+        product_3.price, product_3.cost = CUPMoney('20'), CUPMoney('10')  # profit 10
         products = insert_products_in_database_and_return_them(products)
 
         the_filter = ProductFilter()
-        the_filter.more_than_profit = CUPMoney('13')
-        the_filter.less_than_profit = CUPMoney('18')
+        the_filter.more_than_profit = CUPMoney('7')
+        the_filter.less_than_profit = CUPMoney('9')
         filtered_products = self.product_repository.get_products_by_filter(the_filter)
 
-        self.assertEqual([product_0, product_1, product_2], filtered_products)
+        self.assertEqual(filtered_products, [product_0, product_1, product_2])
 
     def test_get_products_by_filter_using_quantity_range(self):
         products = ProductGenerator.generate_products_by_quantity(4)
