@@ -57,19 +57,3 @@ class NegativeProfitException(Exception):
 
     def __init__(self):
         super().__init__(NegativeProfitException.MSG)
-
-
-class TooMuchProfitException(Exception):
-
-    MSG = 'The profit cannot be higher than price. {} > {}'
-
-    def __init__(self, price: Money, profit: Money):
-        super().__init__(self.MSG.format(str(profit), str(price)))
-        self.__price = price
-        self.__profit = profit
-
-    def get_price(self) -> Money:
-        return self.__price
-
-    def get_profit(self) -> Money:
-        return self.__profit

@@ -5,8 +5,7 @@ from sqlalchemy import insert, update, select, delete, cast, Numeric, type_coerc
 from model.entity.models import Product, Sale
 from sqlalchemy.orm import Session
 
-from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeProfitException, \
-    TooMuchProfitException
+from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeProfitException
 from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException, \
     ChangeProductIdInSaleException
 from model.repository.observer import RepositoryObserver
