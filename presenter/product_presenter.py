@@ -1,7 +1,7 @@
 from easy_mvp.abstract_presenter import AbstractPresenter
 
 from model.entity.models import Product
-from model.repository.exc.product import UniqueProductNameException
+from model.repository.exc.product import UniqueProductNameException, EmptyProductNameException
 from model.repository.factory import RepositoryFactory
 from model.repository.product import ProductFilter
 from model.util.monetary_types import CUPMoney
@@ -97,7 +97,7 @@ class ProductPresenter(AbstractPresenter):
             self.__product_repo.insert_product(self.__helper_product)
             self.new_product = self.__helper_product
             thread.finished_without_error.emit()
-        except UniqueProductNameException as e:
+        except Exception as e:
             thread.error_found.emit(e)
 
     def __disable_gui_and_show_operation_message(self):
@@ -106,10 +106,13 @@ class ProductPresenter(AbstractPresenter):
         self.get_view().set_state_bar_message('Procesando...')
 
     def __handle_errors_on_product_fields(self, error: Exception):
+        self.get_view().set_state_bar_invisible(True)
+        self.get_view().set_disabled_view_except_state_bar(False)
+
         if isinstance(error, UniqueProductNameException):
-            self.get_view().set_state_bar_invisible(True)
             self.get_view().show_error_message('Ya existe un producto con el nombre \'{}\'.'.format(error.get_product_name()))
-            self.get_view().set_disabled_view_except_state_bar(False)
+        elif isinstance(error, EmptyProductNameException):
+            self.get_view().show_error_message('El nombre no puede estar vacío.')
 
     def __close_presenter_with_new_product_result(self):
         self._close_this_presenter_with_result({
