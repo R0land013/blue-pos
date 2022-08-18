@@ -49,3 +49,15 @@ class NoPositivePriceException(Exception):
 
     def __init__(self):
         super().__init__(NoPositivePriceException.MSG)
+
+
+class NegativeCostException(Exception):
+
+    MSG = 'The cost can not be negative. Current value: {}'
+
+    def __init__(self, negative_cost: Money):
+        super().__init__(self.MSG.format(negative_cost))
+        self.__negative_cost = negative_cost
+
+    def get_negative_cost(self) -> Money:
+        return self.__negative_cost

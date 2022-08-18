@@ -1,6 +1,6 @@
 import unittest
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
-    InvalidProductQuantityException, NoPositivePriceException, EmptyProductNameException
+    InvalidProductQuantityException, NoPositivePriceException, EmptyProductNameException, NegativeCostException
 from model.repository.factory import RepositoryFactory
 from model.repository.product import ProductFilter
 from model.util.monetary_types import CUPMoney
@@ -70,6 +70,12 @@ class TestProductRepository(unittest.TestCase):
 
         self.assertRaises(NoPositivePriceException, self.product_repository.insert_product,
                           product)
+
+    def test_insert_product_with_negative_cost_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        product.cost = CUPMoney('-1.00')
+
+        self.assertRaises(NegativeCostException, self.product_repository.insert_product, product)
 
     def test_product_is_deleted_successfully(self):
         product = ProductGenerator.generate_one_product()
@@ -194,6 +200,13 @@ class TestProductRepository(unittest.TestCase):
 
         self.assertRaises(NoPositivePriceException, self.product_repository.update_product,
                           product)
+
+    def test_product_updated_with_negative_cost_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        insert_product_and_return_it(product)
+        product.cost = CUPMoney('-1.00')
+
+        self.assertRaises(NegativeCostException, self.product_repository.update_product, product)
 
     def test_get_all_products_returns_empty_list(self):
         empty_list = []

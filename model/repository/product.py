@@ -3,7 +3,7 @@ from model.entity.models import Product, Sale
 from sqlalchemy import select, delete, cast, Float
 
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
-    InvalidProductQuantityException, NoPositivePriceException, EmptyProductNameException
+    InvalidProductQuantityException, NoPositivePriceException, EmptyProductNameException, NegativeCostException
 from model.repository.observer import RepositoryObserver
 from model.util.monetary_types import CUPMoney
 
@@ -92,6 +92,7 @@ class ProductRepository(RepositoryObserver):
         self.__check_name_is_not_empty_or_whitespaces(product.name)
         self.__check_correctness_of_quantity(product)
         self.__check_correctness_of_price(product)
+        self.__check_correctness_of_cost(product)
         self.__check_name_is_not_used(product)
 
         self.__session.add(product)
@@ -103,13 +104,20 @@ class ProductRepository(RepositoryObserver):
         if name.isspace() or name == '':
             raise EmptyProductNameException()
 
-    def __check_correctness_of_quantity(self, product: Product):
+    @staticmethod
+    def __check_correctness_of_quantity(product: Product):
         if product.quantity < 0:
             raise InvalidProductQuantityException()
 
-    def __check_correctness_of_price(self, product: Product):
+    @staticmethod
+    def __check_correctness_of_price(product: Product):
         if product.price <= CUPMoney('0.00'):
             raise NoPositivePriceException()
+
+    @staticmethod
+    def __check_correctness_of_cost(product: Product):
+        if product.cost < CUPMoney('0.00'):
+            raise NegativeCostException(product.cost)
 
     def __check_name_is_not_used(self, product: Product):
         found_product = self.__find_product_by_name(product.name)
@@ -168,6 +176,7 @@ class ProductRepository(RepositoryObserver):
         self.__check_name_is_not_empty_or_whitespaces(new.name)
         self.__check_correctness_of_quantity(new)
         self.__check_correctness_of_price(new)
+        self.__check_correctness_of_cost(new)
         old = self.__check_product_exists(new)
         self.__check_name_can_be_used(old, new)
 
