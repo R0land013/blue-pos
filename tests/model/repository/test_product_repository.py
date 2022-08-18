@@ -129,7 +129,7 @@ class TestProductRepository(unittest.TestCase):
         new_product = ProductGenerator.generate_one_product()
         new_product.id = old_product.id
         new_product.price = CUPMoney('55.00')
-        new_product.profit = CUPMoney('45.00')
+        new_product.cost = CUPMoney('20.00')
         new_product.quantity = 13
 
         self.product_repository.update_product(new_product)

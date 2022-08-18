@@ -186,7 +186,7 @@ class ProductRepository(RepositoryObserver):
         old.name = new.name
         old.description = new.description
         old.price = new.price
-        old.profit = new.profit
+        old.cost = new.cost
         old.quantity = new.quantity
 
         self.__session.flush()

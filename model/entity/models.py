@@ -15,7 +15,7 @@ class Product(Base):
     def __repr__(self):
         return '[id: {}, name: "{}", description: "{}", price: {}, cost: {},' \
                'profit: {}, quantity: {}]'\
-            .format(self.id, self.name,self.description, self.price, self.cost, self.profit, self.quantity)
+            .format(self.id, self.name, self.description, self.price, self.cost, self.profit, self.quantity)
 
     def __str__(self):
         return self.__repr__()
@@ -35,6 +35,8 @@ class Product(Base):
 
     @property
     def profit(self):
+        if self.price is None or self.cost is None:
+            return None
         return self.price - self.cost
 
 
