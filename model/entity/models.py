@@ -13,16 +13,16 @@ Base = declarative_base()
 class Product(Base):
 
     def __repr__(self):
-        return '[id: {}, name: "{}", description: "{}", price: {}, profit: {}, ' \
-               'quantity: {}]'.format(self.id, self.name, self.description, self.price,
-                                      self.profit, self.quantity)
+        return '[id: {}, name: "{}", description: "{}", price: {}, cost: {},' \
+               'profit: {}, quantity: {}]'\
+            .format(self.id, self.name,self.description, self.price, self.cost, self.profit, self.quantity)
 
     def __str__(self):
         return self.__repr__()
 
     def __eq__(self, other):
         return (self.id == other.id and self.name == other.name and self.description == other.description
-                and self.price == other.price and self.profit == other.profit
+                and self.price == other.price and self.cost == other.cost and self.profit == other.profit
                 and self.quantity == other.quantity)
 
     __tablename__ = 'products'
@@ -30,8 +30,12 @@ class Product(Base):
     name = Column(String(length=80), nullable=False, unique=True)
     description = Column(String(length=300), nullable=True, default='')
     price = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
-    profit = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
+    cost = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
     quantity = Column(Integer, nullable=False, default=0)
+
+    @property
+    def profit(self):
+        return self.price - self.cost
 
 
 class Sale(Base):
@@ -76,3 +80,4 @@ class Expense(Base):
     description = Column(String(length=600), nullable=True, default='')
     spent_money = Column(MoneyColumn(), nullable=False, default=CUPMoney('-1.00'))
     date = Column(Date, nullable=False, default=date.today())
+
