@@ -3,7 +3,7 @@ from model.entity.models import Product, Sale
 from sqlalchemy import select, delete
 
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
-    InvalidProductQuantityException, NoPositivePriceException, NegativeProfitException, EmptyProductNameException
+    InvalidProductQuantityException, NoPositivePriceException, EmptyProductNameException
 from model.repository.observer import RepositoryObserver
 from model.util.monetary_types import CUPMoney
 
@@ -52,10 +52,6 @@ class ProductFilter:
         self.__check_profit_correctness(value)
         self.__less_than_profit = value
 
-    def __check_profit_correctness(self, value: CUPMoney):
-        if value is not None and value < CUPMoney('0'):
-            raise NegativeProfitException()
-
     @property
     def more_than_profit(self):
         return self.__more_than_profit
@@ -98,7 +94,6 @@ class ProductRepository(RepositoryObserver):
         self.__check_name_is_not_empty_or_whitespaces(product.name)
         self.__check_correctness_of_quantity(product)
         self.__check_correctness_of_price(product)
-        self.__check_correctness_of_profit(product)
         self.__check_name_is_not_used(product)
 
         self.__session.add(product)
@@ -117,10 +112,6 @@ class ProductRepository(RepositoryObserver):
     def __check_correctness_of_price(self, product: Product):
         if product.price <= CUPMoney('0.00'):
             raise NoPositivePriceException()
-
-    def __check_correctness_of_profit(self, product: Product):
-        if product.profit < CUPMoney('0.00'):
-            raise NegativeProfitException()
 
     def __check_name_is_not_used(self, product: Product):
         found_product = self.__find_product_by_name(product.name)
@@ -179,7 +170,6 @@ class ProductRepository(RepositoryObserver):
         self.__check_name_is_not_empty_or_whitespaces(new.name)
         self.__check_correctness_of_quantity(new)
         self.__check_correctness_of_price(new)
-        self.__check_correctness_of_profit(new)
         old = self.__check_product_exists(new)
         self.__check_name_can_be_used(old, new)
 
