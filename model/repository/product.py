@@ -3,7 +3,8 @@ from model.entity.models import Product, Sale
 from sqlalchemy import select, delete
 
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
-    InvalidProductQuantityException, NoPositivePriceException, NegativeProfitException, TooMuchProfitException
+    InvalidProductQuantityException, NoPositivePriceException, NegativeProfitException, TooMuchProfitException, \
+    EmptyProductNameException
 from model.repository.observer import RepositoryObserver
 from model.util.monetary_types import CUPMoney
 
@@ -95,6 +96,7 @@ class ProductRepository(RepositoryObserver):
         self.__session = session
 
     def insert_product(self, product: Product):
+        self.__check_name_is_not_empty_or_whitespaces(product.name)
         self.__check_correctness_of_quantity(product)
         self.__check_correctness_of_price(product)
         self.__check_correctness_of_profit(product)
@@ -104,6 +106,11 @@ class ProductRepository(RepositoryObserver):
         self.__session.add(product)
         self.__session.commit()
         self._notify_on_data_changed_listeners()
+
+    @staticmethod
+    def __check_name_is_not_empty_or_whitespaces(name: str):
+        if name.isspace() or name == '':
+            raise EmptyProductNameException()
 
     def __check_correctness_of_quantity(self, product: Product):
         if product.quantity < 0:
@@ -175,6 +182,7 @@ class ProductRepository(RepositoryObserver):
                                .where(Product.id.in_(product_id_list)))
 
     def update_product(self, new: Product):
+        self.__check_name_is_not_empty_or_whitespaces(new.name)
         self.__check_correctness_of_quantity(new)
         self.__check_correctness_of_price(new)
         self.__check_correctness_of_profit(new)

@@ -15,6 +15,14 @@ class UniqueProductNameException(Exception):
         return self.__name
 
 
+class EmptyProductNameException(Exception):
+
+    MSG = 'The product has an empty name'
+
+    def __init__(self):
+        super().__init__(self.MSG)
+
+
 class NonExistentProductException(Exception):
 
     MSG = 'The product {} does not exist.'

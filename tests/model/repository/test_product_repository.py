@@ -1,6 +1,7 @@
 import unittest
 from model.repository.exc.product import UniqueProductNameException, NonExistentProductException, \
-    InvalidProductQuantityException, NoPositivePriceException, NegativeProfitException, TooMuchProfitException
+    InvalidProductQuantityException, NoPositivePriceException, NegativeProfitException, TooMuchProfitException, \
+    EmptyProductNameException
 from model.repository.factory import RepositoryFactory
 from model.repository.product import ProductFilter
 from model.util.monetary_types import CUPMoney
@@ -35,6 +36,12 @@ class TestProductRepository(unittest.TestCase):
         self.product_repository.insert_product(product)
 
         self.assertRaises(UniqueProductNameException, self.product_repository.insert_product, product)
+
+    def test_insert_product_with_empty_name_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        product.name = '     '
+
+        self.assertRaises(EmptyProductNameException, self.product_repository.insert_product, product)
 
     def test_product_inserted_with_used_name_in_uppercase_raises_exception(self):
         product = ProductGenerator.generate_one_product()
@@ -172,6 +179,13 @@ class TestProductRepository(unittest.TestCase):
 
         updated_product = get_one_product_from_database()
         self.assertEqual(updated_product, new_product)
+
+    def test_update_product_with_empty_name_raises_exception(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        product.name = '     '
+
+        self.assertRaises(EmptyProductNameException, self.product_repository.update_product, product)
 
     def test_product_updated_with_negative_quantity_raises_exception(self):
         product = ProductGenerator.generate_one_product()
