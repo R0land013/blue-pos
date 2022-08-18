@@ -49,11 +49,11 @@ class ProductManagementView(QFrame):
 
         self.tool_bar.addWidget(self.back_button)
         self.tool_bar.addSeparator()
+
         self.tool_bar.addWidget(self.new_button)
-        self.tool_bar.addSeparator()
         self.tool_bar.addWidget(self.edit_button)
-        self.tool_bar.addSeparator()
         self.tool_bar.addWidget(self.delete_button)
+
         self.tool_bar.addSeparator()
         self.tool_bar.addWidget(self.sell_button)
 
