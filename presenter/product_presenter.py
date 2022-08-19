@@ -26,6 +26,7 @@ class ProductPresenter(AbstractPresenter):
         self.__initialize_view()
         self.__product_repo = RepositoryFactory.get_product_repository()
         self.__product_to_edit = self.__get_product_if_action_is_to_edit()
+        self.__is_new_product_action = self._get_intent_action() == self.NEW_PRODUCT_ACTION
 
     def __get_product_if_action_is_to_edit(self) -> Product:
         if self._get_intent_action() == self.EDIT_PRODUCT_ACTION:
@@ -63,32 +64,34 @@ class ProductPresenter(AbstractPresenter):
         view.set_quantity(product.quantity)
 
     def save_product(self):
-        if self._get_intent_action() == self.NEW_PRODUCT_ACTION:
+        if self.__is_new_product_action:
             self.__execute_thread_to_insert_new_product()
         elif self._get_intent_action() == self.EDIT_PRODUCT_ACTION:
             self.__execute_thread_to_update_product()
 
     def __execute_thread_to_insert_new_product(self):
-        self.__helper_product = self.__construct_product_instance_from_view_fields()
-        self.worker = PresenterThreadWorker(self.insert_new_product)
-        self.worker.when_started.connect(self.__disable_gui_and_show_operation_message)
-        self.worker.error_found.connect(self.__handle_errors_on_product_fields)
-        self.worker.finished_without_error.connect(self.__close_presenter_with_new_product_result)
-        self.worker.start()
+        if self.get_view().ask_user_to_confirm_no_profit_product_if_needed():
+
+            self.__helper_product = self.__construct_product_instance_from_view_fields()
+            self.worker = PresenterThreadWorker(self.insert_new_product)
+            self.worker.when_started.connect(self.__disable_gui_and_show_operation_message)
+            self.worker.error_found.connect(self.__handle_errors_on_product_fields)
+            self.worker.finished_without_error.connect(self.__close_presenter_with_new_product_result)
+            self.worker.start()
 
     def __construct_product_instance_from_view_fields(self):
         view = self.get_view()
         name = view.get_name()
         description = view.get_description()
         price = CUPMoney(view.get_price())
-        profit = CUPMoney(view.get_profit())
+        cost = CUPMoney(view.get_cost())
         quantity = view.get_quantity()
 
         return Product(
             name=name,
             description=description,
             price=price,
-            profit=profit,
+            cost=cost,
             quantity=quantity
         )
 

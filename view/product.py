@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from PyQt5.QtWidgets import QFrame, QMessageBox
 from PyQt5.uic import loadUi
 
@@ -12,13 +14,17 @@ class ProductView(QFrame):
 
     def __setup_gui(self):
         loadUi('./view/ui/product_form.ui', self)
-        self.__setup_price_and_profit_spin_boxes()
+        self.__setup_price_and_cost_spin_boxes()
         self.__wire_up_gui_connections()
 
-    def __setup_price_and_profit_spin_boxes(self):
-        self.profit_spin_box.setMaximum(self.price_spin_box.value())
-        self.price_spin_box.valueChanged.connect(
-            lambda value: self.profit_spin_box.setMaximum(value))
+    def __setup_price_and_cost_spin_boxes(self):
+        self.price_spin_box.valueChanged.connect(self.__set_profit_label_depending_on_price_and_cost)
+        self.cost_spin_box.valueChanged.connect(self.__set_profit_label_depending_on_price_and_cost)
+
+    def __set_profit_label_depending_on_price_and_cost(self):
+        price = self.price_spin_box.value()
+        cost = self.cost_spin_box.value()
+        self.set_profit(price - cost)
 
     def __wire_up_gui_connections(self):
         self.save_button.clicked.connect(self.__presenter.save_product)
@@ -65,11 +71,14 @@ class ProductView(QFrame):
     def set_price(self, price: float):
         self.price_spin_box.setValue(price)
 
-    def get_profit(self) -> str:
-        return self.profit_spin_box.cleanText()
+    def get_cost(self) -> str:
+        return self.cost_spin_box.cleanText()
 
-    def set_profit(self, profit: float):
-        self.profit_spin_box.setValue(profit)
+    def set_cost(self, cost: float):
+        self.cost_spin_box.setValue(cost)
+
+    def set_profit(self, amount: float):
+        self.profit_value_label.setText('{} CUP'.format(str(amount)))
 
     def get_quantity(self) -> int:
         return self.quantity_spin_box.value()
@@ -79,3 +88,24 @@ class ProductView(QFrame):
 
     def show_error_message(self, message: str):
         QMessageBox.critical(self.window(), 'Error', message)
+
+    def ask_user_to_confirm_no_profit_product_if_needed(self) -> bool:
+        price = self.price_spin_box.value()
+        cost = self.cost_spin_box.value()
+        if cost < price:
+            return True
+
+        if cost > price:
+            window_title = 'El producto generará pérdidas'
+            detail_message = '¿Seguro que desea un producto que genera pérdidas?'
+        elif cost == price:
+            window_title = 'El producto no generará ganancias'
+            detail_message = '¿Seguro que desea un producto que no genera ganancias?'
+
+        pressed_button = QMessageBox.question(self.window(),
+                                              window_title,
+                                              detail_message,
+                                              QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
+        if pressed_button == QMessageBox.StandardButton.Ok:
+            return True
+        return False
