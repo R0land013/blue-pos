@@ -5,11 +5,13 @@ from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 
 
 class ProductManagementView(QFrame):
+
     ID_COLUMN = 0
     NAME_COLUMN = 1
     PRICE_COLUMN = 2
-    PROFIT_COLUMN = 3
-    QUANTITY_COLUMN = 4
+    COST_COLUMN = 3
+    PROFIT_COLUMN = 4
+    QUANTITY_COLUMN = 5
 
     def __init__(self, presenter):
         super().__init__()
@@ -28,13 +30,14 @@ class ProductManagementView(QFrame):
         self.sell_button.setDisabled(True)
 
     def __set_table_format(self):
-        self.product_table.setColumnCount(5)
+        self.product_table.setColumnCount(6)
         self.product_table.setHorizontalHeaderLabels([
             'Id.',
             'Nombre',
             'Precio/u',
+            'Costo/u',
             'Ganacia/u',
-            'Cantidad'
+            'Cantidad disponible'
         ])
         self.product_table.resizeColumnsToContents()
         self.product_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)

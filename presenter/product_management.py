@@ -62,6 +62,7 @@ class ProductManagementPresenter(AbstractPresenter):
         view.set_cell_in_table(row, ProductManagementView.ID_COLUMN, product.id)
         view.set_cell_in_table(row, ProductManagementView.NAME_COLUMN, product.name)
         view.set_cell_in_table(row, ProductManagementView.PRICE_COLUMN, product.price)
+        view.set_cell_in_table(row, ProductManagementView.COST_COLUMN, product.cost)
         view.set_cell_in_table(row, ProductManagementView.PROFIT_COLUMN, product.profit)
         view.set_cell_in_table(row, ProductManagementView.QUANTITY_COLUMN, product.quantity)
 
