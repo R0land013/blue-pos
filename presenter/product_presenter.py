@@ -60,7 +60,7 @@ class ProductPresenter(AbstractPresenter):
         view.set_name(product.name)
         view.set_description(product.description)
         view.set_price(float(product.price.amount))
-        view.set_profit(float(product.profit.amount))
+        view.set_cost(float(product.profit.amount))
         view.set_quantity(product.quantity)
 
     def save_product(self):

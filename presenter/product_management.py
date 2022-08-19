@@ -143,6 +143,7 @@ class ProductManagementPresenter(AbstractPresenter):
         updated_product = result_data[ProductPresenter.UPDATED_PRODUCT]
         row = self.get_view().get_selected_row_index()
         self.__set_table_row_by_product(row, updated_product)
+        self.get_view().resize_table_columns_to_contents()
 
     def __update_product_quantity_on_table(self, result_data: dict):
         new_product_quantity = result_data[ProductSaleManagementPresenter.REMAINING_PRODUCT_QUANTITY]
