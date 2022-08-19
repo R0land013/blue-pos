@@ -291,3 +291,22 @@ class TestSaleRepository(unittest.TestCase):
         sorted_sales = self.sale_repository.get_sales_by_filter(filter_sorted_by_date)
 
         self.assertEqual(sorted_sales, [s4, s2, s1, s3])
+
+    def test_get_sales_by_filter_sorted_by_profit_descending(self):
+        product = ProductGenerator.generate_one_product()
+        product = insert_product_and_return_it(product)
+        sales = SaleGenerator.generate_sales_from_product(product, 5)
+        s1, s2, s3, s4, s5 = sales
+        s1.price, s1.cost = CUPMoney('20.00'), CUPMoney('10.00')  # 10 profit
+        s2.price, s2.cost = CUPMoney('20.00'), CUPMoney('9.00')  # 11 profit
+        s3.price, s3.cost = CUPMoney('20.00'), CUPMoney('8.00')  # 12 profit
+        s4.price, s4.cost = CUPMoney('20.00'), CUPMoney('7.00')  # 13 profit
+        s5.price, s5.cost = CUPMoney('20.00'), CUPMoney('6.00')  # 14 profit
+        insert_sales_and_return_them(sales)
+
+        the_filter = SaleFilter()
+        the_filter.sorted_by = SaleFilter.PROFIT
+        the_filter.ascending_order = False
+        filtered_sales = self.sale_repository.get_sales_by_filter(the_filter)
+
+        self.assertEqual(filtered_sales, [s5, s4, s3, s2, s1])

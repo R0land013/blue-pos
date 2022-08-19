@@ -1,9 +1,9 @@
 from datetime import date
 
-from sqlalchemy import insert, update, select, delete, cast, Numeric, type_coerce, asc, desc
+from sqlalchemy import insert, update, select, delete, cast, Numeric, type_coerce, asc, desc, Float
 
 from model.entity.models import Product, Sale
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 
 from model.repository.exc.product import NonExistentProductException, NoPositivePriceException
 from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException, \
@@ -18,6 +18,7 @@ class SaleFilter:
     PRODUCT_ID = 'product_id'
     SALE_DATE = 'sale_date'
     PRICE = 'price'
+    COST = 'cost'
     PROFIT = 'profit'
 
     def __init__(self):
@@ -228,7 +229,7 @@ class SaleRepository(RepositoryObserver):
 
     @staticmethod
     def __create_filter_query(the_filter: SaleFilter):
-        query = select(Sale)
+        query = select(Sale, )
 
         if the_filter.minimum_date is not None:
             query = query.where(Sale.date >= the_filter.minimum_date)
@@ -264,9 +265,12 @@ class SaleRepository(RepositoryObserver):
         elif the_filter.sorted_by == SaleFilter.PRICE:
             column = Sale.price
             is_money_column = True
-        elif the_filter.sorted_by == SaleFilter.PROFIT:
-            column = Sale.profit
+        elif the_filter.sorted_by == SaleFilter.COST:
+            column = Sale.cost
             is_money_column = True
+        elif the_filter.sorted_by == SaleFilter.PROFIT:
+            column = cast(Sale.price, Float) - cast(Sale.cost, Float)
+            query = query.add_columns(column)
 
         if is_money_column:
             if the_filter.ascending_order:
