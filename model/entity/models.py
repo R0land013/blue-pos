@@ -43,8 +43,8 @@ class Product(Base):
 class Sale(Base):
 
     def __repr__(self):
-        return 'Sale(id: {}, product_id: "{}", date: "{}", price: {}, profit: {})'\
-            .format(self.id, self.product_id, self.date, self.price, self.profit)
+        return 'Sale(id: {}, product_id: "{}", date: "{}", price: {}, cost: {}, profit: {})'\
+            .format(self.id, self.product_id, self.date, self.price, self.cost, self.profit)
 
     def __str__(self):
         return self.__repr__()
@@ -52,15 +52,21 @@ class Sale(Base):
     def __eq__(self, other):
         return (self.id == other.id and self.product_id == other.product_id
                 and self.date == other.date and self.price == other.price
-                and self.profit == other.profit)
+                and self.cost == other.cost and self.profit == other.profit)
 
     __tablename__ = 'sales'
     id = Column(Integer, primary_key=True)
     product_id = Column(Integer, ForeignKey('products.id', ondelete='CASCADE'), nullable=False)
     date = Column(Date, nullable=False, default=date.today())
     price = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
-    profit = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
+    cost = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
     product = relationship('Product', backref=backref('sales', cascade='all,delete'))
+
+    @property
+    def profit(self):
+        if self.price is None or self.cost is None:
+            return None
+        return self.price - self.cost
 
 
 class Expense(Base):
