@@ -163,7 +163,7 @@ class TestSaleRepository(unittest.TestCase):
         insert_sales_and_return_them(sales)
 
         s1.price = CUPMoney('50')
-        s1.profit = CUPMoney('40')
+        s1.cost = CUPMoney('40')
         s1.date = s1.date - timedelta(days=1)
         self.sale_repository.update_sale(s1)
 

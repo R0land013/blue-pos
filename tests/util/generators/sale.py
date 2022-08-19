@@ -6,7 +6,6 @@ from model.util.monetary_types import CUPMoney
 class SaleGenerator:
 
     DEFAULT_DATE = date.today()
-    DEFAULT_MONEY = CUPMoney('1.00')
 
     @staticmethod
     def generate_sales_from_product(product: Product, quantity: int):
@@ -24,7 +23,7 @@ class SaleGenerator:
         sale.product_id = product.id
         sale.product = product
         sale.price = product.price
-        sale.profit = product.profit
+        sale.cost = product.cost
 
         return sale
 
@@ -32,6 +31,6 @@ class SaleGenerator:
     def generate_one_sale_without_product() -> Sale:
         sale = Sale()
         sale.date = SaleGenerator.DEFAULT_DATE
-        sale.price = SaleGenerator.DEFAULT_MONEY
-        sale.profit = SaleGenerator.DEFAULT_MONEY
+        sale.price = CUPMoney('2.00')
+        sale.cost = CUPMoney('1.00')
         return sale

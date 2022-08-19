@@ -86,8 +86,6 @@ class SaleRepository(RepositoryObserver):
     def insert_sales(self, sale: Sale, quantity: int) -> list:
         self.__check_quantity_is_positive(quantity)
         self.__check_price_is_positive(sale)
-        self.__check_profit_is_not_negative(sale)
-        self.__check_profit_is_no_higher_than_price(sale)
         self.__check_product_exists(sale)
         self.__check_there_are_enough_products(sale, quantity)
 
@@ -104,14 +102,6 @@ class SaleRepository(RepositoryObserver):
     def __check_price_is_positive(self, sale: Sale):
         if not sale.price > CUPMoney('0.00'):
             raise NoPositivePriceException()
-
-    def __check_profit_is_not_negative(self, sale: Sale):
-        if sale.profit < CUPMoney('0.00'):
-            raise NegativeProfitException()
-
-    def __check_profit_is_no_higher_than_price(self, sale: Sale):
-        if sale.profit > sale.price:
-            raise TooMuchProfitException(sale.price, sale.profit)
 
     def __get_product_by_id(self, product_id: int) -> Product:
         return self.__session.scalar(select(Product).where(Product.id == product_id))
@@ -135,7 +125,7 @@ class SaleRepository(RepositoryObserver):
                 product_id=sale.product_id,
                 date=sale.date,
                 price=sale.price,
-                profit=sale.profit
+                cost=sale.cost
             )
             sales.append(a_sale)
         self.__session.add_all(sales)
@@ -190,10 +180,10 @@ class SaleRepository(RepositoryObserver):
     def __get_sale_by_id(self, sale_id: int):
         return self.__session.scalar(select(Sale).where(Sale.id == sale_id))
 
-    def __check_sale_exists(self, sale_to_delete):
-        read_sale = self.__get_sale_by_id(sale_to_delete.id)
+    def __check_sale_exists(self, a_sale):
+        read_sale = self.__get_sale_by_id(a_sale.id)
         if read_sale is None:
-            raise NonExistentSaleException(sale_to_delete)
+            raise NonExistentSaleException(a_sale)
 
     def __increase_product_quantity(self, sale: Sale):
         product = self.__get_product_by_id(sale.product_id)
@@ -206,19 +196,12 @@ class SaleRepository(RepositoryObserver):
 
     def update_sale(self, sale: Sale):
         self.__check_price_is_positive(sale)
-        self.__check_profit_is_not_negative(sale)
-        self.__check_profit_is_no_higher_than_price(sale)
         self.__check_sale_exists(sale)
         self.__check_product_id_is_not_changed_in_sale(sale)
 
         self.__execute_update_operation(sale)
         self.__session.commit()
         self._notify_on_data_changed_listeners()
-
-    def __check_sale_exists(self, sale: Sale):
-        read_sale = self.__session.scalar(select(Sale).where(Sale.id == sale.id))
-        if read_sale is None:
-            raise NonExistentSaleException(sale)
 
     def __check_product_id_is_not_changed_in_sale(self, sale: Sale):
         read_sale = self.__get_sale_by_id(sale.id)
@@ -232,7 +215,7 @@ class SaleRepository(RepositoryObserver):
                 .values(
                 date=sale.date,
                 price=sale.price,
-                profit=sale.profit
+                cost=sale.cost
             )
         )
 
