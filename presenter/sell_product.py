@@ -62,7 +62,7 @@ class MakeSalePresenter(AbstractPresenter):
         return Sale(
             product_id=self.__product.id,
             price=self.__product.price,
-            profit=self.__product.profit,
+            cost=self.__product.cost,
             date=self.get_view().get_sale_date()
         )
 
