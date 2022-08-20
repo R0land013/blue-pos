@@ -60,7 +60,7 @@ class ProductPresenter(AbstractPresenter):
         view.set_name(product.name)
         view.set_description(product.description)
         view.set_price(float(product.price.amount))
-        view.set_cost(float(product.profit.amount))
+        view.set_cost(float(product.cost.amount))
         view.set_quantity(product.quantity)
 
     def save_product(self):
@@ -123,12 +123,14 @@ class ProductPresenter(AbstractPresenter):
         }, self.NEW_PRODUCT_RESULT)
 
     def __execute_thread_to_update_product(self):
-        self.__helper_product = self.__construct_product_instance_from_view_fields()
-        self.thread = PresenterThreadWorker(self.__update_product)
-        self.thread.when_started.connect(self.__disable_gui_and_show_operation_message)
-        self.thread.error_found.connect(self.__handle_errors_on_product_fields)
-        self.thread.finished_without_error.connect(self.__close_presenter_with_product_updated_result)
-        self.thread.start()
+        if self.get_view().ask_user_to_confirm_no_profit_product_if_needed():
+
+            self.__helper_product = self.__construct_product_instance_from_view_fields()
+            self.thread = PresenterThreadWorker(self.__update_product)
+            self.thread.when_started.connect(self.__disable_gui_and_show_operation_message)
+            self.thread.error_found.connect(self.__handle_errors_on_product_fields)
+            self.thread.finished_without_error.connect(self.__close_presenter_with_product_updated_result)
+            self.thread.start()
 
     def __update_product(self, thread: PresenterThreadWorker):
 

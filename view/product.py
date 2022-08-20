@@ -3,6 +3,8 @@ from decimal import Decimal
 from PyQt5.QtWidgets import QFrame, QMessageBox
 from PyQt5.uic import loadUi
 
+from model.util.monetary_types import CUPMoney
+
 
 class ProductView(QFrame):
 
@@ -22,9 +24,14 @@ class ProductView(QFrame):
         self.cost_spin_box.valueChanged.connect(self.__set_profit_label_depending_on_price_and_cost)
 
     def __set_profit_label_depending_on_price_and_cost(self):
-        price = self.price_spin_box.value()
-        cost = self.cost_spin_box.value()
-        self.set_profit(price - cost)
+        price = CUPMoney(self.get_price())
+        cost = CUPMoney(self.get_cost())
+        profit = price - cost
+        self.set_profit(float(profit.amount))
+        if profit <= CUPMoney('0.00'):
+            self.profit_value_label.setStyleSheet('color: red;')
+        else:
+            self.profit_value_label.setStyleSheet('color: black;')
 
     def __wire_up_gui_connections(self):
         self.save_button.clicked.connect(self.__presenter.save_product)
@@ -66,13 +73,13 @@ class ProductView(QFrame):
         self.description_text_edit.insertPlainText(description)
 
     def get_price(self) -> str:
-        return self.price_spin_box.cleanText()
+        return self.price_spin_box.cleanText().split()[0]
 
     def set_price(self, price: float):
         self.price_spin_box.setValue(price)
 
     def get_cost(self) -> str:
-        return self.cost_spin_box.cleanText()
+        return self.cost_spin_box.cleanText().split()[0]
 
     def set_cost(self, cost: float):
         self.cost_spin_box.setValue(cost)
@@ -90,8 +97,8 @@ class ProductView(QFrame):
         QMessageBox.critical(self.window(), 'Error', message)
 
     def ask_user_to_confirm_no_profit_product_if_needed(self) -> bool:
-        price = self.price_spin_box.value()
-        cost = self.cost_spin_box.value()
+        price = CUPMoney(self.get_price())
+        cost = CUPMoney(self.get_cost())
         if cost < price:
             return True
 
