@@ -32,19 +32,21 @@ class EditSalePresenter(AbstractPresenter):
         view.set_product_name(self.__sale.product.name)
         view.set_sale_id(self.__sale.id)
         view.set_paid_money(float(self.__sale.price.amount))
-        view.set_profit_money(float(self.__sale.profit.amount))
+        view.set_cost_money(float(self.__sale.cost.amount))
         view.set_sale_date(self.__sale.date)
 
     def close_presenter(self):
         self._close_this_presenter()
 
     def update_sale_and_close_presenter(self):
-        self.__updated_sale = self.__construct_updated_sale()
-        self.thread = PresenterThreadWorker(self.__update_sale)
-        self.thread.when_started.connect(self.__disable_controls_and_show_processing_message)
-        self.thread.finished_without_error.connect(
-            self.__close_this_and_notify_below_presenter)
-        self.thread.start()
+        if self.get_view().ask_user_to_confirm_no_profit_sale_if_needed():
+
+            self.__updated_sale = self.__construct_updated_sale()
+            self.thread = PresenterThreadWorker(self.__update_sale)
+            self.thread.when_started.connect(self.__disable_controls_and_show_processing_message)
+            self.thread.finished_without_error.connect(
+                self.__close_this_and_notify_below_presenter)
+            self.thread.start()
 
     def __update_sale(self, thread: PresenterThreadWorker = None):
         self.__sale_repo.update_sale(self.__updated_sale)
@@ -55,7 +57,7 @@ class EditSalePresenter(AbstractPresenter):
             id=self.__sale.id,
             product_id=self.__sale.product_id,
             price=CUPMoney(self.get_view().get_paid_money_as_str()),
-            profit=CUPMoney(self.get_view().get_profit_money_as_str()),
+            cost=CUPMoney(self.get_view().get_cost_money_as_str()),
             date=self.get_view().get_sale_date()
         )
 

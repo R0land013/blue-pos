@@ -53,29 +53,15 @@
          <property name="leftMargin">
           <number>0</number>
          </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="product_label">
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>Producto</string>
+            <string>Fecha de Venta</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="sale_id_label">
-           <property name="text">
-            <string>-1</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>Dinero ganado</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QDoubleSpinBox" name="profit_money_spin_box">
+         <item row="4" column="1">
+          <widget class="QDoubleSpinBox" name="cost_money_spin_box">
            <property name="suffix">
             <string> CUP</string>
            </property>
@@ -90,21 +76,42 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_5">
+         <item row="1" column="1">
+          <widget class="QLabel" name="sale_id_label">
            <property name="text">
-            <string>Fecha de Venta</string>
+            <string>-1</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="0" column="0">
+          <widget class="QLabel" name="product_label">
+           <property name="text">
+            <string>Producto</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Costo del producto</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="product_name_label">
+           <property name="text">
+            <string>Mi producto</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
           <widget class="QDateEdit" name="sale_date_edit">
            <property name="calendarPopup">
             <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="1">
           <widget class="QDoubleSpinBox" name="paid_money_spin_box">
            <property name="suffix">
             <string> CUP</string>
@@ -123,13 +130,6 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="product_name_label">
-           <property name="text">
-            <string>Mi producto</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
@@ -137,10 +137,31 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
             <string>Dinero pagado</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Ganancia</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QLabel" name="profit_value_label">
+           <property name="text">
+            <string>0.00 CUP</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>
