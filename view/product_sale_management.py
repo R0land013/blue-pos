@@ -10,8 +10,9 @@ class ProductSaleManagementView(QFrame):
 
     SALE_ID_COLUMN = 0
     PAYMENT_COLUMN = 1
-    PROFIT_COLUMN = 2
-    SALE_DATE_COLUMN = 3
+    COST_COLUMN = 2
+    PROFIT_COLUMN = 3
+    SALE_DATE_COLUMN = 4
 
     def __init__(self, presenter):
         super().__init__()
@@ -67,10 +68,11 @@ class ProductSaleManagementView(QFrame):
         self.delete_filter_button.setToolTip('Quitar filtro')
 
     def __set_table_format(self):
-        self.sale_table.setColumnCount(4)
+        self.sale_table.setColumnCount(5)
         self.sale_table.setHorizontalHeaderLabels([
             'Id. Venta',
             'Pago',
+            'Costo del producto',
             'Ganancia',
             'Fecha'
         ])

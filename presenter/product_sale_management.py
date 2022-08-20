@@ -88,6 +88,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         view = self.get_view()
         view.set_cell_in_table(row, ProductSaleManagementView.SALE_ID_COLUMN, sale.id)
         view.set_cell_in_table(row, ProductSaleManagementView.PAYMENT_COLUMN, sale.price)
+        view.set_cell_in_table(row, ProductSaleManagementView.COST_COLUMN, sale.cost)
         view.set_cell_in_table(row, ProductSaleManagementView.PROFIT_COLUMN, sale.profit)
         view.set_cell_in_table(row, ProductSaleManagementView.SALE_DATE_COLUMN, sale.date)
 
