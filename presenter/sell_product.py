@@ -32,9 +32,7 @@ class MakeSalePresenter(AbstractPresenter):
     def set_sale_result_by_quantity(self):
         sale_quantity = self.get_view().get_sale_quantity()
         money_to_pay = self.__product.price * sale_quantity
-        profit_money = self.__product.profit * sale_quantity
         self.get_view().set_money_to_pay(str(money_to_pay.amount))
-        self.get_view().set_profit(str(profit_money.amount))
 
     def make_sales_and_close_presenter(self):
         self.__sale_quantity = self.get_view().get_sale_quantity()

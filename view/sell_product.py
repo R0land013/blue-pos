@@ -50,9 +50,6 @@ class MakeSaleView(QFrame):
     def set_money_to_pay(self, amount: str):
         self.money_to_pay_label.setText('{} CUP'.format(amount))
 
-    def set_profit(self, amount: str):
-        self.profit_label.setText('{} CUP'.format(amount))
-
     def hide_status_bar(self, set_hidden: bool):
         if set_hidden:
             self.state_bar_label.hide()
