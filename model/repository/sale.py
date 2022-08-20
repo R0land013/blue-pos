@@ -5,7 +5,7 @@ from sqlalchemy import insert, update, select, delete, cast, Numeric, type_coerc
 from model.entity.models import Product, Sale
 from sqlalchemy.orm import Session, aliased
 
-from model.repository.exc.product import NonExistentProductException, NoPositivePriceException
+from model.repository.exc.product import NonExistentProductException, NoPositivePriceException, NegativeCostException
 from model.repository.exc.sale import NoEnoughProductQuantityException, NonExistentSaleException, \
     ChangeProductIdInSaleException
 from model.repository.observer import RepositoryObserver
@@ -87,6 +87,7 @@ class SaleRepository(RepositoryObserver):
     def insert_sales(self, sale: Sale, quantity: int) -> list:
         self.__check_quantity_is_positive(quantity)
         self.__check_price_is_positive(sale)
+        self.__check_cost_is_not_negative(sale)
         self.__check_product_exists(sale)
         self.__check_there_are_enough_products(sale, quantity)
 
@@ -103,6 +104,11 @@ class SaleRepository(RepositoryObserver):
     def __check_price_is_positive(self, sale: Sale):
         if not sale.price > CUPMoney('0.00'):
             raise NoPositivePriceException()
+
+    @staticmethod
+    def __check_cost_is_not_negative(sale: Sale):
+        if sale.cost < CUPMoney('0.00'):
+            raise NegativeCostException(sale.cost)
 
     def __get_product_by_id(self, product_id: int) -> Product:
         return self.__session.scalar(select(Product).where(Product.id == product_id))
@@ -197,6 +203,7 @@ class SaleRepository(RepositoryObserver):
 
     def update_sale(self, sale: Sale):
         self.__check_price_is_positive(sale)
+        self.__check_cost_is_not_negative(sale)
         self.__check_sale_exists(sale)
         self.__check_product_id_is_not_changed_in_sale(sale)
 
