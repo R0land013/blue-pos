@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from PyQt5.QtGui import QPainter, QColor, QTextCharFormat, QPalette
+from PyQt5.QtGui import QPainter, QColor, QTextCharFormat, QPalette, QFont
 from PyQt5.QtWidgets import QCalendarWidget
 from PyQt5.QtCore import QDate, QRect, Qt, pyqtSignal
 
@@ -16,7 +16,12 @@ class QWeekCalendarSelectorWidget(QCalendarWidget):
         self.__HIGHLIGHTED_CALENDAR_FORMAT = QTextCharFormat()
         self.__HIGHLIGHTED_CALENDAR_FORMAT.setBackground(self.palette().brush(QPalette.Highlight))
         self.__HIGHLIGHTED_CALENDAR_FORMAT.setForeground(self.palette().color(QPalette.HighlightedText))
+        self.__HIGHLIGHTED_CALENDAR_FORMAT.setFontPointSize(10)
         self.__RESET_CALENDAR_FORMAT = QTextCharFormat()
+
+        self.__DISABLED_FORMAT = QTextCharFormat()
+        # self.__DISABLED_FORMAT.setBackground()
+
 
         self.clicked.connect(self.__change_selected_week)
         self.selectionChanged.connect(self.__change_selected_week)
@@ -101,8 +106,10 @@ class QWeekCalendarSelectorWidget(QCalendarWidget):
 
         if self.__first_date_of_week <= qdate <= self.__last_date_of_week:
             self.__paint_selected_week_cell(painter, rect, qdate)
+        elif qdate < self.minimumDate() or qdate > self.maximumDate():
+            self.__paint_disabled_week_cell(painter, rect, qdate)
         else:
-            super().paintCell(painter, rect, qdate)
+            self.__paint_no_selected_cell(painter, rect, qdate)
 
     def __notify_listeners_if_week_is_changed(self, initial_date: QDate, final_date: QDate):
         if initial_date != self.__first_date_of_week and final_date != self.__last_date_of_week:
@@ -112,6 +119,31 @@ class QWeekCalendarSelectorWidget(QCalendarWidget):
     def __paint_selected_week_cell(painter: QPainter, rect: QRect, qdate: QDate):
         painter.fillRect(rect, QColor(102, 178, 255))
         painter.save()
+        font: QFont = painter.font()
+        font.setPointSize(10)
+        painter.setFont(font)
         painter.setPen(Qt.white)
+        painter.drawText(rect, Qt.AlignCenter, str(qdate.day()))
+        painter.restore()
+
+    @staticmethod
+    def __paint_disabled_week_cell(painter: QPainter, rect: QRect, qdate: QDate):
+        painter.fillRect(rect, QColor(208, 203, 222))
+        painter.save()
+        font: QFont = painter.font()
+        font.setPointSize(10)
+        painter.setFont(font)
+        painter.setPen(Qt.white)
+        painter.drawText(rect, Qt.AlignCenter, str(qdate.day()))
+        painter.restore()
+
+    @staticmethod
+    def __paint_no_selected_cell(painter: QPainter, rect: QRect, qdate: QDate):
+        painter.fillRect(rect, QColor(255, 255, 255))
+        painter.save()
+        font: QFont = painter.font()
+        font.setPointSize(10)
+        painter.setFont(font)
+        painter.setPen(Qt.black)
         painter.drawText(rect, Qt.AlignCenter, str(qdate.day()))
         painter.restore()
