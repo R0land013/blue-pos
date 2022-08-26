@@ -1,5 +1,7 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFrame, QTableWidgetItem, QTableWidget, QMessageBox, QToolBar, QToolButton, QHBoxLayout
+from PyQt5.QtWidgets import QFrame, QTableWidgetItem, QTableWidget, QMessageBox, QToolBar, QToolButton, QHBoxLayout, \
+    QPushButton, QDialog
 from PyQt5.uic import loadUi
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 
@@ -167,11 +169,24 @@ class ProductManagementView(QFrame):
         product_text = 'producto'
         if product_quantity > 1:
             product_text = 'productos'
-        detail_message = '¿Seguro que desea borrar {} {}?'.format(product_quantity, product_text)
-        pressed_button = QMessageBox.question(self.window(),
-                                              'Blue POS - Eliminar productos',
-                                              detail_message,
-                                              QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
-        if pressed_button == QMessageBox.StandardButton.Ok:
+        detail_message = '¿Seguro que desea borrar {} {}?\nSe eliminarán todas sus ventas asociadas.'\
+            .format(product_quantity, product_text)
+
+        message_box = QMessageBox(self.window())
+        message_box.setIcon(QMessageBox.Question)
+        message_box.setText(detail_message)
+        message_box.setWindowTitle('Eliminar productos')
+
+        delete_button = QPushButton('Eliminar')
+        delete_button.setObjectName('dialog_delete_button')
+        delete_button.setCursor(Qt.PointingHandCursor)
+        message_box.addButton(delete_button, QMessageBox.AcceptRole)
+
+        cancel_button = QPushButton('Cancelar')
+        cancel_button.setCursor(Qt.PointingHandCursor)
+        message_box.addButton(cancel_button, QMessageBox.NoRole)
+
+        message_box.exec()
+        if message_box.clickedButton() == delete_button:
             return True
         return False

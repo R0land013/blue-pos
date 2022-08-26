@@ -33,6 +33,14 @@ QPushButton{
     color: white;
 }
 
+QPushButton#dialog_delete_button{
+    background-color: #CE2412;
+}
+
+QPushButton#dialog_delete_button:hover{
+    background-color: #CE7562;
+}
+
 QPushButton:hover{
     background-color: rgb(115, 151, 247);
 }
