@@ -23,6 +23,9 @@ class EditSalePresenter(AbstractPresenter):
         view = EditSaleView(self)
         self._set_view(view)
 
+    def get_default_window_title(self) -> str:
+        return 'Editar venta'
+
     def on_view_shown(self):
         self.get_view().hide_status_bar(True)
         self.__fill_form_fields()

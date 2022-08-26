@@ -21,6 +21,9 @@ class ExpenseManagementPresenter(AbstractPresenter):
     def close_presenter(self):
         self._close_this_presenter()
 
+    def get_default_window_title(self) -> str:
+        return 'Blue POS - Gestión de gastos'
+
     def on_view_shown(self):
         self.__execute_thread_to_fill_table()
 

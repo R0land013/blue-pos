@@ -31,14 +31,13 @@ class ExpenseFormPresenter(AbstractPresenter):
     def close_presenter(self):
         self._close_this_presenter()
 
-    def get_default_window_title(self) -> str:
-        return 'Blue POS - Nuevo gasto'
-
     def on_view_shown(self):
         if self._get_intent_action() == self.CREATE_NEW_EXPENSE_ACTION:
             self.get_view().hide_id_labels(True)
+            self._set_window_title('Nuevo gasto')
         else:
             self.__fill_fields_by_expense_to_update()
+            self._set_window_title('Editar gasto')
         self.get_view().set_status_bar_message('')
 
     def __fill_fields_by_expense_to_update(self):

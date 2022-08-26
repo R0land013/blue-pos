@@ -23,6 +23,9 @@ class ProductManagementPresenter(AbstractPresenter):
     def return_to_main(self):
         self._close_this_presenter()
 
+    def get_default_window_title(self) -> str:
+        return 'Blue POS - Gestión de productos'
+
     def on_view_shown(self):
         self.__execute_thread_to_fill_table()
 

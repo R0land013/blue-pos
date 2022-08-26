@@ -30,6 +30,9 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         result_data = {self.REMAINING_PRODUCT_QUANTITY: self.__product.quantity}
         self._close_this_presenter_with_result(result_data, self.MANAGED_SALES_RESULT)
 
+    def get_default_window_title(self) -> str:
+        return 'Blue POS - Gestión de ventas'
+
     def open_filter_presenter(self):
         intent = Intent(SaleFilterPresenter)
         data = {SaleFilterPresenter.FILTER_BY_PRODUCT_ID_LIST_DATA: [self.__product.id]}

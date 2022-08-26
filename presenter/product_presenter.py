@@ -43,12 +43,19 @@ class ProductPresenter(AbstractPresenter):
     def on_view_shown(self):
         self.__hide_labels_depending_on_intent_action()
         self.get_view().set_state_bar_invisible(True)
+        self.__set_window_title_depending_on_intent_action()
         self.__fill_product_form_if_action_is_for_editing_product()
 
     def __hide_labels_depending_on_intent_action(self):
         current_action = self._get_intent_action()
         if current_action == self.NEW_PRODUCT_ACTION:
             self.get_view().set_id_labels_invisible(True)
+
+    def __set_window_title_depending_on_intent_action(self):
+        if self._get_intent_action() == self.EDIT_PRODUCT_ACTION:
+            self._set_window_title('Editar producto')
+        elif self._get_intent_action() == self.NEW_PRODUCT_ACTION:
+            self._set_window_title('Crear producto')
 
     def __fill_product_form_if_action_is_for_editing_product(self):
         if self._get_intent_action() == self.EDIT_PRODUCT_ACTION:

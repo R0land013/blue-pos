@@ -37,6 +37,9 @@ class MainPresenter(AbstractPresenter):
             style = f.read()
             QApplication.instance().setStyleSheet(style)
 
+    def get_default_window_title(self) -> str:
+        return 'Blue POS'
+
     def open_product_management(self):
         intent = Intent(ProductManagementPresenter)
         self._open_other_presenter(intent)

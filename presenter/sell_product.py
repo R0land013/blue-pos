@@ -24,6 +24,9 @@ class MakeSalePresenter(AbstractPresenter):
         view = MakeSaleView(self)
         self._set_view(view)
 
+    def get_default_window_title(self) -> str:
+        return 'Vender'
+
     def on_view_shown(self):
         self.get_view().set_limit_of_sales(self.__product.quantity)
         self.set_sale_result_by_quantity()
