@@ -214,3 +214,6 @@ class ProductSaleManagementView(QFrame):
 
         self.sale_table.clearSelection()
         self.__disable_buttons_depending_on_table_selection()
+
+    def set_product_name(self, name: str):
+        self.product_name_label.setText(name)

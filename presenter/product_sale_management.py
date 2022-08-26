@@ -1,7 +1,7 @@
 from easy_mvp.abstract_presenter import AbstractPresenter
 from easy_mvp.intent import Intent
 
-from model.entity.models import Sale
+from model.entity.models import Sale, Product
 from model.repository.factory import RepositoryFactory
 from model.repository.sale import SaleFilter
 from presenter.edit_sale import EditSalePresenter
@@ -22,7 +22,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
     def _on_initialize(self):
         view = ProductSaleManagementView(self)
         self._set_view(view)
-        self.__product = self._get_intent_data()[self.PRODUCT_DATA]
+        self.__product: Product = self._get_intent_data()[self.PRODUCT_DATA]
         self.__sale_repo = RepositoryFactory.get_sale_repository()
         self.__applied_sale_filter = None
 
@@ -43,6 +43,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self._open_other_presenter(intent)
 
     def on_view_shown(self):
+        self.get_view().set_product_name(self.__product.name)
         self.get_view().set_available_product_quantity(self.__product.quantity)
         self.__set_sell_button_availability_depending_on_remaining_product_quantity()
         self.get_view().disable_delete_filter_button(True)
