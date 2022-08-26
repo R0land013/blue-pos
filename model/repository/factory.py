@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.pool import NullPool
 
 from model.repository.sale import SaleRepository
+from model.repository.sales_grouped_by_product import SalesGroupedByProductRepository
 
 DB_URL = 'sqlite:///data.db?check_same_thread=False'
 
@@ -14,6 +15,7 @@ class RepositoryFactory:
     __session: Session = None
     __product_repository = None
     __sale_repository = None
+    __sales_grouped_by_product_repository = None
     __expense_repository = None
     __engine = None
 
@@ -52,6 +54,16 @@ class RepositoryFactory:
             RepositoryFactory.__expense_repository = ExpenseRepository(RepositoryFactory.__session)
 
         return RepositoryFactory.__expense_repository
+
+    @staticmethod
+    def get_sales_grouped_by_product_repository(url: str = DB_URL) -> SalesGroupedByProductRepository:
+        RepositoryFactory.__create_session_if_necessary(url)
+
+        if RepositoryFactory.__sales_grouped_by_product_repository is None:
+            RepositoryFactory.__sales_grouped_by_product_repository = SalesGroupedByProductRepository(
+                RepositoryFactory.__session)
+
+        return RepositoryFactory.__sales_grouped_by_product_repository
 
     @staticmethod
     def close_session():
