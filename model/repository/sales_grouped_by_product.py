@@ -72,4 +72,8 @@ class SalesGroupedByProductRepository:
         return first_date_next_month - timedelta(days=1)
 
     def get_groups_on_year(self, year_date: date) -> List[SalesGroupedByProduct]:
-        pass
+        year_first_date = date(year=year_date.year, month=1, day=1)
+        year_last_date = date(year=year_date.year, month=12, day=31)
+        query = self.__construct_query_using_date_limits(year_first_date, year_last_date)
+        rows = self.__session.execute(query)
+        return self.__construct_sale_groups_from_rows(rows, year_first_date, year_last_date)
