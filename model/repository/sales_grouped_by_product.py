@@ -52,8 +52,8 @@ class SalesGroupedByProductRepository:
             ))
         return groups
 
-    def get_groups_by_day_on_month(self, month_date: date) -> List[SalesGroupedByProduct]:
+    def get_groups_on_month(self, month_date: date) -> List[SalesGroupedByProduct]:
         pass
 
-    def get_groups_by_month_on_year(self, year_date: date) -> List[SalesGroupedByProduct]:
+    def get_groups_on_year(self, year_date: date) -> List[SalesGroupedByProduct]:
         pass
