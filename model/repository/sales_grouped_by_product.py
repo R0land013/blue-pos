@@ -19,7 +19,7 @@ class SalesGroupedByProductRepository:
         sunday_date = week_date + timedelta(days=6 - week_date.weekday())
         query = self.__construct_query_using_date_limits(monday_date, sunday_date)
         rows = self.__session.execute(query).all()
-        return self.__construct_sale_groups_from_result(rows, monday_date, sunday_date)
+        return self.__construct_sale_groups_from_rows(rows, monday_date, sunday_date)
 
     @staticmethod
     def __construct_query_using_date_limits(initial_date: date, final_date: date):
@@ -34,7 +34,7 @@ class SalesGroupedByProductRepository:
         return query
 
     @staticmethod
-    def __construct_sale_groups_from_result(rows, initial_date: date, final_date: date) -> List[SalesGroupedByProduct]:
+    def __construct_sale_groups_from_rows(rows, initial_date: date, final_date: date) -> List[SalesGroupedByProduct]:
         groups = []
         for a_row in rows:
             acquired_money = CUPMoney(str(a_row['acquired_money']))
@@ -53,7 +53,23 @@ class SalesGroupedByProductRepository:
         return groups
 
     def get_groups_on_month(self, month_date: date) -> List[SalesGroupedByProduct]:
-        pass
+        month_first_date = date(year=month_date.year, month=month_date.month, day=1)
+        month_last_date = self.__get_last_date_of_month(month_date)
+        query = self.__construct_query_using_date_limits(month_first_date, month_last_date)
+        rows = self.__session.execute(query)
+        return self.__construct_sale_groups_from_rows(rows, month_first_date, month_last_date)
+
+    @staticmethod
+    def __get_last_date_of_month(month_date: date):
+        if month_date.month == 12:
+            next_month = 1
+        else:
+            next_month = month_date.month + 1
+        if next_month == 1:
+            first_date_next_month = date(day=1, month=next_month, year=month_date.year + 1)
+        else:
+            first_date_next_month = date(day=1, month=next_month, year=month_date.year)
+        return first_date_next_month - timedelta(days=1)
 
     def get_groups_on_year(self, year_date: date) -> List[SalesGroupedByProduct]:
         pass
