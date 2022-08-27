@@ -19,7 +19,7 @@ class TestSalesGroupedByProductRepository(TestCase):
         RepositoryFactory.close_session()
         delete_all_products_from_database()
 
-    def test_get_groups_by_day_on_week(self):
+    def test_get_groups_on_week(self):
         products = ProductGenerator.generate_products_by_quantity(2)
         p1, p2 = products
         p1.price, p1.cost = CUPMoney('3.00'), CUPMoney('2.00')  # 1.00 profit
@@ -38,7 +38,7 @@ class TestSalesGroupedByProductRepository(TestCase):
         sales_of_p1 = insert_sales_and_return_them(sales_of_p1)
         sales_of_p2 = insert_sales_and_return_them(sales_of_p2)
 
-        groups = self.sales_grouped_repo.get_groups_by_day_on_week(week_date=date(year=2000, month=6, day=24))
+        groups = self.sales_grouped_repo.get_groups_on_week(week_date=date(year=2000, month=6, day=24))
 
         self.assertEqual(groups, [
 

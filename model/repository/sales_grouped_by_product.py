@@ -14,7 +14,7 @@ class SalesGroupedByProductRepository:
     def __init__(self, session: Session):
         self.__session: Session = session
 
-    def get_groups_by_day_on_week(self, week_date: date) -> List[SalesGroupedByProduct]:
+    def get_groups_on_week(self, week_date: date) -> List[SalesGroupedByProduct]:
         monday_date = week_date - timedelta(days=week_date.weekday())
         sunday_date = week_date + timedelta(days=6 - week_date.weekday())
         query = self.__construct_query_using_date_limits(monday_date, sunday_date)
