@@ -44,11 +44,14 @@ class MonthSaleReport(AbstractSaleReport):
 
     def __get_last_date_of_month(self):
         if self.__month_date.month == 12:
-            month = 1
+            next_month = 1
         else:
-            month = self.__month_date.month + 1
-        first_date_next_month = date(day=1, month=month, year=self.__month_date.year)
-        return first_date_next_month - timedelta(1)
+            next_month = self.__month_date.month + 1
+        if next_month == 1:
+            first_date_next_month = date(day=1, month=1, year=self.__month_date.year + 1)
+        else:
+            first_date_next_month = date(day=1, month=next_month, year=self.__month_date.year)
+        return first_date_next_month - timedelta(days=1)
 
     def get_report_statistics(self) -> ReportStatistic:
         first_date_of_month = date(day=1,
