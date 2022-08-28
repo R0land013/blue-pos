@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1068</width>
-    <height>771</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
   </property>
   <property name="mouseTracking">
    <bool>true</bool>
@@ -152,6 +158,9 @@ font: 13pt;</string>
            <property name="pixmap">
             <pixmap>images/previous.png</pixmap>
            </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
         </layout>
@@ -175,29 +184,11 @@ font: 13pt;</string>
    </item>
    <item>
     <widget class="QStackedWidget" name="stacked_widget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>800</width>
-       <height>771</height>
-      </size>
-     </property>
-     <property name="mouseTracking">
-      <bool>true</bool>
-     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
      <widget class="QWidget" name="management_widget">
-      <property name="mouseTracking">
-       <bool>true</bool>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <widget class="QFrame" name="frame_3">
          <property name="mouseTracking">
@@ -296,6 +287,9 @@ font: 13pt;</string>
                   </property>
                   <property name="pixmap">
                    <pixmap>images/expense.png</pixmap>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -400,6 +394,9 @@ font: 13pt;</string>
                   </property>
                   <property name="pixmap">
                    <pixmap>images/product.png</pixmap>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -513,10 +510,7 @@ font: 13pt;</string>
       </layout>
      </widget>
      <widget class="QWidget" name="reports_widget">
-      <property name="mouseTracking">
-       <bool>true</bool>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayout_9">
        <item>
         <widget class="QLabel" name="reports_label">
          <property name="sizePolicy">
@@ -566,6 +560,9 @@ font: 13pt;</string>
             <property name="pixmap">
              <pixmap>images/month_report.png</pixmap>
             </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="1" column="1">
@@ -582,6 +579,9 @@ font: 13pt;</string>
             <property name="pixmap">
              <pixmap>images/week_report.png</pixmap>
             </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
@@ -597,6 +597,9 @@ font: 13pt;</string>
             </property>
             <property name="pixmap">
              <pixmap>images/day_report.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -785,6 +788,9 @@ font: 13pt;</string>
             <property name="pixmap">
              <pixmap>images/year_report.png</pixmap>
             </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="0" column="1">
@@ -800,6 +806,9 @@ font: 13pt;</string>
             </property>
             <property name="pixmap">
              <pixmap>images/custom_report.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -999,6 +1008,9 @@ font: 13pt;</string>
            </property>
            <property name="pixmap">
             <pixmap>images/next.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
