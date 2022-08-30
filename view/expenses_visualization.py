@@ -1,6 +1,6 @@
 from datetime import date
 
-from PyQt5.QtCore import QItemSelection
+from PyQt5.QtCore import QItemSelection, Qt
 from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem
 from PyQt5.uic import loadUi
 from money import Money
@@ -18,6 +18,8 @@ class ExpensesVisualizationView(QFrame):
     def __init__(self, presenter):
         super().__init__()
         self.__presenter = presenter
+        self.__sorting_column = self.DATE_COLUMN
+        self.__sorting_order = Qt.AscendingOrder
 
         self.__setup_gui()
 
@@ -44,10 +46,26 @@ class ExpensesVisualizationView(QFrame):
     def __setup_gui_connections(self):
         self.close_button.clicked.connect(self.__presenter.close_presenter)
         self.expense_table.itemSelectionChanged.connect(self.__set_expense_description_if_there_is_row_selected)
+        self.expense_table.horizontalHeader().sectionClicked.connect(self.__change_sorting_configuration)
+        self.expense_table.horizontalHeader().sectionClicked.connect(self.sort_table_rows)
 
     def __set_expense_description_if_there_is_row_selected(self):
         if self.expense_table.currentRow() != -1:
             self.__presenter.set_expense_description()
+
+    def __change_sorting_configuration(self, clicked_header_section: int):
+        if clicked_header_section == self.__sorting_column:
+            self.__sorting_order = (Qt.AscendingOrder if self.__sorting_order == Qt.DescendingOrder
+                                    else Qt.DescendingOrder)
+        else:
+            self.__sorting_column = clicked_header_section
+            self.__sorting_order = Qt.AscendingOrder
+
+    def sort_table_rows(self):
+        horizontal_header = self.expense_table.horizontalHeader()
+        horizontal_header.setSortIndicator(self.__sorting_column, self.__sorting_order)
+        horizontal_header.setSortIndicatorShown(True)
+        self.expense_table.sortItems(self.__sorting_column, self.__sorting_order)
 
     def disable_view(self, disable: bool):
         self.main_content_frame.setDisabled(disable)

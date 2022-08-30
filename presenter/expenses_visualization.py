@@ -25,6 +25,7 @@ class ExpensesVisualizationPresenter(AbstractPresenter):
         self.get_view().set_date_range_for_message(self.__initial_date, self.__final_date)
         self.get_view().set_total_expense(self.__total_expense)
         self.__fill_table()
+        self.get_view().sort_table_rows()
         self.get_view().set_first_row_selected()
 
         self.get_view().disable_view(False)
