@@ -18,6 +18,8 @@ class TestWeekSaleReport(unittest.TestCase):
 
     def setUp(self) -> None:
         self.sale_repository = RepositoryFactory.get_sale_repository(TEST_DB_URL)
+        self.sale_groups_repo = RepositoryFactory.get_sales_grouped_by_product_repository(TEST_DB_URL)
+        self.expenses_repo = RepositoryFactory.get_expense_repository(TEST_DB_URL)
         today = date.today()
         self.SUNDAY_DATE_PREVIOUS_WEEK = today - timedelta(days=today.weekday() + 1)
         self.MONDAY_DATE_THIS_WEEK = self.__get_monday_date_of_this_week()
@@ -76,7 +78,9 @@ class TestWeekSaleReport(unittest.TestCase):
         s1, s2, s3 = insert_sales_and_return_them(sales_of_p1)
         s4, s5, s6 = insert_sales_and_return_them(sales_of_p2)
 
-        week_report = WeekSaleReport(self.WEDNESDAY_DATE_THIS_WEEK, self.sale_repository)
+        week_report = WeekSaleReport(self.WEDNESDAY_DATE_THIS_WEEK, self.sale_repository,
+                                     grouped_sales_repo=self.sale_groups_repo,
+                                     expense_repo=self.expenses_repo)
         week_report_sales = week_report.get_sales()
 
         self.assertEqual(week_report_sales, [s2, s3, s4, s5])
@@ -141,7 +145,9 @@ class TestWeekSaleReport(unittest.TestCase):
         s1, s2, s3 = insert_sales_and_return_them(sales_of_p1)
         s4, s5, s6 = insert_sales_and_return_them(sales_of_p2)
 
-        week_report = WeekSaleReport(self.WEDNESDAY_DATE_THIS_WEEK, self.sale_repository)
+        week_report = WeekSaleReport(self.WEDNESDAY_DATE_THIS_WEEK, self.sale_repository,
+                                     grouped_sales_repo=self.sale_groups_repo,
+                                     expense_repo=self.expenses_repo)
         generate_html_file(self.HTML_WEEK_REPORT_PATH, week_report)
 
     def test_pdf_report_is_correctly_generated(self):
@@ -160,5 +166,7 @@ class TestWeekSaleReport(unittest.TestCase):
         s1, s2, s3 = insert_sales_and_return_them(sales_of_p1)
         s4, s5, s6 = insert_sales_and_return_them(sales_of_p2)
 
-        week_report = WeekSaleReport(self.WEDNESDAY_DATE_THIS_WEEK, self.sale_repository)
+        week_report = WeekSaleReport(self.WEDNESDAY_DATE_THIS_WEEK, self.sale_repository,
+                                     grouped_sales_repo=self.sale_groups_repo,
+                                     expense_repo=self.expenses_repo)
         generate_pdf_file(self.PDF_WEEK_REPORT_PATH, week_report)
