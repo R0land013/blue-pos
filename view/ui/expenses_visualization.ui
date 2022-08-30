@@ -205,6 +205,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
@@ -275,6 +278,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="close_button">
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
         <property name="text">
          <string>Cerrar</string>
         </property>

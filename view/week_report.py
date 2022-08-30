@@ -74,10 +74,12 @@ class WeekSaleReportView(QFrame):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
         self.create_report_button.clicked.connect(self.__presenter.execute_thread_to_generate_report_on_gui)
         self.create_report_button.clicked.connect(self.__set_available_export_as_button)
+        self.create_report_button.clicked.connect(lambda: self.expenses_button.setDisabled(False))
         self.export_as_button.clicked.connect(self.__presenter.ask_user_to_export_report)
         self.sale_group_table.horizontalHeader().sectionClicked.connect(self.__change_sorting_configuration)
         self.sale_group_table.horizontalHeader().sectionClicked.connect(self.sort_table_rows)
         self.__week_calendar_selector.week_changed.connect(self.__disable_export_as_button)
+        self.expenses_button.clicked.connect(self.__presenter.open_expenses_visualization_presenter)
 
     def __set_available_export_as_button(self):
         self.export_as_button.setDisabled(False)
