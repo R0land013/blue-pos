@@ -1,9 +1,12 @@
 from pathlib import Path
+from typing import List
 
 from easy_mvp.abstract_presenter import AbstractPresenter
 
 from model.entity.models import Sale
 from model.report.generators import generate_pdf_file, generate_html_file
+from model.report.sales_grouped_by_product import SalesGroupedByProduct
+from model.report.statistics import ReportStatistic
 from model.report.week import WeekSaleReport
 from model.repository.factory import RepositoryFactory
 from presenter.util.thread_worker import PresenterThreadWorker
@@ -14,13 +17,17 @@ class WeekSaleReportPresenter(AbstractPresenter):
 
     def _on_initialize(self):
         self.__sale_repo = RepositoryFactory.get_sale_repository()
+        self.__sale_group_repo = RepositoryFactory.get_sales_grouped_by_product_repository()
+        self.__expense_repo = RepositoryFactory.get_expense_repository()
+        self.__report_statistic: ReportStatistic = None
+        self.__sales_grouped_by_product_list: List[SalesGroupedByProduct] = None
         self._set_view(WeekSaleReportView(self))
 
     def close_presenter(self):
         self._close_this_presenter()
 
     def execute_thread_to_generate_report_on_gui(self):
-        self.thread = PresenterThreadWorker(self.__load_report_sales)
+        self.thread = PresenterThreadWorker(self.__load_report_and_statistic)
         self.thread.when_started.connect(self.__disable_gui_and_show_processing_message)
         self.thread.when_finished.connect(self.__fill_table)
         self.thread.when_finished.connect(self.get_view().sort_table_rows)
@@ -28,10 +35,13 @@ class WeekSaleReportPresenter(AbstractPresenter):
         self.thread.when_finished.connect(self.__set_available_gui_and_show_no_state_bar_message)
         self.thread.start()
 
-    def __load_report_sales(self, thread: PresenterThreadWorker):
+    def __load_report_and_statistic(self, thread: PresenterThreadWorker):
         initial_date, final_date = self.get_view().get_limit_dates_of_week()
-        self.__week_report = WeekSaleReport(week_day=initial_date, sale_repository=self.__sale_repo)
-        self.__sales = self.__week_report.get_sales()
+        self.__week_report = WeekSaleReport(week_day=initial_date, sale_repository=self.__sale_repo,
+                                            grouped_sales_repo=self.__sale_group_repo,
+                                            expense_repo=self.__expense_repo)
+        self.__sales_grouped_by_product_list = self.__week_report.get_sales_grouped_by_product()
+        self.__report_statistic = self.__week_report.get_report_statistics()
 
     def __disable_gui_and_show_processing_message(self):
         self.get_view().set_disabled_view_except_status_bar(True)
@@ -39,29 +49,32 @@ class WeekSaleReportPresenter(AbstractPresenter):
 
     def __fill_table(self):
         self.get_view().clean_table()
-        for a_sale in self.__sales:
-            self.__insert_sale_on_table(a_sale)
+        for a_sale_group in self.__sales_grouped_by_product_list:
+            self.__insert_sale_on_table(a_sale_group)
         self.get_view().resize_table_columns_to_contents()
 
-    def __insert_sale_on_table(self, sale: Sale):
+    def __insert_sale_on_table(self, sale_group: SalesGroupedByProduct):
         view = self.get_view()
         view.add_empty_row_at_the_end_of_table()
         row = view.get_last_table_row_index()
 
-        view.set_cell_on_table(row, WeekSaleReportView.SALE_ID_COLUMN, str(sale.id))
-        view.set_cell_on_table(row, WeekSaleReportView.PRODUCT_NAME_COLUMN, str(sale.product.name))
-        view.set_cell_on_table(row, WeekSaleReportView.PRODUCT_ID_COLUMN, str(sale.product.id))
-        view.set_cell_on_table(row, WeekSaleReportView.SALE_PRICE_COLUMN, str(sale.price))
-        view.set_cell_on_table(row, WeekSaleReportView.SALE_PROFIT_COLUMN, str(sale.profit))
-        view.set_cell_on_table(row, WeekSaleReportView.SALE_DATE_COLUMN, str(sale.date))
+        view.set_cell_on_table(row, WeekSaleReportView.PRODUCT_ID_COLUMN, str(sale_group.product_id))
+        view.set_cell_on_table(row, WeekSaleReportView.PRODUCT_NAME_COLUMN, str(sale_group.product_name))
+        view.set_cell_on_table(row, WeekSaleReportView.SALE_QUANTITY_COLUMN, str(sale_group.sale_quantity))
+        view.set_cell_on_table(row, WeekSaleReportView.ACQUIRED_MONEY_COLUMN, str(sale_group.acquired_money))
+        view.set_cell_on_table(row, WeekSaleReportView.TOTAL_COST_COLUMN, str(sale_group.total_cost))
+        view.set_cell_on_table(row, WeekSaleReportView.TOTAL_PROFIT_COLUMN, str(sale_group.total_profit))
 
     def __set_report_statistics(self):
-        report_statistics = self.__week_report.get_report_statistics()
-        self.get_view().set_initial_date(report_statistics.initial_date())
-        self.get_view().set_final_date(report_statistics.final_date())
-        self.get_view().set_sale_quantity(report_statistics.sale_quantity())
-        self.get_view().set_paid_money(str(report_statistics.paid_money()))
-        self.get_view().set_profit_money(str(report_statistics.profit_money()))
+        self.get_view().set_report_range_dates()
+
+        self.get_view().set_sale_quantity(self.__report_statistic.sale_quantity())
+        self.get_view().set_paid_money(self.__report_statistic.paid_money())
+        self.get_view().set_total_cost(self.__report_statistic.cost_money())
+        self.get_view().set_profit_money(self.__report_statistic.profit_money())
+
+        self.get_view().set_expense_money(self.__report_statistic.total_expenses())
+        self.get_view().set_net_profit_money(self.__report_statistic.net_profit())
 
     def __set_available_gui_and_show_no_state_bar_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
