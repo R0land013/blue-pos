@@ -25,6 +25,7 @@ class ExpensesVisualizationPresenter(AbstractPresenter):
         self.get_view().set_date_range_for_message(self.__initial_date, self.__final_date)
         self.get_view().set_total_expense(self.__total_expense)
         self.__fill_table()
+        self.get_view().set_first_row_selected()
 
         self.get_view().disable_view(False)
         self.get_view().set_status_bar_message('')
@@ -51,3 +52,8 @@ class ExpensesVisualizationPresenter(AbstractPresenter):
 
     def get_default_window_title(self) -> str:
         return 'Gastos'
+
+    def set_expense_description(self):
+        selected_id = self.get_view().get_selected_expense_id()
+        selected_expense = list(filter(lambda exp: exp.id == selected_id, self.__expenses))[0]
+        self.get_view().set_description(selected_expense.description)

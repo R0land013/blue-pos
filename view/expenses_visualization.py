@@ -1,5 +1,6 @@
 from datetime import date
 
+from PyQt5.QtCore import QItemSelection
 from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem
 from PyQt5.uic import loadUi
 from money import Money
@@ -36,10 +37,17 @@ class ExpensesVisualizationView(QFrame):
         ])
         self.expense_table.resizeColumnsToContents()
         self.expense_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.expense_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.expense_table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
         self.expense_table.horizontalHeader().setSectionsClickable(True)
 
     def __setup_gui_connections(self):
         self.close_button.clicked.connect(self.__presenter.close_presenter)
+        self.expense_table.itemSelectionChanged.connect(self.__set_expense_description_if_there_is_row_selected)
+
+    def __set_expense_description_if_there_is_row_selected(self):
+        if self.expense_table.currentRow() != -1:
+            self.__presenter.set_expense_description()
 
     def disable_view(self, disable: bool):
         self.main_content_frame.setDisabled(disable)
@@ -78,3 +86,17 @@ class ExpensesVisualizationView(QFrame):
 
     def set_total_expense(self, total_expense: Money):
         self.total_expense_label.setText('-{} CUP'.format(total_expense.amount))
+
+    def set_description(self, description: str):
+        self.description_plain_text_edit.setPlainText(description)
+
+    def set_first_row_selected(self):
+        if self.expense_table.rowCount() > 0:
+            self.expense_table.selectionModel().clear()
+            self.expense_table.selectRow(0)
+
+    def get_selected_expense_id(self) -> int:
+        if self.expense_table.currentRow() != -1:
+            row = self.expense_table.currentRow()
+            return int(self.expense_table.item(row, self.ID_COLUMN).text())
+        return -1
