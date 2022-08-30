@@ -4,7 +4,7 @@ from typing import List
 from easy_mvp.abstract_presenter import AbstractPresenter
 from easy_mvp.intent import Intent
 
-from model.entity.models import Sale
+from model.entity.models import Sale, Expense
 from model.report.generators import generate_pdf_file, generate_html_file
 from model.report.sales_grouped_by_product import SalesGroupedByProduct
 from model.report.statistics import ReportStatistic
@@ -23,13 +23,14 @@ class WeekSaleReportPresenter(AbstractPresenter):
         self.__expense_repo = RepositoryFactory.get_expense_repository()
         self.__report_statistic: ReportStatistic = None
         self.__sales_grouped_by_product_list: List[SalesGroupedByProduct] = None
+        self.__expenses: List[Expense] = None
         self._set_view(WeekSaleReportView(self))
 
     def close_presenter(self):
         self._close_this_presenter()
 
     def execute_thread_to_generate_report_on_gui(self):
-        self.thread = PresenterThreadWorker(self.__load_report_and_statistic)
+        self.thread = PresenterThreadWorker(self.__load_all_report_data)
         self.thread.when_started.connect(self.__disable_gui_and_show_processing_message)
         self.thread.when_finished.connect(self.__fill_table)
         self.thread.when_finished.connect(self.get_view().sort_table_rows)
@@ -37,13 +38,18 @@ class WeekSaleReportPresenter(AbstractPresenter):
         self.thread.when_finished.connect(self.__set_available_gui_and_show_no_state_bar_message)
         self.thread.start()
 
-    def __load_report_and_statistic(self, thread: PresenterThreadWorker):
+    def __load_all_report_data(self, thread: PresenterThreadWorker):
+        """
+        Crea el reporte, carga las ventas agrupadas por producto, crea las estadísticas
+        del reporte y carga la lista de gastos.
+        """
         initial_date, final_date = self.get_view().get_limit_dates_of_week()
         self.__week_report = WeekSaleReport(week_day=initial_date, sale_repository=self.__sale_repo,
                                             grouped_sales_repo=self.__sale_group_repo,
                                             expense_repo=self.__expense_repo)
         self.__sales_grouped_by_product_list = self.__week_report.get_sales_grouped_by_product()
         self.__report_statistic = self.__week_report.get_report_statistics()
+        self.__expenses = self.__week_report.get_expenses()
 
     def __disable_gui_and_show_processing_message(self):
         self.get_view().set_disabled_view_except_status_bar(True)
@@ -115,4 +121,13 @@ class WeekSaleReportPresenter(AbstractPresenter):
         intent = Intent(ExpensesVisualizationPresenter)
         intent.use_new_window(True)
         intent.use_modal(True)
+
+        initial_date, final_date = self.get_view().get_limit_dates_of_week()
+        intent.set_data({
+            ExpensesVisualizationPresenter.INITIAL_DATE_DATA: initial_date,
+            ExpensesVisualizationPresenter.FINAL_DATE_DATA: final_date,
+            ExpensesVisualizationPresenter.TOTAL_EXPENSE_DATA: self.__report_statistic.total_expenses(),
+            ExpensesVisualizationPresenter.EXPENSES_DATA: self.__expenses
+        })
+
         self._open_other_presenter(intent)
