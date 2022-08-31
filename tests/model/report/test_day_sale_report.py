@@ -23,21 +23,6 @@ class TestDaySaleReport(unittest.TestCase):
         RepositoryFactory.close_session()
         delete_all_products_from_database()
 
-    def test_get_sales(self):
-        product = ProductGenerator.generate_one_product()
-        product = insert_product_and_return_it(product)
-        sales = SaleGenerator.generate_sales_from_product(product, 3)
-        s1, s2, s3 = sales
-        s1.date = self.YESTERDAY
-        s2.date = self.TODAY
-        s3.date = self.YESTERDAY
-        sales = insert_sales_and_return_them(sales)
-
-        report = DaySaleReport(self.YESTERDAY, self.sale_repository)
-        sales_of_report = report.get_sales()
-
-        assert_sale_lists_are_equal_ignoring_id(sales_of_report, [s1, s3])
-
     def test_html_report_is_correctly_generated(self):
         products = ProductGenerator.generate_products_by_quantity(2)
         products = insert_products_in_database_and_return_them(products)

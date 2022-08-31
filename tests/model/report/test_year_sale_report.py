@@ -25,23 +25,6 @@ class TestYearSaleReport(TestCase):
         RepositoryFactory.close_session()
         delete_all_products_from_database()
 
-    def test_get_sales(self):
-        product = ProductGenerator.generate_one_product()
-        product = insert_product_and_return_it(product)
-        sales = SaleGenerator.generate_sales_from_product(product, 5)
-        s1, s2, s3, s4, s5 = sales
-        s1.date = self.LAST_DATE_OF_PREVIOUS_YEAR
-        s2.date = self.FIRST_DATE_OF_THIS_YEAR
-        s3.date = self.FIRST_DATE_OF_THIS_YEAR + timedelta(days=60)
-        s4.date = self.LAST_DATE_OF_THIS_YEAR
-        s5.date = self.FIRST_DATE_OF_NEXT_YEAR
-        insert_sales_and_return_them(sales)
-
-        report = YearSaleReport(self.FIRST_DATE_OF_THIS_YEAR, self.sale_repository)
-        report_sales = report.get_sales()
-
-        self.assertEqual(report_sales, [s2, s3, s4])
-
     def test_html_report_is_generated(self):
         product = ProductGenerator.generate_one_product()
         product = insert_product_and_return_it(product)
