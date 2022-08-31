@@ -14,6 +14,8 @@ class TestMonthSaleReport(TestCase):
 
     def setUp(self):
         self.sale_repository = RepositoryFactory.get_sale_repository(TEST_DB_URL)
+        self.expense_repo = RepositoryFactory.get_expense_repository(TEST_DB_URL)
+        self.sales_grouped_repo = RepositoryFactory.get_sales_grouped_by_product_repository(TEST_DB_URL)
         this_month = date.today().month
         this_year = date.today().year
         self.FIRST_DATE_OF_THIS_MONTH = date(this_year, this_month, 1)
@@ -45,7 +47,10 @@ class TestMonthSaleReport(TestCase):
         s3.date = self.LAST_DATE_OF_THIS_MONTH
         insert_sales_and_return_them(sales)
 
-        report = MonthSaleReport(self.FIRST_DATE_OF_THIS_MONTH, self.sale_repository)
+        report = MonthSaleReport(self.FIRST_DATE_OF_THIS_MONTH,
+                                 sale_repository=self.sale_repository,
+                                 expense_repo=self.expense_repo,
+                                 grouped_sales_repo=self.sales_grouped_repo)
         generate_html_file(self.HTML_MONTH_REPORT_PATH, report)
 
     def test_pdf_report_is_generated(self):
@@ -58,5 +63,8 @@ class TestMonthSaleReport(TestCase):
         s3.date = self.LAST_DATE_OF_THIS_MONTH
         insert_sales_and_return_them(sales)
 
-        report = MonthSaleReport(self.FIRST_DATE_OF_THIS_MONTH, self.sale_repository)
+        report = MonthSaleReport(self.FIRST_DATE_OF_THIS_MONTH,
+                                 sale_repository=self.sale_repository,
+                                 expense_repo=self.expense_repo,
+                                 grouped_sales_repo=self.sales_grouped_repo)
         generate_pdf_file(self.PDF_MONTH_REPORT_PATH, report)
