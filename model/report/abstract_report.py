@@ -1,4 +1,5 @@
 from datetime import date
+from functools import reduce
 from typing import List
 from model.entity.models import Expense, Sale
 from model.report.sales_grouped_by_product import SalesGroupedByProduct
@@ -6,6 +7,7 @@ from model.report.statistics import ReportStatistic
 from model.repository.expense import ExpenseRepository, ExpenseFilter
 from model.repository.sale import SaleRepository, SaleFilter
 from model.repository.sales_grouped_by_product import SalesGroupedByProductRepository
+from model.util.monetary_types import CUPMoney
 
 
 class AbstractSaleReport:
@@ -44,4 +46,18 @@ class AbstractSaleReport:
         raise NotImplementedError()
 
     def get_report_statistics(self) -> ReportStatistic:
-        raise NotImplementedError()
+        sales_grouped = self.get_sales_grouped_by_product()
+
+        sale_quantity = reduce(lambda quantity, group: quantity + group.sale_quantity, sales_grouped, 0)
+        collected_money = reduce(lambda collected, group: collected + group.acquired_money,
+                                 sales_grouped, CUPMoney('0'))
+        cost_money = reduce(lambda cost, group: cost + group.total_cost, sales_grouped, CUPMoney('0'))
+
+        expense_list = self.get_expenses()
+        total_expense = reduce(lambda expense_money, expense: expense_money + expense.spent_money,
+                               expense_list, CUPMoney('0'))
+
+        return ReportStatistic(sale_quantity=sale_quantity, paid_money=collected_money,
+                               cost_money=cost_money, total_expenses=total_expense,
+                               initial_date=self._initial_date,
+                               final_date=self._final_date)
