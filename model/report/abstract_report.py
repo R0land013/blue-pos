@@ -3,7 +3,7 @@ from typing import List
 from model.entity.models import Expense, Sale
 from model.report.sales_grouped_by_product import SalesGroupedByProduct
 from model.report.statistics import ReportStatistic
-from model.repository.expense import ExpenseRepository
+from model.repository.expense import ExpenseRepository, ExpenseFilter
 from model.repository.sale import SaleRepository, SaleFilter
 from model.repository.sales_grouped_by_product import SalesGroupedByProductRepository
 
@@ -32,10 +32,13 @@ class AbstractSaleReport:
         return self._sale_repo.get_sales_by_filter(sale_filter)
 
     def get_sales_grouped_by_product(self) -> List[SalesGroupedByProduct]:
-        raise NotImplementedError()
+        return self._grouped_sales_repo.get_groups_on_date_range(self._initial_date, self._final_date)
 
     def get_expenses(self) -> List[Expense]:
-        raise NotImplementedError()
+        expense_filter = ExpenseFilter()
+        expense_filter.minimum_date = self._initial_date
+        expense_filter.maximum_date = self._final_date
+        return self._expense_repo.get_expenses_by_filter(expense_filter)
 
     def get_report_as_html(self) -> str:
         raise NotImplementedError()
