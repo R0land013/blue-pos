@@ -8,7 +8,7 @@ from model.repository.factory import RepositoryFactory
 from model.util.monetary_types import CUPMoney
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, \
     insert_products_in_database_and_return_them, insert_sales_and_return_them, TEST_REPORT_PATH, \
-    insert_expenses_in_database
+    insert_expenses_in_database, delete_all_expenses_from_database
 from tests.util.generators.expense import ExpenseGenerator
 from tests.util.generators.product import ProductGenerator
 from tests.util.generators.sale import SaleGenerator
@@ -61,6 +61,7 @@ class TestWeekSaleReport(unittest.TestCase):
     def tearDown(self):
         RepositoryFactory.close_session()
         delete_all_products_from_database()
+        delete_all_expenses_from_database()
 
     def test_get_sales(self):
         products = ProductGenerator.generate_products_by_quantity(2)
