@@ -1,10 +1,13 @@
 from pathlib import Path
+from typing import List
 
 from easy_mvp.abstract_presenter import AbstractPresenter
 
-from model.entity.models import Sale
+from model.entity.models import Expense
 from model.report.generators import generate_pdf_file, generate_html_file
 from model.report.month import MonthSaleReport
+from model.report.sales_grouped_by_product import SalesGroupedByProduct
+from model.report.statistics import ReportStatistic
 from model.repository.factory import RepositoryFactory
 from presenter.util.thread_worker import PresenterThreadWorker
 from view.month_report import MonthSaleReportView
@@ -13,17 +16,22 @@ from view.month_report import MonthSaleReportView
 class MonthSaleReportPresenter(AbstractPresenter):
 
     def _on_initialize(self):
-        self.__initialize_view()
-        self.__sale_repo = RepositoryFactory.get_sale_repository()
-
-    def __initialize_view(self):
         self._set_view(MonthSaleReportView(self))
+        self.__sale_repo = RepositoryFactory.get_sale_repository()
+        self.__expense_repo = RepositoryFactory.get_expense_repository()
+        self.__grouped_sale_repo = RepositoryFactory.get_sales_grouped_by_product_repository()
+        self.__grouped_sales: List[SalesGroupedByProduct] = None
+        self.__report_statistic: ReportStatistic = None
+        self.__expenses: List[Expense] = None
 
     def close_presenter(self):
         self._close_this_presenter()
 
+    def get_default_window_title(self) -> str:
+        return 'Blue POS - Reporte Mensual'
+
     def execute_thread_to_generate_report_on_gui(self):
-        self.thread = PresenterThreadWorker(self.__load_report_sales)
+        self.thread = PresenterThreadWorker(self.__load_all_report_data)
         self.thread.when_started.connect(self.__disable_gui_and_show_processing_message)
         self.thread.when_finished.connect(self.__fill_table)
         self.thread.when_finished.connect(self.get_view().sort_table_rows)
@@ -31,10 +39,14 @@ class MonthSaleReportPresenter(AbstractPresenter):
         self.thread.when_finished.connect(self.__set_available_gui_and_show_no_state_bar_message)
         self.thread.start()
 
-    def __load_report_sales(self, thread: PresenterThreadWorker):
+    def __load_all_report_data(self, thread: PresenterThreadWorker):
         self.__month_report = MonthSaleReport(month_date=self.get_view().get_date(),
-                                            sale_repository=self.__sale_repo)
-        self.__sales = self.__month_report.get_sales()
+                                              sale_repository=self.__sale_repo,
+                                              expense_repo=self.__expense_repo,
+                                              grouped_sales_repo=self.__grouped_sale_repo)
+        self.__grouped_sales = self.__month_report.get_sales_grouped_by_product()
+        self.__report_statistic = self.__month_report.get_report_statistics()
+        self.__expenses = self.__month_report.get_expenses()
 
     def __disable_gui_and_show_processing_message(self):
         self.get_view().set_disabled_view_except_status_bar(True)
@@ -42,27 +54,30 @@ class MonthSaleReportPresenter(AbstractPresenter):
 
     def __fill_table(self):
         self.get_view().clean_table()
-        for a_sale in self.__sales:
-            self.__insert_sale_on_table(a_sale)
+        for a_group in self.__grouped_sales:
+            self.__insert_sale_group_on_table(a_group)
         self.get_view().resize_table_columns_to_contents()
 
-    def __insert_sale_on_table(self, sale: Sale):
+    def __insert_sale_group_on_table(self, sale_group: SalesGroupedByProduct):
         view = self.get_view()
         view.add_empty_row_at_the_end_of_table()
         row = view.get_last_table_row_index()
 
-        view.set_cell_on_table(row, MonthSaleReportView.SALE_ID_COLUMN, str(sale.id))
-        view.set_cell_on_table(row, MonthSaleReportView.PRODUCT_NAME_COLUMN, str(sale.product.name))
-        view.set_cell_on_table(row, MonthSaleReportView.PRODUCT_ID_COLUMN, str(sale.product.id))
-        view.set_cell_on_table(row, MonthSaleReportView.SALE_PRICE_COLUMN, str(sale.price))
-        view.set_cell_on_table(row, MonthSaleReportView.SALE_PROFIT_COLUMN, str(sale.profit))
-        view.set_cell_on_table(row, MonthSaleReportView.SALE_DATE_COLUMN, str(sale.date))
+        view.set_cell_on_table(row, MonthSaleReportView.PRODUCT_ID_COLUMN, str(sale_group.product_id))
+        view.set_cell_on_table(row, MonthSaleReportView.PRODUCT_NAME_COLUMN, str(sale_group.product_name))
+        view.set_cell_on_table(row, MonthSaleReportView.SALE_QUANTITY_COLUMN, str(sale_group.sale_quantity))
+        view.set_cell_on_table(row, MonthSaleReportView.ACQUIRED_MONEY_COLUMN, str(sale_group.acquired_money))
+        view.set_cell_on_table(row, MonthSaleReportView.TOTAL_COST_COLUMN, str(sale_group.total_cost))
+        view.set_cell_on_table(row, MonthSaleReportView.TOTAL_PROFIT_COLUMN, str(sale_group.total_profit))
 
     def __set_report_statistics(self):
-        report_statistics = self.__month_report.get_report_statistics()
-        self.get_view().set_sale_quantity(report_statistics.sale_quantity())
-        self.get_view().set_paid_money(str(report_statistics.paid_money()))
-        self.get_view().set_profit_money(str(report_statistics.profit_money()))
+        self.get_view().set_report_month(self.__report_statistic.initial_date())
+        self.get_view().set_sale_quantity(self.__report_statistic.sale_quantity())
+        self.get_view().set_paid_money(self.__report_statistic.paid_money())
+        self.get_view().set_total_cost_money(self.__report_statistic.cost_money())
+        self.get_view().set_profit_money(self.__report_statistic.profit_money())
+        self.get_view().set_total_expense_money(self.__report_statistic.total_expenses())
+        self.get_view().set_net_profit(self.__report_statistic.net_profit())
 
     def __set_available_gui_and_show_no_state_bar_message(self):
         self.get_view().set_disabled_view_except_status_bar(False)
