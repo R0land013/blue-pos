@@ -32,7 +32,6 @@ class MonthSaleReportView(QFrame):
         self.__wire_up_gui_connections()
         self.__setup_date_edit()
         self.__setup_table()
-        self.export_as_button.setDisabled(True)
 
     def __setup_tool_bar(self):
         self.set_up_tool_buttons()
@@ -68,13 +67,12 @@ class MonthSaleReportView(QFrame):
     def __wire_up_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
         self.create_report_button.clicked.connect(self.__presenter.execute_thread_to_generate_report_on_gui)
-        self.create_report_button.clicked.connect(self.__set_available_export_as_button)
+        self.create_report_button.clicked.connect(lambda: self.export_as_button.setDisabled(False))
+        self.create_report_button.clicked.connect(lambda: self.expenses_button.setDisabled(False))
         self.export_as_button.clicked.connect(self.__presenter.ask_user_to_export_report)
+        self.expenses_button.clicked.connect(self.__presenter.open_expenses_visualization_presenter)
         self.sale_group_table.horizontalHeader().sectionClicked.connect(self.__change_sorting_configuration)
         self.sale_group_table.horizontalHeader().sectionClicked.connect(self.sort_table_rows)
-
-    def __set_available_export_as_button(self):
-        self.export_as_button.setDisabled(False)
 
     def __change_sorting_configuration(self, clicked_header_section: int):
         if clicked_header_section == self.__sorting_column:

@@ -1,7 +1,9 @@
+from datetime import date, timedelta
 from pathlib import Path
 from typing import List
 
 from easy_mvp.abstract_presenter import AbstractPresenter
+from easy_mvp.intent import Intent
 
 from model.entity.models import Expense
 from model.report.generators import generate_pdf_file, generate_html_file
@@ -9,6 +11,7 @@ from model.report.month import MonthSaleReport
 from model.report.sales_grouped_by_product import SalesGroupedByProduct
 from model.report.statistics import ReportStatistic
 from model.repository.factory import RepositoryFactory
+from presenter.expenses_visualization import ExpensesVisualizationPresenter
 from presenter.util.thread_worker import PresenterThreadWorker
 from view.month_report import MonthSaleReportView
 
@@ -110,3 +113,38 @@ class MonthSaleReportPresenter(AbstractPresenter):
     def __disable_gui_and_show_exporting_message(self):
         self.get_view().set_disabled_view_except_status_bar(True)
         self.get_view().set_state_bar_message('Exportando reporte...')
+
+    def open_expenses_visualization_presenter(self):
+        intent = Intent(ExpensesVisualizationPresenter)
+        intent.use_new_window(True)
+        intent.use_modal(True)
+        intent.set_data({
+            ExpensesVisualizationPresenter.EXPENSES_DATA: self.__expenses,
+            ExpensesVisualizationPresenter.TOTAL_EXPENSE_DATA: self.__report_statistic.total_expenses(),
+            ExpensesVisualizationPresenter.INITIAL_DATE_DATA: self.__report_statistic.initial_date(),
+            ExpensesVisualizationPresenter.FINAL_DATE_DATA: self.__get_last_available_date_of_month()
+        })
+
+        self._open_other_presenter(intent)
+
+    def __get_last_available_date_of_month(self):
+        last_date_of_month = self.__get_last_date_of_month(self.__report_statistic.initial_date())
+        current_date = date.today()
+
+        if current_date < last_date_of_month:
+            return current_date
+        return last_date_of_month
+
+    @staticmethod
+    def __get_last_date_of_month(month_date: date):
+        if month_date.month == 12:
+            next_month = 1
+        else:
+            next_month = month_date.month + 1
+
+        if next_month == 1:
+            first_date_next_month = date(day=1, month=1, year=month_date.year + 1)
+        else:
+            first_date_next_month = date(day=1, month=next_month, year=month_date.year)
+
+        return first_date_next_month - timedelta(days=1)
