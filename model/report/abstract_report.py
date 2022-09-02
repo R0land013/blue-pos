@@ -19,13 +19,15 @@ class AbstractSaleReport:
                  final_date: date,
                  sale_repository: SaleRepository,
                  grouped_sales_repo: SalesGroupedByProductRepository,
-                 expense_repo: ExpenseRepository):
+                 expense_repo: ExpenseRepository,
+                 product_id_list: List[int] = None):
 
         self._initial_date = initial_date
         self._final_date = final_date
         self._sale_repo = sale_repository
         self._grouped_sales_repo = grouped_sales_repo
         self._expense_repo = expense_repo
+        self._product_id_list = product_id_list
 
     def get_sales(self) -> List[Sale]:
         sale_filter = SaleFilter()
@@ -34,7 +36,8 @@ class AbstractSaleReport:
         return self._sale_repo.get_sales_by_filter(sale_filter)
 
     def get_sales_grouped_by_product(self) -> List[SalesGroupedByProduct]:
-        return self._grouped_sales_repo.get_groups_on_date_range(self._initial_date, self._final_date)
+        return self._grouped_sales_repo.get_groups_on_date_range(self._initial_date, self._final_date,
+                                                                 product_id_list=self._product_id_list)
 
     def get_expenses(self) -> List[Expense]:
         expense_filter = ExpenseFilter()

@@ -16,6 +16,8 @@ class TestCustomSaleReport(unittest.TestCase):
 
     def setUp(self) -> None:
         self.sale_repository = RepositoryFactory.get_sale_repository(TEST_DB_URL)
+        self.expense_repo = RepositoryFactory.get_expense_repository(TEST_DB_URL)
+        self.grouped_sales_repo = RepositoryFactory.get_sales_grouped_by_product_repository(TEST_DB_URL)
         self.TODAY_DATE = date.today()
         self.YESTERDAY_DATE = date.today() - timedelta(days=1)
         self.HTML_CUSTOM_REPORT_PATH = TEST_REPORT_PATH.joinpath('custom_report.html')
@@ -41,12 +43,16 @@ class TestCustomSaleReport(unittest.TestCase):
         s1, s2, s3 = insert_sales_and_return_them(sales_of_p1)
         s4, s5, s6 = insert_sales_and_return_them(sales_of_p2)
 
-        custom_filter = SaleFilter()
-        custom_filter.product_id_list = [p1.id]
-        custom_filter.minimum_date = self.TODAY_DATE
         report_name = 'Ventas de Juan'
         description = 'Los productos {} que se vendieron hoy y que eran propiedad de juanito.'.format(p1.name)
-        custom_report = CustomSaleReport(custom_filter, self.sale_repository, report_name, description)
+        custom_report = CustomSaleReport(initial_date=self.TODAY_DATE,
+                                         final_date=self.TODAY_DATE,
+                                         product_id_list=[p1.id],
+                                         sale_repository=self.sale_repository,
+                                         expense_repo=self.expense_repo,
+                                         grouped_sales_repo=self.grouped_sales_repo,
+                                         name=report_name,
+                                         description=description)
 
         generate_html_file(self.HTML_CUSTOM_REPORT_PATH, custom_report)
 
@@ -66,12 +72,15 @@ class TestCustomSaleReport(unittest.TestCase):
         s1, s2, s3 = insert_sales_and_return_them(sales_of_p1)
         s4, s5, s6 = insert_sales_and_return_them(sales_of_p2)
 
-        custom_filter = SaleFilter()
-        custom_filter.product_id_list = [p1.id]
-        custom_filter.minimum_date = self.YESTERDAY_DATE
-        custom_filter.maximum_date = self.TODAY_DATE
         report_name = 'Ventas de Juan'
         description = 'Los productos {} que se vendieron ayer y hoy, y que eran propiedad de juanito.'.format(p1.name)
-        custom_report = CustomSaleReport(custom_filter, self.sale_repository, report_name, description)
+        custom_report = CustomSaleReport(initial_date=self.YESTERDAY_DATE,
+                                         final_date=self.TODAY_DATE,
+                                         product_id_list=[p1.id],
+                                         sale_repository=self.sale_repository,
+                                         expense_repo=self.expense_repo,
+                                         grouped_sales_repo=self.grouped_sales_repo,
+                                         name=report_name,
+                                         description=description)
 
         generate_pdf_file(self.PDF_CUSTOM_REPORT_PATH, custom_report)
