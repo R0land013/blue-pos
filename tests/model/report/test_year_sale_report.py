@@ -14,6 +14,9 @@ class TestYearSaleReport(TestCase):
 
     def setUp(self):
         self.sale_repository = RepositoryFactory.get_sale_repository(TEST_DB_URL)
+        self.grouped_sale_repo = RepositoryFactory.get_sales_grouped_by_product_repository(TEST_DB_URL)
+        self.expense_repo = RepositoryFactory.get_expense_repository(TEST_DB_URL)
+
         self.FIRST_DATE_OF_THIS_YEAR = date(day=1, month=1, year=date.today().year)
         self.LAST_DATE_OF_THIS_YEAR = date(day=31, month=12, year=date.today().year)
         self.LAST_DATE_OF_PREVIOUS_YEAR = date(day=31, month=12, year=date.today().year - 1)
@@ -37,7 +40,10 @@ class TestYearSaleReport(TestCase):
         s5.date = self.FIRST_DATE_OF_NEXT_YEAR
         insert_sales_and_return_them(sales)
 
-        report = YearSaleReport(self.FIRST_DATE_OF_THIS_YEAR, self.sale_repository)
+        report = YearSaleReport(year_date=self.FIRST_DATE_OF_THIS_YEAR,
+                                sale_repo=self.sale_repository,
+                                expense_repo=self.expense_repo,
+                                sale_group_repo=self.grouped_sale_repo)
         generate_html_file(self.HTML_YEAR_REPORT_PATH, report)
 
     def test_pdf_report_is_generated(self):
@@ -52,5 +58,8 @@ class TestYearSaleReport(TestCase):
         s5.date = self.FIRST_DATE_OF_NEXT_YEAR
         insert_sales_and_return_them(sales)
 
-        report = YearSaleReport(self.FIRST_DATE_OF_THIS_YEAR, self.sale_repository)
+        report = YearSaleReport(year_date=self.FIRST_DATE_OF_THIS_YEAR,
+                                sale_repo=self.sale_repository,
+                                expense_repo=self.expense_repo,
+                                sale_group_repo=self.grouped_sale_repo)
         generate_pdf_file(self.PDF_YEAR_REPORT_PATH, report)

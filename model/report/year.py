@@ -6,24 +6,26 @@ from jinja2.nodes import Template
 from model.economy import calculate_total_profit, calculate_collected_money
 from model.report.abstract_report import AbstractSaleReport
 from model.report.statistics import ReportStatistic
+from model.repository.expense import ExpenseRepository
 from model.repository.sale import SaleRepository, SaleFilter
+from model.repository.sales_grouped_by_product import SalesGroupedByProductRepository
 
 
 class YearSaleReport(AbstractSaleReport):
 
-    def __init__(self, year_date: date, sale_repo: SaleRepository):
-        self.__sale_repo = sale_repo
-        self.__year_date = year_date
+    def __init__(self,
+                 year_date: date,
+                 sale_repo: SaleRepository,
+                 sale_group_repo: SalesGroupedByProductRepository,
+                 expense_repo: ExpenseRepository):
 
-    def get_sales(self) -> list:
-        first_date_of_year = date(day=1, month=1, year=self.__year_date.year)
-        last_date_of_year = date(day=31, month=12, year=self.__year_date.year)
-
-        sale_filter = SaleFilter()
-        sale_filter.minimum_date = first_date_of_year
-        sale_filter.maximum_date = last_date_of_year
-
-        return self.__sale_repo.get_sales_by_filter(sale_filter)
+        first_date_of_year = date(year=year_date.year, month=1, day=1)
+        last_date_of_year = date(year=year_date.year, month=12, day=31)
+        super().__init__(initial_date=first_date_of_year,
+                         final_date=last_date_of_year,
+                         sale_repository=sale_repo,
+                         grouped_sales_repo=sale_group_repo,
+                         expense_repo=expense_repo)
 
     def get_report_as_html(self) -> str:
         sales = self.get_sales()
@@ -31,7 +33,7 @@ class YearSaleReport(AbstractSaleReport):
         total_collected_money = calculate_collected_money(sales)
 
         template = self.get_template()
-        return template.render(date=self.__year_date,
+        return template.render(date=self._initial_date,
                                sale_quantity=len(sales),
                                sales=sales,
                                total_profit=total_profit,
@@ -43,14 +45,3 @@ class YearSaleReport(AbstractSaleReport):
             autoescape=select_autoescape()
         )
         return env.get_template('year_report.html')
-
-    def get_report_statistics(self) -> ReportStatistic:
-        first_date_of_year = date(day=1, month=1, year=self.__year_date.year)
-        last_date_of_year = date(day=31, month=12, year=self.__year_date.year)
-        sales = self.get_sales()
-        profit_money = calculate_total_profit(sales)
-        collected_money = calculate_collected_money(sales)
-
-        return ReportStatistic(sale_quantity=len(sales), paid_money=collected_money,
-                               profit_money=profit_money, initial_date=first_date_of_year,
-                               final_date=last_date_of_year)
