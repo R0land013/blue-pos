@@ -78,7 +78,9 @@ class SalesGroupedByProductRepository:
         rows = self.__session.execute(query)
         return self.__construct_sale_groups_from_rows(rows, year_first_date, year_last_date)
 
-    def get_groups_on_date_range(self, initial_date: date, final_date: date):
+    def get_groups_on_date_range(self, initial_date: date, final_date: date, product_id_list: List[int] = None):
         query = self.__construct_query_using_date_limits(initial_date, final_date)
+        if product_id_list is not None:
+            query = query.where(Product.id.in_(product_id_list))
         rows = self.__session.execute(query)
         return self.__construct_sale_groups_from_rows(rows, initial_date, final_date)

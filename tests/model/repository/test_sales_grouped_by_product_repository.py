@@ -165,3 +165,50 @@ class TestSalesGroupedByProductRepository(TestCase):
                                   initial_date=date(year=2000, month=6, day=1),
                                   final_date=date(year=2000, month=6, day=30))
         ])
+
+    def test_get_groups_on_date_range_and_using_product_id_list(self):
+        products = ProductGenerator.generate_products_by_quantity(3)
+        p1, p2, p3 = products
+        p1.price, p1.cost = CUPMoney('3.00'), CUPMoney('2.00')  # 1.00 profit
+        p2.price, p2.cost = CUPMoney('5.00'), CUPMoney('3.00')  # 2.00 profit
+        p3.price, p2.cost = CUPMoney('8.00'), CUPMoney('4.00')  # 4.00 profit
+        insert_products_in_database_and_return_them(products)
+        sales_of_p1 = SaleGenerator.generate_sales_from_product(p1, 3)
+        sales_of_p2 = SaleGenerator.generate_sales_from_product(p2, 3)
+        sales_of_p3 = SaleGenerator.generate_sales_from_product(p3, 3)
+        s1, s2, s3 = sales_of_p1
+        s4, s5, s6 = sales_of_p2
+        s7, s8, s9 = sales_of_p3
+        s1.date = date(year=2000, month=5, day=31)
+        s2.date = date(year=2000, month=6, day=1)
+        s3.date = date(year=2000, month=6, day=2)
+        s4.date = date(year=2000, month=6, day=3)
+        s5.date = date(year=2000, month=6, day=4)
+        s6.date = date(year=2000, month=6, day=5)
+        s7.date = date(year=2000, month=6, day=6)
+        s8.date = date(year=2000, month=6, day=30)
+        s9.date = date(year=2000, month=7, day=1)
+        sales_of_p1 = insert_sales_and_return_them(sales_of_p1)
+        sales_of_p2 = insert_sales_and_return_them(sales_of_p2)
+        sales_of_p3 = insert_sales_and_return_them(sales_of_p3)
+
+        groups = self.sales_grouped_repo.get_groups_on_date_range(
+            initial_date=date(year=2000, month=6, day=1),
+            final_date=date(year=2000, month=6, day=30),
+            product_id_list=[p1.id, p3.id]
+        )
+
+        self.assertEqual(groups, [
+
+            SalesGroupedByProduct(product_id=p1.id, product_name=p1.name, sale_quantity=2,
+                                  acquired_money=p1.price * 2, total_cost=p1.cost * 2,
+                                  total_profit=p1.profit * 2,
+                                  initial_date=date(year=2000, month=6, day=1),
+                                  final_date=date(year=2000, month=6, day=30)),
+
+            SalesGroupedByProduct(product_id=p3.id, product_name=p3.name, sale_quantity=2,
+                                  acquired_money=p3.price * 2, total_cost=p3.cost * 2,
+                                  total_profit=p3.profit * 2,
+                                  initial_date=date(year=2000, month=6, day=1),
+                                  final_date=date(year=2000, month=6, day=30))
+        ])
