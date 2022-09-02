@@ -27,6 +27,9 @@ class ProductSelectionPresenter(AbstractPresenter):
     def cancel_selection_and_close_presenter(self):
         self._close_this_presenter()
 
+    def get_default_window_title(self) -> str:
+        return 'Seleccionar productos'
+
     def on_view_shown(self):
         self.__execute_thread_to_load_products()
 

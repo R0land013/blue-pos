@@ -29,6 +29,9 @@ class WeekSaleReportPresenter(AbstractPresenter):
     def close_presenter(self):
         self._close_this_presenter()
 
+    def get_default_window_title(self) -> str:
+        return 'Blue POS - Reporte Semanal'
+
     def execute_thread_to_generate_report_on_gui(self):
         self.thread = PresenterThreadWorker(self.__load_all_report_data)
         self.thread.when_started.connect(self.__disable_gui_and_show_processing_message)
