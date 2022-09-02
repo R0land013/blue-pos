@@ -69,9 +69,11 @@ class YearSaleReportView(QFrame):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
         self.create_report_button.clicked.connect(self.__presenter.execute_thread_to_generate_report_on_gui)
         self.create_report_button.clicked.connect(lambda: self.export_as_button.setDisabled(False))
+        self.create_report_button.clicked.connect(lambda: self.expenses_button.setDisabled(False))
         self.export_as_button.clicked.connect(self.__presenter.ask_user_to_export_report)
         self.sale_group_table.horizontalHeader().sectionClicked.connect(self.__change_sorting_configuration)
         self.sale_group_table.horizontalHeader().sectionClicked.connect(self.sort_table_rows)
+        self.expenses_button.clicked.connect(self.__presenter.open_expenses_visualization_presenter)
 
     def ask_user_to_save_report_as(self, suggested_file_name: str) -> tuple:
         user_home_directory = os.path.expanduser('~')
