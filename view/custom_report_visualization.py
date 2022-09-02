@@ -63,6 +63,7 @@ class CustomReportVisualizationView(QFrame):
     def __wire_up_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
         self.export_as_button.clicked.connect(self.__presenter.ask_user_to_export_report)
+        self.expenses_button.clicked.connect(self.__presenter.open_expenses_visualization_presenter)
         self.sale_group_table.horizontalHeader().sectionClicked.connect(self.__change_sorting_configuration)
         self.sale_group_table.horizontalHeader().sectionClicked.connect(self.sort_table_rows)
 

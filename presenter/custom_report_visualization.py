@@ -1,12 +1,15 @@
 from pathlib import Path
 from typing import List
 from easy_mvp.abstract_presenter import AbstractPresenter
+from easy_mvp.intent import Intent
+
 from model.entity.models import Expense
 from model.report.custom import CustomSaleReport
 from model.report.generators import generate_pdf_file, generate_html_file
 from model.report.sales_grouped_by_product import SalesGroupedByProduct
 from model.report.statistics import ReportStatistic
 from model.repository.factory import RepositoryFactory
+from presenter.expenses_visualization import ExpensesVisualizationPresenter
 from presenter.util.thread_worker import PresenterThreadWorker
 from view.custom_report_visualization import CustomReportVisualizationView
 
@@ -144,3 +147,16 @@ class CustomReportVisualizationPresenter(AbstractPresenter):
         self.get_view().disable_all_gui(True)
         self.get_view().set_state_bar_hidden(False)
         self.get_view().set_state_bar_message('Exportando reporte...')
+
+    def open_expenses_visualization_presenter(self):
+        intent = Intent(ExpensesVisualizationPresenter)
+        intent.use_new_window(True)
+        intent.use_modal(True)
+        intent.set_data({
+            ExpensesVisualizationPresenter.INITIAL_DATE_DATA: self.__initial_date,
+            ExpensesVisualizationPresenter.FINAL_DATE_DATA: self.__final_date,
+            ExpensesVisualizationPresenter.TOTAL_EXPENSE_DATA: self.__report_statistic.total_expenses(),
+            ExpensesVisualizationPresenter.EXPENSES_DATA: self.__expenses
+        })
+
+        self._open_other_presenter(intent)
