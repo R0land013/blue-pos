@@ -65,7 +65,14 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="name_line_edit"/>
+          <widget class="QLineEdit" name="name_line_edit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_2">
@@ -75,7 +82,14 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QPlainTextEdit" name="description_plain_text_edit"/>
+          <widget class="QPlainTextEdit" name="description_plain_text_edit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -133,58 +147,6 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="1" colspan="2">
-             <widget class="QGroupBox" name="ordering_group_box">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="title">
-               <string>Orden</string>
-              </property>
-              <property name="checkable">
-               <bool>false</bool>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
-               <property name="spacing">
-                <number>30</number>
-               </property>
-               <item>
-                <widget class="QRadioButton" name="ascending_radio_button">
-                 <property name="text">
-                  <string>Ascendente</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="descending_radio_button">
-                 <property name="text">
-                  <string>Descendente</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Fecha final</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>Ordenar por</string>
-              </property>
-             </widget>
-            </item>
             <item row="2" column="2">
              <widget class="QDateEdit" name="final_date_edit">
               <property name="calendarPopup">
@@ -192,10 +154,7 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="2">
-             <widget class="QComboBox" name="order_by_combo_box"/>
-            </item>
-            <item row="5" column="1">
+            <item row="3" column="1">
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -207,6 +166,13 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Fecha final</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -229,7 +195,7 @@
             <item>
              <widget class="QLabel" name="label_6">
               <property name="text">
-               <string>Incluir ventas de los productos</string>
+               <string>Incluir los productos</string>
               </property>
              </widget>
             </item>
