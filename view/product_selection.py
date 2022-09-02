@@ -51,7 +51,7 @@ class ProductSelectionView(QFrame):
         )
         self.take_all_button.clicked.connect(self.__presenter.take_all_remaining_products)
         self.empty_button.clicked.connect(self.__presenter.empty_selected_products_table)
-        self.accept_button.clicked.connect(
+        self.apply_selection_button.clicked.connect(
             self.__presenter.close_presenter_and_return_new_selected_products)
 
     def __disable_send_to_remaining_button_if_no_row_selected(self):
@@ -73,7 +73,7 @@ class ProductSelectionView(QFrame):
     def disable_all_gui(self, disable: bool):
         self.main_content_frame.setDisabled(disable)
         self.cancel_button.setDisabled(disable)
-        self.accept_button.setDisabled(disable)
+        self.apply_selection_button.setDisabled(disable)
 
     def set_state_bar_message(self, message: str):
         self.state_bar_label.setText(message)
