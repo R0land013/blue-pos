@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QMessageBox, QToolButton, QToolBar, QHBoxLayout
+from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QMessageBox, QToolButton, QToolBar, QHBoxLayout, \
+    QPushButton
 from PyQt5.uic import loadUi
 
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
@@ -156,20 +157,25 @@ class ProductSaleManagementView(QFrame):
         self.quantity_value_label.setText(str(quantity))
 
     def ask_user_to_confirm_undo_sales(self) -> bool:
-        message_box = self.__construct_message_box()
-        pressed_button = message_box.exec()
-        return pressed_button == QMessageBox.StandardButton.Ok
-
-    def __construct_message_box(self) -> QMessageBox:
         quantity = self.__get_selected_sale_quantity()
         sale_word = self.__get_singular_or_plural_sale_word()
 
-        message_box = QMessageBox()
-        message_box.setIcon(QMessageBox.Icon.Question)
-        message_box.setWindowTitle('Blue POS - Deshacer {}'.format(sale_word))
-        message_box.setStandardButtons(QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
+        message_box = QMessageBox(self.window())
+        message_box.setIcon(QMessageBox.Question)
         message_box.setText('¿Seguro que desea deshacer {} {}?'.format(quantity, sale_word))
-        return message_box
+        message_box.setWindowTitle('Blue POS - Deshacer {}'.format(sale_word))
+
+        undo_button = QPushButton(f'Deshacer {sale_word}')
+        undo_button.setObjectName('dialog_delete_button')
+        undo_button.setCursor(Qt.PointingHandCursor)
+        message_box.addButton(undo_button, QMessageBox.AcceptRole)
+
+        cancel_button = QPushButton('Cancelar')
+        cancel_button.setCursor(Qt.PointingHandCursor)
+        message_box.addButton(cancel_button, QMessageBox.NoRole)
+
+        pressed_button = message_box.exec()
+        return message_box.clickedButton() == undo_button
 
     def __get_selected_sale_quantity(self) -> int:
         return len(self.sale_table.selectionModel().selectedRows(self.SALE_ID_COLUMN))
