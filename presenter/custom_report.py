@@ -20,6 +20,9 @@ class CustomSaleReportPresenter(AbstractPresenter):
     def close_presenter(self):
         self._close_this_presenter()
 
+    def get_default_window_title(self) -> str:
+        return 'Blue POS - Crear Reporte Personalizado'
+
     def execute_thread_to_insert_all_products_on_table(self):
         self.thread = PresenterThreadWorker(self.__load_all_products)
         self.thread.when_started.connect(self.__disable_gui_and_show_loading_products_message)
@@ -66,34 +69,19 @@ class CustomSaleReportPresenter(AbstractPresenter):
             self.__fill_product_table()
 
     def open_custom_report_visualization_presenter(self):
-        custom_filter = self.__create_sale_filter()
+        initial_date = self.get_view().get_initial_date()
+        final_date = self.get_view().get_final_date()
+        product_id_list = list(map(lambda product: product.id, self.__selected_products))
         report_name = self.get_view().get_report_name()
         report_description = self.get_view().get_report_description()
 
         intent = Intent(CustomReportVisualizationPresenter)
         intent.set_data({
-            CustomReportVisualizationPresenter.CUSTOM_FILTER_DATA: custom_filter,
+            CustomReportVisualizationPresenter.INITIAL_DATE_DATA: initial_date,
+            CustomReportVisualizationPresenter.FINAL_DATE_DATA: final_date,
+            CustomReportVisualizationPresenter.PRODUCT_ID_LIST_DATA: product_id_list,
             CustomReportVisualizationPresenter.REPORT_NAME_DATA: report_name,
             CustomReportVisualizationPresenter.REPORT_DESCRIPTION_DATA: report_description
         })
 
         self._open_other_presenter(intent)
-
-    def __create_sale_filter(self) -> SaleFilter:
-        sale_filter = SaleFilter()
-        sale_filter.minimum_date = self.get_view().get_initial_date()
-        sale_filter.maximum_date = self.get_view().get_final_date()
-        sale_filter.sorted_by = self.__get_column_to_order_sale_report()
-        sale_filter.ascending_order = self.get_view().is_ascending_order()
-        sale_filter.product_id_list = list(map(lambda x: x.id, self.__selected_products))
-        return sale_filter
-
-    def __get_column_to_order_sale_report(self):
-        column = self.get_view().get_order_by_report_column()
-        if column == CustomSaleReportView.SALE_ID_REPORT_COLUMN:
-            return SaleFilter.ID
-        elif column == CustomSaleReportView.PAID_REPORT_COLUMN:
-            return SaleFilter.PRICE
-        elif column == CustomSaleReportView.PROFIT_REPORT_COLUMN:
-            return SaleFilter.PROFIT
-        return SaleFilter.SALE_DATE

@@ -28,7 +28,6 @@ class CustomSaleReportView(QFrame):
         loadUi('./view/ui/custom_sale_report.ui', self)
         self.__setup_tool_bar()
         self.__setup_date_edit()
-        self.__setup_order_by_combo_box()
         self.__setup_product_table()
         self.__wire_up_gui_connections()
 
@@ -57,15 +56,6 @@ class CustomSaleReportView(QFrame):
         self.final_date_edit.dateChanged.connect(
             lambda: self.initial_date_edit.setMaximumDate(self.final_date_edit.date())
         )
-
-    def __setup_order_by_combo_box(self):
-        report_columns = [
-            self.SALE_ID_REPORT_COLUMN,
-            self.PAID_REPORT_COLUMN,
-            self.PROFIT_REPORT_COLUMN,
-            self.SALE_DATE_REPORT_COLUMN
-        ]
-        self.order_by_combo_box.addItems(report_columns)
 
     def __setup_product_table(self):
         self.selected_products_table.setColumnCount(2)
