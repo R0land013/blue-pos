@@ -100,6 +100,8 @@ class ExpensesVisualizationView(QFrame):
             initial_date.day, initial_date.month, initial_date.year,
             final_date.day, final_date.month, final_date.year
         )
+        if initial_date == final_date:
+            message = f'Gastos de <b>{initial_date.day}-{initial_date.month}-{initial_date.year}</b>'
         self.expense_date_range_label.setText(message)
 
     def set_total_expense(self, total_expense: Money):
