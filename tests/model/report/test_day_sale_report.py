@@ -14,6 +14,8 @@ class TestDaySaleReport(unittest.TestCase):
 
     def setUp(self) -> None:
         self.sale_repository = RepositoryFactory.get_sale_repository(TEST_DB_URL)
+        self.expense_repo = RepositoryFactory.get_expense_repository(TEST_DB_URL)
+        self.grouped_sales_repo = RepositoryFactory.get_sales_grouped_by_product_repository(TEST_DB_URL)
         self.TODAY = date.today()
         self.YESTERDAY = self.TODAY - timedelta(days=1)
         self.HTML_DAY_REPORT_PATH = TEST_REPORT_PATH.joinpath('day_report.html')
@@ -36,7 +38,10 @@ class TestDaySaleReport(unittest.TestCase):
         p1_sales = insert_sales_and_return_them(p1_sales)
         p2_sales = insert_sales_and_return_them(p2_sales)
 
-        report = DaySaleReport(self.TODAY, self.sale_repository)
+        report = DaySaleReport(self.TODAY,
+                               sale_repo=self.sale_repository,
+                               expense_repo=self.expense_repo,
+                               grouped_sales_repo=self.grouped_sales_repo)
         generate_html_file(self.HTML_DAY_REPORT_PATH, report)
 
     def test_pdf_report_is_correctly_generated(self):
@@ -52,5 +57,8 @@ class TestDaySaleReport(unittest.TestCase):
         p1_sales = insert_sales_and_return_them(p1_sales)
         p2_sales = insert_sales_and_return_them(p2_sales)
 
-        report = DaySaleReport(self.TODAY, self.sale_repository)
+        report = DaySaleReport(self.TODAY,
+                               sale_repo=self.sale_repository,
+                               expense_repo=self.expense_repo,
+                               grouped_sales_repo=self.grouped_sales_repo)
         generate_pdf_file(self.PDF_DAY_REPORT_PATH, report)
