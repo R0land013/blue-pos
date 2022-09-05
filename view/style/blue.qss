@@ -142,7 +142,7 @@ QDateEdit{
 /*---------------------------------------------------------------------*/
 
 /***************Headers de la vista principal*******************************/
-QLabel#management_label, QLabel#reports_label {
+QLabel#management_label, QLabel#reports_label, QLabel#statistics_label {
     color: black;
     font-family: Arial;
     font-weight: bold;
