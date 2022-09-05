@@ -1,9 +1,9 @@
 from datetime import date, timedelta
 from sqlalchemy import select, cast, FLOAT
-from sqlalchemy.orm import Session, aliased
+from sqlalchemy.orm import Session
 from typing import List
 from model.entity.models import Product, Sale
-from model.report.sales_grouped_by_product import SalesGroupedByProduct
+from model.entity.sales_grouped_by_product import SalesGroupedByProduct
 from sqlalchemy import func
 
 from model.util.monetary_types import CUPMoney

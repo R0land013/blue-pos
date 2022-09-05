@@ -1,18 +1,12 @@
 from datetime import date, timedelta
-from functools import reduce
-from typing import List
 
 from jinja2 import Template, Environment, PackageLoader, select_autoescape
 
 from model.economy import calculate_total_profit, calculate_collected_money
-from model.entity.models import Expense
 from model.report.abstract_report import AbstractSaleReport
-from model.report.sales_grouped_by_product import SalesGroupedByProduct
-from model.report.statistics import ReportStatistic
-from model.repository.expense import ExpenseRepository, ExpenseFilter
-from model.repository.sale import SaleRepository, SaleFilter
+from model.repository.expense import ExpenseRepository
+from model.repository.sale import SaleRepository
 from model.repository.sales_grouped_by_product import SalesGroupedByProductRepository
-from model.util.monetary_types import CUPMoney
 
 
 class WeekSaleReport(AbstractSaleReport):

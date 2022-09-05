@@ -2,7 +2,7 @@ from datetime import date
 from functools import reduce
 from typing import List
 from model.entity.models import Expense, Sale
-from model.report.sales_grouped_by_product import SalesGroupedByProduct
+from model.entity.sales_grouped_by_product import SalesGroupedByProduct
 from model.report.statistics import ReportStatistic
 from model.repository.expense import ExpenseRepository, ExpenseFilter
 from model.repository.sale import SaleRepository, SaleFilter

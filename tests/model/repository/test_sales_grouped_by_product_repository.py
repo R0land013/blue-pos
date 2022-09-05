@@ -1,7 +1,7 @@
 from datetime import date
 from unittest import TestCase
 
-from model.report.sales_grouped_by_product import SalesGroupedByProduct
+from model.entity.sales_grouped_by_product import SalesGroupedByProduct
 from model.repository.factory import RepositoryFactory
 from model.util.monetary_types import CUPMoney
 from tests.util.general import TEST_DB_URL, delete_all_products_from_database, \

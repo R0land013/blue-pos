@@ -4,9 +4,9 @@ from typing import List
 from easy_mvp.abstract_presenter import AbstractPresenter
 from easy_mvp.intent import Intent
 
-from model.entity.models import Sale, Expense
+from model.entity.models import Expense
 from model.report.generators import generate_pdf_file, generate_html_file
-from model.report.sales_grouped_by_product import SalesGroupedByProduct
+from model.entity.sales_grouped_by_product import SalesGroupedByProduct
 from model.report.statistics import ReportStatistic
 from model.report.week import WeekSaleReport
 from model.repository.factory import RepositoryFactory
