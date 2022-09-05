@@ -60,3 +60,18 @@ class TestEconomicSummaryRepository(TestCase):
             total_expense=CUPMoney('3.00'),
             net_profit=CUPMoney('3.00')
         ))
+
+    def test_get_economic_summary_on_month_returns_empty_summary(self):
+        december_summary = self.economic_summary_repo.get_economic_summary_on_month(
+            date(year=2000, month=12, day=1)
+        )
+        self.assertEqual(december_summary, EconomicSummary(
+            initial_date=date(day=1, month=12, year=2000),
+            final_date=date(day=31, month=12, year=2000),
+            sale_quantity=0,
+            acquired_money=CUPMoney('0.00'),
+            total_cost=CUPMoney('0.00'),
+            total_profit=CUPMoney('0.00'),
+            total_expense=CUPMoney('0.00'),
+            net_profit=CUPMoney('0.00')
+        ))

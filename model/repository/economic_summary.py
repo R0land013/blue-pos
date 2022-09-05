@@ -36,10 +36,16 @@ class EconomicSummaryRepository:
         row_derived_from_sales = self.__get_row_with_values_derived_from_sales(initial_date, final_date)
         total_expense_row = self.__get_total_expense_row(initial_date, final_date)
 
-        acquired_money = CUPMoney(str(row_derived_from_sales['acquired_money']))
-        total_cost = CUPMoney(str(row_derived_from_sales['total_cost']))
+        acquired_money = row_derived_from_sales['acquired_money']
+        acquired_money = CUPMoney(str(acquired_money)) if acquired_money is not None else CUPMoney('0.00')
+
+        total_cost = row_derived_from_sales['total_cost']
+        total_cost = CUPMoney(str(total_cost)) if total_cost is not None else CUPMoney('0.00')
+
+        total_expense = total_expense_row['total_expense']
+        total_expense = CUPMoney(str(total_expense)) if total_expense is not None else CUPMoney('0.00')
+
         total_profit = acquired_money - total_cost
-        total_expense = CUPMoney(str(total_expense_row['total_expense']))
 
         return EconomicSummary(
             initial_date=initial_date,
