@@ -68,7 +68,7 @@ class RepositoryFactory:
         return RepositoryFactory.__sales_grouped_by_product_repository
 
     @staticmethod
-    def get_economic_summary_repository(self, url: str = DB_URL):
+    def get_economic_summary_repository(url: str = DB_URL):
         RepositoryFactory.__create_session_if_necessary(url)
 
         if RepositoryFactory.__economic_summary_repository is None:
