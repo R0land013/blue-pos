@@ -1,3 +1,4 @@
+from model.repository.economic_summary import EconomicSummaryRepository
 from model.repository.expense import ExpenseRepository
 from model.repository.product import ProductRepository
 from sqlalchemy.orm import Session
@@ -17,6 +18,7 @@ class RepositoryFactory:
     __sale_repository = None
     __sales_grouped_by_product_repository = None
     __expense_repository = None
+    __economic_summary_repository = None
     __engine = None
 
     @staticmethod
@@ -64,6 +66,16 @@ class RepositoryFactory:
                 RepositoryFactory.__session)
 
         return RepositoryFactory.__sales_grouped_by_product_repository
+
+    @staticmethod
+    def get_economic_summary_repository(self, url: str = DB_URL):
+        RepositoryFactory.__create_session_if_necessary(url)
+
+        if RepositoryFactory.__economic_summary_repository is None:
+            RepositoryFactory.__economic_summary_repository = EconomicSummaryRepository(
+                RepositoryFactory.__session)
+
+        return RepositoryFactory.__economic_summary_repository
 
     @staticmethod
     def close_session():
