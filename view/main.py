@@ -20,12 +20,16 @@ class MainView(QFrame):
         self.__previous_frame_animation = None
 
         self.__set_up_gui()
+        self.__pages_of_stacked_widget = [
+            self.statistics_widget,
+            self.management_widget,
+            self.reports_widget
+        ]
+        self.__selected_page_index = 1
 
     def __set_up_gui(self):
         loadUi('./view/ui/main.ui', self)
         self.wire_up_gui_connections()
-
-        self.previous_frame.hide()  # Para que la navegación hacia la izquierda no aparezca
 
     def wire_up_gui_connections(self):
         self.product_management_button.clicked.connect(self.__presenter.open_product_management)
@@ -34,20 +38,42 @@ class MainView(QFrame):
         self.year_report_button.clicked.connect(self.__presenter.open_year_sale_report_presenter)
         self.week_report_button.clicked.connect(self.__presenter.open_week_sale_report_presenter)
         self.custom_report_button.clicked.connect(self.__presenter.open_custom_sale_report_presenter)
-        self.clicked_on_next_frame.connect(self.__show_reports_widget)
-        self.clicked_on_previous_frame.connect(self.__show_management_widget)
+        self.clicked_on_next_frame.connect(self.__show_next_page)
+        self.clicked_on_previous_frame.connect(self.__show_previous_page)
         self.clicked_on_about_label.connect(self.__presenter.open_about_presenter)
         self.expenses_button.clicked.connect(self.__presenter.open_expense_management_presenter)
 
-    def __show_reports_widget(self):
-        self.next_frame.hide()
-        self.previous_frame.show()
-        self.stacked_widget.setCurrentWidget(self.reports_widget)
+    def __show_next_page(self):
+        self.__selected_page_index += 1
+        if self.__selected_page_index == len(self.__pages_of_stacked_widget) - 1:
+            self.next_frame.hide()
+            self.previous_frame.show()
+        else:
+            self.next_frame.show()
+            self.previous_frame.show()
+        self.stacked_widget.setCurrentWidget(self.__pages_of_stacked_widget[self.__selected_page_index])
+        self.__set_text_on_direction_frame_labels_depending_on_selected_page()
 
-    def __show_management_widget(self):
-        self.previous_frame.hide()
-        self.next_frame.show()
-        self.stacked_widget.setCurrentWidget(self.management_widget)
+    def __set_text_on_direction_frame_labels_depending_on_selected_page(self):
+        selected_page = self.__pages_of_stacked_widget[self.__selected_page_index]
+        if selected_page == self.management_widget:
+            self.previous_title_label.setText('Estadísticas')
+            self.next_title_label.setText('Reportes')
+        elif selected_page == self.statistics_widget:
+            self.next_title_label.setText('Gestión')
+        elif selected_page == self.reports_widget:
+            self.previous_title_label.setText('Gestión')
+
+    def __show_previous_page(self):
+        self.__selected_page_index -= 1
+        if self.__selected_page_index == 0:
+            self.next_frame.show()
+            self.previous_frame.hide()
+        else:
+            self.next_frame.show()
+            self.previous_frame.show()
+        self.stacked_widget.setCurrentWidget(self.__pages_of_stacked_widget[self.__selected_page_index])
+        self.__set_text_on_direction_frame_labels_depending_on_selected_page()
 
     def mouseMoveEvent(self, event: QMouseEvent):
         self.__create_animations()
