@@ -238,7 +238,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="vertical_axis_combo_box">
+             <widget class="QComboBox" name="vertical_axes_combo_box">
               <property name="enabled">
                <bool>false</bool>
               </property>
