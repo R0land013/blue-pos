@@ -978,7 +978,7 @@ font: 13pt;</string>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_17">
              <item>
-              <widget class="QPushButton" name="year_behavior_button">
+              <widget class="QPushButton" name="year_statistics_button">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
                  <horstretch>0</horstretch>
