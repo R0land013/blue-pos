@@ -36,11 +36,18 @@ class YearStatisticsPresenter(AbstractPresenter):
         self.thread.start()
 
     def __load_summaries(self, thread: PresenterThreadWorker):
+        this_year = date.today().year
+        this_month = date.today().month
         summaries_list = []
         current_month = 1
         while current_month <= 12:
-            month_date = date(day=1, month=current_month, year=self.__selected_year)
-            summaries_list.append(self.__summary_repo.get_economic_summary_on_month(month_date))
+
+            if self.__selected_year == this_year and current_month > this_month:
+                # No se selecciona porque el mes no ha pasado
+                pass
+            else:
+                month_date = date(day=1, month=current_month, year=self.__selected_year)
+                summaries_list.append(self.__summary_repo.get_economic_summary_on_month(month_date))
 
             current_month += 1
         self.__month_summaries = tuple(summaries_list)
