@@ -3,7 +3,7 @@ from datetime import date
 from PyQt5.QtCore import QDate
 from PyQt5.QtWidgets import QFrame
 from PyQt5.uic import loadUi
-from pyqtgraph import PlotWidget, PlotItem, AxisItem
+from pyqtgraph import PlotWidget, PlotItem, AxisItem, ScatterPlotItem
 
 
 class YearStatisticsView(QFrame):
@@ -94,7 +94,12 @@ class YearStatisticsView(QFrame):
         self.status_bar_label.setText(message)
 
     def plot_values(self, month_axis: list, y_axis: list):
-        plot_item: PlotItem = self.__plot_widget.getPlotItem()
-        plot_item.clear()
+        self.__plot_widget.getPlotItem().clear()
+        scatter_plot_item = ScatterPlotItem(size=13)
+        scatter_plot_item.setData(month_axis, y_axis,
+                                  symbol='o',
+                                  hoverable=True,
+                                  tip=self.__presenter.create_tool_tip_for_spot,
+                                  hoverSize=13)
+        self.__plot_widget.addItem(scatter_plot_item)
         self.__set_axis_limits(min(y_axis), max(y_axis))
-        plot_item.plot(month_axis, y_axis, symbol='o')

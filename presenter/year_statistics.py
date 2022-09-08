@@ -63,3 +63,16 @@ class YearStatisticsPresenter(AbstractPresenter):
             new_y_axis = list(map(lambda summary: float(summary.total_expense.amount), self.__month_summaries))
 
         self.get_view().plot_values(month_axis=month_values, y_axis=new_y_axis)
+
+    def create_tool_tip_for_spot(self, x: float, y: float, data):
+        x_month = int(x)
+        hovered_summary: EconomicSummary = list(filter(
+            lambda summary: summary.initial_date.month == x_month,
+            self.__month_summaries))[0]
+
+        return f'Cantidad de ventas: {hovered_summary.sale_quantity}\n\n' \
+               f'Dinero obtenido:    {hovered_summary.acquired_money.amount} CUP\n' \
+               f'Costos totales:    -{hovered_summary.total_cost.amount} CUP\n' \
+               f'Ganacias totales:   {hovered_summary.total_profit.amount} CUP\n' \
+               f'Gastos totales:    -{hovered_summary.total_expense.amount} CUP\n\n' \
+               f'Ganancia neta:      {hovered_summary.net_profit.amount} CUP'
