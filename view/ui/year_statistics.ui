@@ -109,6 +109,9 @@
          <property name="spacing">
           <number>35</number>
          </property>
+         <property name="bottomMargin">
+          <number>40</number>
+         </property>
          <item>
           <widget class="QFrame" name="frame_5">
            <property name="sizePolicy">
@@ -233,7 +236,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Eje vertical</string>
+               <string>Mostrar</string>
               </property>
              </widget>
             </item>

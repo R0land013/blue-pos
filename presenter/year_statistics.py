@@ -50,3 +50,16 @@ class YearStatisticsPresenter(AbstractPresenter):
         net_profit_values = list(map(lambda summary: float(summary.net_profit.amount), self.__month_summaries))
 
         self.get_view().plot_values(month_axis=months_values, y_axis=net_profit_values)
+
+    def change_vertical_axis(self, selected_axis_option: str):
+        month_values = list(map(lambda summary: summary.initial_date.month, self.__month_summaries))
+        new_y_axis = None
+
+        if selected_axis_option == YearStatisticsView.NET_PROFIT_ITEM:
+            new_y_axis = list(map(lambda summary: float(summary.net_profit.amount), self.__month_summaries))
+        elif selected_axis_option == YearStatisticsView.SALE_QUANTITY_ITEM:
+            new_y_axis = list(map(lambda summary: summary.sale_quantity, self.__month_summaries))
+        elif selected_axis_option == YearStatisticsView.TOTAL_EXPENSE_ITEM:
+            new_y_axis = list(map(lambda summary: float(summary.total_expense.amount), self.__month_summaries))
+
+        self.get_view().plot_values(month_axis=month_values, y_axis=new_y_axis)
