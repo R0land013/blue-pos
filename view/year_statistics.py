@@ -95,13 +95,18 @@ class YearStatisticsView(QFrame):
 
     def plot_values(self, month_axis: list, y_axis: list):
         self.__plot_widget.getPlotItem().clear()
+        self.__draw_graph_lines(month_axis, y_axis)
+        self.__draw_graph_points(month_axis, y_axis)
+        self.__set_axis_limits(min(y_axis), max(y_axis))
 
+    def __draw_graph_lines(self, month_axis: list, y_axis: list):
         plot_curve_item = PlotCurveItem()
         plot_curve_item.setData(month_axis, y_axis,
                                 pen=mkPen({'color': '#5599ff', 'width': 2}),
                                 antialias=True)
         self.__plot_widget.addItem(plot_curve_item)
 
+    def __draw_graph_points(self, month_axis: list, y_axis: list):
         scatter_plot_item = ScatterPlotItem(size=14)
         scatter_plot_item.setData(month_axis, y_axis,
                                   symbol='o',
@@ -112,5 +117,3 @@ class YearStatisticsView(QFrame):
                                   tip=self.__presenter.create_tool_tip_for_spot,
                                   hoverSize=14)
         self.__plot_widget.addItem(scatter_plot_item)
-
-        self.__set_axis_limits(min(y_axis), max(y_axis))
