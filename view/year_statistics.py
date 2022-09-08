@@ -1,7 +1,8 @@
 from datetime import date
 
-from PyQt5.QtCore import QDate
-from PyQt5.QtWidgets import QFrame
+from PyQt5.QtCore import QDate, Qt
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QFrame, QToolBar, QHBoxLayout, QToolButton
 from PyQt5.uic import loadUi
 from pyqtgraph import PlotWidget, PlotItem, AxisItem, ScatterPlotItem, PlotCurveItem, mkPen, mkBrush
 
@@ -21,11 +22,23 @@ class YearStatisticsView(QFrame):
 
     def __setup_gui(self):
         loadUi('./view/ui/year_statistics.ui', self)
+        self.__setup_tool_bar()
         self.__setup_date_edit()
         self.__setup_combo_box()
         self.__setup_graph()
         self.__setup_gui_connections()
         self.set_status_bar_message('')
+
+    def __setup_tool_bar(self):
+        self.tool_bar = QToolBar()
+        self.tool_bar_frame.setLayout(QHBoxLayout())
+        self.tool_bar_frame.layout().setContentsMargins(0, 0, 0, 0)
+        self.tool_bar_frame.layout().setMenuBar(self.tool_bar)
+
+        self.back_button = QToolButton()
+        self.back_button.setIcon(QIcon('./view/ui/images/back.png'))
+        self.back_button.setCursor(Qt.PointingHandCursor)
+        self.tool_bar.addWidget(self.back_button)
 
     def __setup_date_edit(self):
         self.year_date_edit.setMaximumDate(QDate.currentDate())
