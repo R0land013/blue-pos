@@ -54,16 +54,14 @@ class YearStatisticsView(QFrame):
 
     def __setup_graph(self):
         layout = self.graph_frame.layout()
-        self.__plot_widget = PlotWidget(parent=self.graph_frame, background='white')
+        self.__plot_widget = PlotWidget(parent=self.graph_frame, background='white', foreground='black')
         layout.addWidget(self.__plot_widget)
         self.__set_month_axis_on_plot_item()
         self.__set_axis_limits()
+        self.__set_axis_style()
         self.__plot_widget.getPlotItem().getViewBox().setMouseEnabled(x=False, y=False)
         self.__plot_widget.getPlotItem().getViewBox().setMenuEnabled(False)
         self.__plot_widget.getPlotItem().hideButtons()
-
-    def __set_graph_title(self, new_text: str):
-        self.__plot_widget.getPlotItem().setTitle(f'{new_text} en {self.__calculated_year}')
 
     def __set_axis_limits(self, min_y: int = 0, max_y: int = 1000):
         self.__plot_widget.getPlotItem().getViewBox().setRange(
@@ -71,14 +69,16 @@ class YearStatisticsView(QFrame):
             yRange=(min_y, max_y)
         )
 
-    def __set_month_axis_on_plot_item(self):
-        months_dict = {1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril', 5: 'Mayo', 6: 'Junio',
-                       7: 'Julio', 8: 'Agosto', 9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre',
-                       12: 'Diciembre'}
-        month_axis = AxisItem(orientation='bottom')
-        month_axis.setTicks([months_dict.items()])
-        plot_item: PlotItem = self.__plot_widget.getPlotItem()
-        plot_item.setAxisItems(axisItems={'bottom': month_axis})
+    def __set_axis_style(self):
+        black_pen = mkPen(color='black')
+
+        bottom_axis: AxisItem = self.__plot_widget.getPlotItem().getAxis('bottom')
+        bottom_axis.setPen(black_pen)
+        bottom_axis.setTextPen(black_pen)
+
+        left_axis: AxisItem = self.__plot_widget.getPlotItem().getAxis('left')
+        left_axis.setPen(black_pen)
+        left_axis.setTextPen(black_pen)
 
     def __setup_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
@@ -92,6 +92,19 @@ class YearStatisticsView(QFrame):
 
     def __save_selected_year(self):
         self.__calculated_year = self.get_selected_year()
+
+    def __set_graph_title(self, new_text: str):
+        self.__plot_widget.getPlotItem()\
+            .setTitle(f'<span style="color: black">{new_text} en {self.__calculated_year}</span>')
+
+    def __set_month_axis_on_plot_item(self):
+        months_dict = {1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril', 5: 'Mayo', 6: 'Junio',
+                       7: 'Julio', 8: 'Agosto', 9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre',
+                       12: 'Diciembre'}
+        month_axis = AxisItem(orientation='bottom',)
+        month_axis.setTicks([months_dict.items()])
+        plot_item: PlotItem = self.__plot_widget.getPlotItem()
+        plot_item.setAxisItems(axisItems={'bottom': month_axis})
 
     def get_selected_axis(self) -> str:
         return self.vertical_axes_combo_box.currentText()
