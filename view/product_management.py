@@ -1,9 +1,10 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QFrame, QTableWidgetItem, QTableWidget, QMessageBox, QToolBar, QToolButton, QHBoxLayout, \
     QPushButton, QDialog
 from PyQt5.uic import loadUi
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
+from view.util.text_tool_button import ToolButtonWithTextAndIcon
 
 
 class ProductManagementView(QFrame):
@@ -63,16 +64,20 @@ class ProductManagementView(QFrame):
         self.tool_bar.addWidget(self.sell_button)
 
     def set_up_tool_buttons(self):
-        self.back_button = QToolButton()
-        self.back_button.setIcon(QIcon('./view/ui/images/back.png'))
-        self.new_button = QToolButton()
-        self.new_button.setIcon(QIcon('./view/ui/images/new.png'))
-        self.edit_button = QToolButton()
-        self.edit_button.setIcon(QIcon('./view/ui/images/edit.png'))
-        self.delete_button = QToolButton()
-        self.delete_button.setIcon(QIcon('./view/ui/images/delete.png'))
-        self.sell_button = QToolButton()
-        self.sell_button.setIcon(QIcon('./view/ui/images/sale.png'))
+        self.back_button = ToolButtonWithTextAndIcon('Atrás')
+        self.back_button.set_icon(QPixmap('./view/ui/images/back.png'))
+
+        self.new_button = ToolButtonWithTextAndIcon('Añadir')
+        self.new_button.set_icon(QPixmap('./view/ui/images/new.png'))
+
+        self.edit_button = ToolButtonWithTextAndIcon('Editar')
+        self.edit_button.set_icon(QPixmap('./view/ui/images/edit.png'))
+
+        self.delete_button = ToolButtonWithTextAndIcon('Eliminar')
+        self.delete_button.set_icon(QPixmap('./view/ui/images/delete.png'))
+
+        self.sell_button = ToolButtonWithTextAndIcon('Ventas')
+        self.sell_button.set_icon(QPixmap('./view/ui/images/sale.png'))
 
     def __wire_up_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.return_to_main)
