@@ -1,10 +1,12 @@
 from datetime import date
 
-from PyQt5.QtCore import QDate, Qt
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFrame, QToolBar, QHBoxLayout, QToolButton
+from PyQt5.QtCore import QDate
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QFrame, QToolBar, QHBoxLayout
 from PyQt5.uic import loadUi
 from pyqtgraph import PlotWidget, PlotItem, AxisItem, ScatterPlotItem, PlotCurveItem, mkPen, mkBrush
+
+from view.util.text_tool_button import ToolButtonWithTextAndIcon
 
 
 class YearStatisticsView(QFrame):
@@ -35,9 +37,8 @@ class YearStatisticsView(QFrame):
         self.tool_bar_frame.layout().setContentsMargins(0, 0, 0, 0)
         self.tool_bar_frame.layout().setMenuBar(self.tool_bar)
 
-        self.back_button = QToolButton()
-        self.back_button.setIcon(QIcon('./view/ui/images/back.png'))
-        self.back_button.setCursor(Qt.PointingHandCursor)
+        self.back_button = ToolButtonWithTextAndIcon('Atrás')
+        self.back_button.set_icon(QPixmap('./view/ui/images/back.png'))
         self.tool_bar.addWidget(self.back_button)
 
     def __setup_date_edit(self):

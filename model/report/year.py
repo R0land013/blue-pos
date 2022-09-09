@@ -5,9 +5,8 @@ from jinja2.nodes import Template
 
 from model.economy import calculate_total_profit, calculate_collected_money
 from model.report.abstract_report import AbstractSaleReport
-from model.report.statistics import ReportStatistic
 from model.repository.expense import ExpenseRepository
-from model.repository.sale import SaleRepository, SaleFilter
+from model.repository.sale import SaleRepository
 from model.repository.sales_grouped_by_product import SalesGroupedByProductRepository
 
 

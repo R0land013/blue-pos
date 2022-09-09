@@ -1,7 +1,6 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QFrame, QTableWidgetItem, QTableWidget, QMessageBox, QToolBar, QToolButton, QHBoxLayout, \
-    QPushButton, QDialog
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QFrame, QTableWidgetItem, QTableWidget, QMessageBox, QToolBar, QHBoxLayout, QPushButton
 from PyQt5.uic import loadUi
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 from view.util.text_tool_button import ToolButtonWithTextAndIcon

@@ -1,7 +1,7 @@
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QIcon, QMouseEvent, QPixmap
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QToolButton, QLabel, QApplication, QFrame
+from PyQt5.QtGui import QMouseEvent, QPixmap
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QFrame
 
 
 class ToolButtonWithTextAndIcon(QFrame):
@@ -37,6 +37,12 @@ class ToolButtonWithTextAndIcon(QFrame):
             font: 8pt;
             padding: 0;
             """)
+
+    def setDisabled(self, disabled: bool):
+        # Se resetean los estilos
+        self.setStyleSheet('')
+        self.__label.setStyleSheet('font: 8pt;')
+        super().setDisabled(disabled)
 
     def mouseReleaseEvent(self, mouse_event: QMouseEvent):
         if self.underMouse() and mouse_event.button() == Qt.MouseButton.LeftButton:

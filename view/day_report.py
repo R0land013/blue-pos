@@ -2,12 +2,13 @@ import os.path
 from datetime import date
 
 from PyQt5.QtCore import QDate, Qt
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QFileDialog, QToolButton, QHBoxLayout, QToolBar
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QFileDialog, QHBoxLayout, QToolBar
 from PyQt5.uic import loadUi
 from money import Money
 
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
+from view.util.text_tool_button import ToolButtonWithTextAndIcon
 
 
 class DaySaleReportView(QFrame):
@@ -45,8 +46,8 @@ class DaySaleReportView(QFrame):
         self.tool_bar.addWidget(self.back_button)
 
     def set_up_tool_buttons(self):
-        self.back_button = QToolButton()
-        self.back_button.setIcon(QIcon('./view/ui/images/back.png'))
+        self.back_button = ToolButtonWithTextAndIcon('Atrás')
+        self.back_button.set_icon(QPixmap('./view/ui/images/back.png'))
 
     def __set_up_table_format(self):
         self.sale_group_table.setColumnCount(6)

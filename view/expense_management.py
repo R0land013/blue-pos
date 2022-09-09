@@ -1,9 +1,10 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFrame, QToolBar, QHBoxLayout, QToolButton, QTableWidget, QTableWidgetItem, QMessageBox
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QFrame, QToolBar, QHBoxLayout, QTableWidget, QTableWidgetItem, QMessageBox
 from qtpy.uic import loadUi
 
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
+from view.util.text_tool_button import ToolButtonWithTextAndIcon
 
 
 class ExpenseManagementView(QFrame):
@@ -45,31 +46,25 @@ class ExpenseManagementView(QFrame):
         self.tool_bar.addWidget(self.delete_filter_button)
 
     def set_up_tool_buttons(self):
-        self.back_button = QToolButton()
-        self.back_button.setIcon(QIcon('./view/ui/images/back.png'))
-        self.back_button.setToolTip('Regresar')
+        self.back_button = ToolButtonWithTextAndIcon('Atrás')
+        self.back_button.set_icon(QPixmap('./view/ui/images/back.png'))
 
-        self.new_button = QToolButton()
-        self.new_button.setIcon(QIcon('./view/ui/images/new.png'))
-        self.new_button.setToolTip('Nuevo gasto')
+        self.new_button = ToolButtonWithTextAndIcon('Añadir gasto')
+        self.new_button.set_icon(QPixmap('./view/ui/images/new.png'))
 
-        self.edit_button = QToolButton()
-        self.edit_button.setIcon(QIcon('./view/ui/images/edit.png'))
-        self.edit_button.setToolTip('Editar gasto')
+        self.edit_button = ToolButtonWithTextAndIcon('Editar')
+        self.edit_button.set_icon(QPixmap('./view/ui/images/edit.png'))
         self.edit_button.setDisabled(True)
 
-        self.delete_button = QToolButton()
-        self.delete_button.setIcon(QIcon('./view/ui/images/delete.png'))
-        self.delete_button.setToolTip('Eliminar gasto')
+        self.delete_button = ToolButtonWithTextAndIcon('Eliminar')
+        self.delete_button.set_icon(QPixmap('./view/ui/images/delete.png'))
         self.delete_button.setDisabled(True)
 
-        self.filter_button = QToolButton()
-        self.filter_button.setIcon(QIcon('./view/ui/images/filter.png'))
-        self.filter_button.setToolTip('Filtrar gastos')
+        self.filter_button = ToolButtonWithTextAndIcon('Filtrar')
+        self.filter_button.set_icon(QPixmap('./view/ui/images/filter.png'))
 
-        self.delete_filter_button = QToolButton()
-        self.delete_filter_button.setIcon(QIcon('./view/ui/images/delete_filter.png'))
-        self.delete_filter_button.setToolTip('Quitar filtro')
+        self.delete_filter_button = ToolButtonWithTextAndIcon('Quitar filtro')
+        self.delete_filter_button.set_icon(QPixmap('./view/ui/images/delete_filter.png'))
         self.delete_filter_button.setDisabled(True)
 
     def __setup_table(self):

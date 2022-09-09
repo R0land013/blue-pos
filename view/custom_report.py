@@ -1,11 +1,12 @@
 from datetime import date
 
 from PyQt5.QtCore import QDate
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QToolBar, QHBoxLayout, QToolButton
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QToolBar, QHBoxLayout
 from PyQt5.uic import loadUi
 
 from view.util.table_columns import QIntegerTableItem
+from view.util.text_tool_button import ToolButtonWithTextAndIcon
 
 
 class CustomSaleReportView(QFrame):
@@ -43,8 +44,8 @@ class CustomSaleReportView(QFrame):
         self.tool_bar.addWidget(self.back_button)
 
     def set_up_tool_buttons(self):
-        self.back_button = QToolButton()
-        self.back_button.setIcon(QIcon('./view/ui/images/back.png'))
+        self.back_button = ToolButtonWithTextAndIcon('Atrás')
+        self.back_button.set_icon(QPixmap('./view/ui/images/back.png'))
 
     def __setup_date_edit(self):
         self.initial_date_edit.setDate(QDate.currentDate())
