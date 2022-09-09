@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QFrame, QToolBar, QHBoxLayout, QTableWidget, QTableWidgetItem, QMessageBox
+from PyQt5.QtWidgets import QFrame, QToolBar, QHBoxLayout, QTableWidget, QTableWidgetItem, QMessageBox, QPushButton
 from qtpy.uic import loadUi
 
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
@@ -177,20 +177,26 @@ class ExpenseManagementView(QFrame):
         self.__disable_edit_and_delete_buttons_depending_on_row_selection()
 
     def ask_user_to_confirm_deleting_expenses(self) -> bool:
-        message_box = self.__construct_message_box()
-        pressed_button = message_box.exec()
-        return pressed_button == QMessageBox.StandardButton.Ok
-
-    def __construct_message_box(self) -> QMessageBox:
         quantity = self.__get_selected_expenses_quantity()
         expense_word = self.__get_singular_or_plural_expense_word()
 
-        message_box = QMessageBox()
-        message_box.setIcon(QMessageBox.Icon.Question)
-        message_box.setWindowTitle('Blue POS - Eliminar {}'.format(expense_word))
-        message_box.setStandardButtons(QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
+        message_box = QMessageBox(self.window())
+        message_box.setIcon(QMessageBox.Question)
         message_box.setText('¿Seguro que desea eliminar {} {}?'.format(quantity, expense_word))
-        return message_box
+        message_box.setWindowTitle('Blue POS - Eliminar {}'.format(expense_word))
+
+        delete_button = QPushButton('Eliminar')
+        delete_button.setObjectName('dialog_delete_button')
+        delete_button.setCursor(Qt.PointingHandCursor)
+        message_box.addButton(delete_button, QMessageBox.AcceptRole)
+
+        cancel_button = QPushButton('Cancelar')
+        cancel_button.setCursor(Qt.PointingHandCursor)
+        message_box.addButton(cancel_button, QMessageBox.NoRole)
+
+        message_box.exec()
+
+        return message_box.clickedButton() == delete_button
 
     def __get_selected_expenses_quantity(self) -> int:
         return len(self.expense_table.selectionModel().selectedRows(self.ID_COLUMN))
