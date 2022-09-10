@@ -141,7 +141,7 @@ class DaySaleReportView(QFrame):
     def set_cell_on_table(self, row: int, column: int, data):
 
         item = QTableWidgetItem(str(data))
-        if column == self.SALE_PRICE_COLUMN or column == self.SALE_PROFIT_COLUMN:
+        if column in [self.SALE_PRICE_COLUMN, self.SALE_COST_COLUMN, self.SALE_PROFIT_COLUMN]:
             item = QCUPMoneyTableItem(str(data))
         elif column == self.SALE_ID_COLUMN or column == self.PRODUCT_ID_COLUMN:
             item = QIntegerTableItem(str(data))

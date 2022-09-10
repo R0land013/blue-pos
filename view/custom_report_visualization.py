@@ -104,7 +104,7 @@ class CustomReportVisualizationView(QFrame):
     def set_cell_on_table(self, row: int, column: int, data):
 
         item = QTableWidgetItem(str(data))
-        if column == self.ACQUIRED_MONEY_COLUMN or column == self.TOTAL_COST_COLUMN:
+        if column in [self.ACQUIRED_MONEY_COLUMN, self.TOTAL_COST_COLUMN, self.TOTAL_PROFIT_COLUMN]:
             item = QCUPMoneyTableItem(str(data))
         elif column == self.PRODUCT_ID_COLUMN or column == self.SALE_QUANTITY_COLUMN:
             item = QIntegerTableItem(str(data))
