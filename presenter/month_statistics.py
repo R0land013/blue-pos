@@ -52,3 +52,29 @@ class MonthStatisticsPresenter(AbstractPresenter):
         net_profit_values = list(map(lambda summary: float(summary.net_profit.amount), self.__day_summaries))
 
         self.get_view().plot_values(x_days_values=days, y_values=net_profit_values)
+
+    def change_vertical_axis_and_plot_values(self, selected_axis_option: str):
+        days = list(map(lambda summary: summary.initial_date.day, self.__day_summaries))
+        new_y_values = None
+
+        if selected_axis_option == MonthStatisticsView.NET_PROFIT_ITEM:
+            new_y_values = list(map(lambda summary: float(summary.net_profit.amount), self.__day_summaries))
+        elif selected_axis_option == MonthStatisticsView.SALE_QUANTITY_ITEM:
+            new_y_values = list(map(lambda summary: summary.sale_quantity, self.__day_summaries))
+        elif selected_axis_option == MonthStatisticsView.TOTAL_EXPENSE_ITEM:
+            new_y_values = list(map(lambda summary: float(summary.total_expense.amount), self.__day_summaries))
+
+        self.get_view().plot_values(x_days_values=days, y_values=new_y_values)
+
+    def create_tool_tip_for_spot(self, x: float, y: float, data):
+        x_day = int(x)
+        hovered_summary: EconomicSummary = list(filter(
+            lambda summary: summary.initial_date.day == x_day,
+            self.__day_summaries))[0]
+
+        return f'Cantidad de ventas: {hovered_summary.sale_quantity}\n\n' \
+               f'Dinero obtenido:    {hovered_summary.acquired_money.amount} CUP\n' \
+               f'Costos totales:    -{hovered_summary.total_cost.amount} CUP\n' \
+               f'Ganacias totales:   {hovered_summary.total_profit.amount} CUP\n' \
+               f'Gastos totales:    -{hovered_summary.total_expense.amount} CUP\n\n' \
+               f'Ganancia neta:      {hovered_summary.net_profit.amount} CUP'

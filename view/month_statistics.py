@@ -11,6 +11,10 @@ from view.util.text_tool_button import ToolButtonWithTextAndIcon
 
 class MonthStatisticsView(QFrame):
 
+    NET_PROFIT_ITEM = 'Ganancias netas'
+    SALE_QUANTITY_ITEM = 'Cantidad de ventas'
+    TOTAL_EXPENSE_ITEM = 'Gastos totales'
+
     def __init__(self, presenter):
         super().__init__()
         self.__presenter = presenter
@@ -22,6 +26,7 @@ class MonthStatisticsView(QFrame):
         loadUi('./view/ui/month_statistics.ui', self)
         self.__setup_back_tool_button()
         self.__setup_date_edit()
+        self.__setup_axis_combo_box()
         self.__setup_graph()
         self.__setup_gui_connections()
 
@@ -38,6 +43,14 @@ class MonthStatisticsView(QFrame):
     def __setup_date_edit(self):
         self.month_date_edit.setMaximumDate(QDate.currentDate())
         self.month_date_edit.setDate(QDate.currentDate())
+
+    def __setup_axis_combo_box(self):
+        self.vertical_axes_combo_box.addItems([
+            self.NET_PROFIT_ITEM,
+            self.SALE_QUANTITY_ITEM,
+            self.TOTAL_EXPENSE_ITEM
+        ])
+        self.vertical_axes_combo_box.setCurrentIndex(0)
 
     def __setup_graph(self):
         layout = self.graph_frame.layout()
@@ -63,6 +76,11 @@ class MonthStatisticsView(QFrame):
         self.back_button.clicked.connect(self.__presenter.close_presenter)
         self.calculate_button.clicked.connect(self.__set_days_of_month_on_bottom_axis)
         self.calculate_button.clicked.connect(self.__presenter.calculate_economic_day_summaries)
+        self.calculate_button.clicked.connect(lambda: self.vertical_axes_combo_box.setDisabled(False))
+        self.calculate_button.clicked.connect(lambda: self.__set_graph_title(self.NET_PROFIT_ITEM))
+        self.calculate_button.clicked.connect(lambda: self.vertical_axes_combo_box.setCurrentText(self.NET_PROFIT_ITEM))
+        self.vertical_axes_combo_box.currentTextChanged.connect(self.__presenter.change_vertical_axis_and_plot_values)
+        self.vertical_axes_combo_box.currentTextChanged.connect(self.__set_graph_title)
 
     def __set_days_of_month_on_bottom_axis(self):
         self.__set_calculated_month_date()
@@ -99,6 +117,38 @@ class MonthStatisticsView(QFrame):
 
         return (first_date_next_month - timedelta(days=1)).day
 
+    def __set_graph_title(self, new_text: str):
+        self.plot_widget.getPlotItem() \
+            .setTitle(f'<span style="color: black">{new_text} en {self.__get_selected_month_as_word()} '
+                      f'de {self.__calculated_month_date.year}</span>')
+
+    def __get_selected_month_as_word(self) -> str:
+        month = self.__calculated_month_date.month
+        if month == 1:
+            return 'Enero'
+        elif month == 2:
+            return 'Febrero'
+        elif month == 3:
+            return 'Marzo'
+        elif month == 4:
+            return 'Abril'
+        elif month == 5:
+            return 'Mayo'
+        elif month == 6:
+            return 'Junio'
+        elif month == 7:
+            return 'Julio'
+        elif month == 8:
+            return 'Agosto'
+        elif month == 9:
+            return 'Septiembre'
+        elif month == 10:
+            return 'Octubre'
+        elif month == 11:
+            return 'Noviembre'
+        else:
+            return 'Diciembre'
+
     def get_selected_month_date(self):
         qdate: QDate = self.month_date_edit.date()
         return date(day=1, month=qdate.month(), year=qdate.year())
@@ -112,7 +162,10 @@ class MonthStatisticsView(QFrame):
 
     def plot_values(self, x_days_values: list, y_values: list):
         self.plot_widget.getPlotItem().clear()
-        self.__set_left_axis_limits(y_range=(0, max(y_values)))
+
+        min_left_axis = min(y_values) if min(y_values) < 0 else 0
+        self.__set_left_axis_limits(y_range=(min_left_axis, max(y_values)))
+
         self.__draw_graph_lines(x_days_values, y_values)
         self.__draw_graph_points(x_days_values, y_values)
 
@@ -136,5 +189,6 @@ class MonthStatisticsView(QFrame):
                                   brush=mkBrush('#5599ff'),
                                   hoverBrush=mkBrush('#59DBFF'),
                                   hoverable=True,
+                                  tip=self.__presenter.create_tool_tip_for_spot,
                                   hoverSize=14)
         self.plot_widget.addItem(scatter_plot_item)
