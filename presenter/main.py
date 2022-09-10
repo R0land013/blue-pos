@@ -9,6 +9,7 @@ from presenter.custom_report import CustomSaleReportPresenter
 from presenter.day_report import DaySaleReportPresenter
 from presenter.expense_management import ExpenseManagementPresenter
 from presenter.month_report import MonthSaleReportPresenter
+from presenter.month_statistics import MonthStatisticsPresenter
 from presenter.product_management import ProductManagementPresenter
 from presenter.week_report import WeekSaleReportPresenter
 from presenter.year_report import YearSaleReportPresenter
@@ -75,4 +76,8 @@ class MainPresenter(AbstractPresenter):
 
     def open_year_statistics_presenter(self):
         intent = Intent(YearStatisticsPresenter)
+        self._open_other_presenter(intent)
+
+    def open_month_statistics_presenter(self):
+        intent = Intent(MonthStatisticsPresenter)
         self._open_other_presenter(intent)

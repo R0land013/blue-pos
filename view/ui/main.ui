@@ -950,7 +950,7 @@ font: 13pt;</string>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_18">
              <item>
-              <widget class="QPushButton" name="sale_statistics_button">
+              <widget class="QPushButton" name="month_statistics_button">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
                  <horstretch>0</horstretch>
@@ -961,7 +961,7 @@ font: 13pt;</string>
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="text">
-                <string>Ventas</string>
+                <string>Mensual</string>
                </property>
               </widget>
              </item>

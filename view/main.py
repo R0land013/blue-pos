@@ -39,6 +39,7 @@ class MainView(QFrame):
         self.week_report_button.clicked.connect(self.__presenter.open_week_sale_report_presenter)
         self.custom_report_button.clicked.connect(self.__presenter.open_custom_sale_report_presenter)
         self.year_statistics_button.clicked.connect(self.__presenter.open_year_statistics_presenter)
+        self.month_statistics_button.clicked.connect(self.__presenter.open_month_statistics_presenter)
         self.clicked_on_next_frame.connect(self.__show_next_page)
         self.clicked_on_previous_frame.connect(self.__show_previous_page)
         self.clicked_on_about_label.connect(self.__presenter.open_about_presenter)
