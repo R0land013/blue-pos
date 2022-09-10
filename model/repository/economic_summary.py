@@ -78,3 +78,6 @@ class EconomicSummaryRepository:
         return self.__session.execute(select(total_expense)
                                       .where(Expense.date >= initial_date)
                                       .where(Expense.date <= final_date)).first()
+
+    def get_economic_summary_on_day(self, day_date: date) -> EconomicSummary:
+        return self.__construct_economic_summary(day_date, day_date)
