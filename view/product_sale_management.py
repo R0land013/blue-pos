@@ -137,7 +137,7 @@ class ProductSaleManagementView(QFrame):
     def set_cell_in_table(self, row: int, column: int, data):
 
         item = QTableWidgetItem(str(data))
-        if column == self.PROFIT_COLUMN or column == self.PAYMENT_COLUMN:
+        if column in [self.PAYMENT_COLUMN, self.COST_COLUMN, self.PROFIT_COLUMN]:
             item = QCUPMoneyTableItem(str(data))
         elif column == self.SALE_ID_COLUMN:
             item = QIntegerTableItem(str(data))

@@ -11,11 +11,14 @@ class QCustomTableItemTypes:
 class QCUPMoneyTableItem(QTableWidgetItem):
 
     def __init__(self, text: str):
+        if 'CUP' in text:
+            cup, amount = text.split()
+            text = f'{amount}'
         super().__init__(text, type=QCustomTableItemTypes.CUP_MONEY_TYPE)
 
     def __lt__(self, other):
-        this_amount_str = self.text().split()[1]
-        other_amount_str = other.text().split()[1]
+        this_amount_str = self.text()
+        other_amount_str = other.text()
         this_money = self.__create_cup_money(this_amount_str)
         other_money = self.__create_cup_money(other_amount_str)
         return this_money < other_money
