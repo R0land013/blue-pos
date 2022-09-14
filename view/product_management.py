@@ -27,9 +27,12 @@ class ProductManagementView(QFrame):
         self.__set_up_tool_bar()
         self.__wire_up_gui_connections()
         self.product_table.setSortingEnabled(True)
+
         self.edit_button.setDisabled(True)
         self.delete_button.setDisabled(True)
         self.sell_button.setDisabled(True)
+
+        self.selected_quantity_label.hide()
 
     def __set_table_format(self):
         self.product_table.setColumnCount(6)
@@ -86,6 +89,7 @@ class ProductManagementView(QFrame):
         self.sell_button.clicked.connect(self.__presenter.open_product_sale_management_presenter)
         self.product_table.itemSelectionChanged.connect(self.__disable_edit_and_delete_buttons_if_no_row_selected)
         self.product_table.itemDoubleClicked.connect(self.__presenter.open_presenter_to_edit_product)
+        self.product_table.itemSelectionChanged.connect(self.__set_selected_row_quantity_on_label)
 
     def __disable_edit_and_delete_buttons_if_no_row_selected(self):
         selected_row_quantity = len(self.product_table.selectionModel().selectedRows(self.ID_COLUMN))
@@ -102,6 +106,18 @@ class ProductManagementView(QFrame):
             self.edit_button.setDisabled(True)
             self.delete_button.setDisabled(True)
             self.sell_button.setDisabled(True)
+
+    def __set_selected_row_quantity_on_label(self):
+        selected_row_quantity = len(self.product_table.selectionModel().selectedRows(self.ID_COLUMN))
+
+        if selected_row_quantity == 1:
+            self.selected_quantity_label.show()
+            self.selected_quantity_label.setText('1 seleccionado')
+        elif selected_row_quantity > 1:
+            self.selected_quantity_label.show()
+            self.selected_quantity_label.setText(f'{selected_row_quantity} seleccionados')
+        else:
+            self.selected_quantity_label.hide()
 
     def set_cell_in_table(self, row: int, column: int, data):
 
