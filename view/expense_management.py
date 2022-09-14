@@ -28,6 +28,7 @@ class ExpenseManagementView(QFrame):
         self.__sorting_order = Qt.DescendingOrder
 
         self.__setup_gui_connections()
+        self.selected_quantity_label.setText('')
 
     def __set_up_tool_bar(self):
         self.set_up_tool_buttons()
@@ -87,6 +88,7 @@ class ExpenseManagementView(QFrame):
         self.edit_button.clicked.connect(self.__presenter.open_expense_form_presenter_to_update_expense)
         self.expense_table.itemSelectionChanged.connect(
             self.__disable_edit_and_delete_buttons_depending_on_row_selection)
+        self.expense_table.itemSelectionChanged.connect(self.__set_selected_row_quantity_on_label)
         self.expense_table.itemDoubleClicked.connect(
             self.__presenter.open_expense_form_presenter_to_update_expense)
         self.delete_button.clicked.connect(self.__presenter.execute_thread_to_delete_selected_expenses)
@@ -108,6 +110,18 @@ class ExpenseManagementView(QFrame):
         else:
             self.edit_button.setDisabled(True)
             self.delete_button.setDisabled(True)
+
+    def __set_selected_row_quantity_on_label(self):
+        selected_row_quantity = len(self.expense_table.selectionModel().selectedRows(self.ID_COLUMN))
+
+        if selected_row_quantity == 1:
+            self.selected_quantity_label.show()
+            self.selected_quantity_label.setText('1 seleccionado')
+        elif selected_row_quantity > 1:
+            self.selected_quantity_label.show()
+            self.selected_quantity_label.setText(f'{selected_row_quantity} seleccionados')
+        else:
+            self.selected_quantity_label.setText('')
 
     def __change_sorting_configuration(self, clicked_header_section: int):
         if clicked_header_section == self.__sorting_column:
