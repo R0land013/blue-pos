@@ -32,6 +32,7 @@ class ProductSaleManagementView(QFrame):
         self.edit_sale_button.setDisabled(True)
         self.undo_sale_button.setDisabled(True)
         self.disable_delete_filter_button(True)
+        self.selected_quantity_label.hide()
 
     def __setup_tool_bar(self):
         self.__define_tool_bar_buttons()
@@ -88,6 +89,7 @@ class ProductSaleManagementView(QFrame):
         self.undo_sale_button.clicked.connect(self.__presenter.undo_selected_sales)
         self.edit_sale_button.clicked.connect(self.__presenter.open_presenter_to_edit_sale)
         self.sale_table.itemSelectionChanged.connect(self.__disable_buttons_depending_on_table_selection)
+        self.sale_table.itemSelectionChanged.connect(self.__set_selected_row_quantity_on_label)
         self.filter_button.clicked.connect(self.__presenter.open_filter_presenter)
         self.delete_filter_button.clicked.connect(self.__presenter.execute_thread_to_delete_applied_filter)
         self.sale_table.horizontalHeader().sectionClicked.connect(self.__change_sorting_configuration)
@@ -105,6 +107,18 @@ class ProductSaleManagementView(QFrame):
         else:
             self.edit_sale_button.setDisabled(True)
             self.undo_sale_button.setDisabled(True)
+
+    def __set_selected_row_quantity_on_label(self):
+        selected_row_quantity = len(self.sale_table.selectionModel().selectedRows(self.SALE_ID_COLUMN))
+
+        if selected_row_quantity == 1:
+            self.selected_quantity_label.show()
+            self.selected_quantity_label.setText('1 seleccionada')
+        elif selected_row_quantity > 1:
+            self.selected_quantity_label.show()
+            self.selected_quantity_label.setText(f'{selected_row_quantity} seleccionadas')
+        else:
+            self.selected_quantity_label.setText('')
 
     def __change_sorting_configuration(self, clicked_header_section: int):
         if clicked_header_section == self.__sorting_column:
