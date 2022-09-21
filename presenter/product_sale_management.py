@@ -24,7 +24,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self._set_view(view)
         self.__product: Product = self._get_intent_data()[self.PRODUCT_DATA]
         self.__sale_repo = RepositoryFactory.get_sale_repository()
-        self.__applied_sale_filter = None
+        self.__applied_sale_filter: SaleFilter = None
 
     def close_presenter(self):
         result_data = {self.REMAINING_PRODUCT_QUANTITY: self.__product.quantity}
@@ -159,23 +159,36 @@ class ProductSaleManagementPresenter(AbstractPresenter):
     def __update_gui_on_new_sales_inserted(self, result_data: dict):
         new_sales = result_data[MakeSalePresenter.NEW_SALES]
 
-        self.__disable_gui_and_show_loading_sales_message()
+        if self.__applied_sale_filter is None or self.__are_sales_matching_sale_filter_values(new_sales):
 
-        for a_sale in new_sales:
-            self.__add_sale_to_table(a_sale)
+            self.__disable_gui_and_show_loading_sales_message()
 
-        self.__update_available_product_quantity_on_gui()
-        self.__set_sell_button_availability_depending_on_remaining_product_quantity()
-        self.__set_available_gui_and_show_no_message()
-        self.get_view().resize_table_columns_to_contents()
-        self.get_view().sort_table_rows()
+            for a_sale in new_sales:
+                self.__add_sale_to_table(a_sale)
+
+            self.__update_available_product_quantity_on_gui()
+            self.__set_sell_button_availability_depending_on_remaining_product_quantity()
+            self.__set_available_gui_and_show_no_message()
+            self.get_view().resize_table_columns_to_contents()
+            self.get_view().sort_table_rows()
+
+    def __are_sales_matching_sale_filter_values(self, sales: list) -> bool:
+        a_sale: Sale = sales[0]
+        return (self.__applied_sale_filter is not None
+                and self.__applied_sale_filter.minimum_date <= a_sale.date
+                and self.__applied_sale_filter.maximum_date >= a_sale.date)
 
     def __update_sale_on_table(self, result_data: dict):
         selected_row = self.get_view().get_selected_row_index()
         updated_sale = result_data[EditSalePresenter.UPDATED_SALE]
-        self.__set_table_row_by_sale(selected_row, updated_sale)
-        self.get_view().resize_table_columns_to_contents()
-        self.get_view().sort_table_rows()
+
+        if self.__applied_sale_filter is None or self.__are_sales_matching_sale_filter_values([updated_sale]):
+
+            self.__set_table_row_by_sale(selected_row, updated_sale)
+            self.get_view().resize_table_columns_to_contents()
+            self.get_view().sort_table_rows()
+        elif not self.__are_sales_matching_sale_filter_values([updated_sale]):
+            self.get_view().delete_selected_sales_from_table()
 
     def open_presenter_to_edit_sale(self):
         data = {EditSalePresenter.SALE: self.__get_selected_sale()}
