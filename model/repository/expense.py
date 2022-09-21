@@ -5,6 +5,7 @@ from model.entity.models import Expense
 from model.repository.exc.expense import UniqueExpenseNameException, EmptyExpenseNameException, \
     NonPositiveExpenseMoneyException, NonExistentExpenseException
 from model.util.monetary_types import CUPMoney
+import re
 
 
 class ExpenseFilter:
@@ -46,6 +47,24 @@ class ExpenseFilter:
     @phrase.setter
     def phrase(self, value):
         self.__phrase = value
+
+    def is_it_match(self, expense: Expense):
+        is_it_match = True
+
+        if self.__phrase is not None:
+            is_it_match = is_it_match and self.__match_phrase(expense)
+
+        if self.__minimum_date is not None:
+            is_it_match = is_it_match and (self.__minimum_date <= expense.date)
+
+        if self.__maximum_date is not None:
+            is_it_match = is_it_match and (expense.date <= self.__maximum_date)
+
+        return is_it_match
+
+    def __match_phrase(self, expense: Expense):
+        return (re.search(self.__phrase, expense.name) is not None
+                or re.search(self.__phrase, expense.description) is not None)
 
 
 class ExpenseRepository:

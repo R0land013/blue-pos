@@ -16,7 +16,7 @@ class ExpenseManagementPresenter(AbstractPresenter):
         self._set_view(ExpenseManagementView(self))
         self.__expense_repo = RepositoryFactory.get_expense_repository()
         self.__expenses = []
-        self.__expense_filter = None
+        self.__expense_filter: ExpenseFilter = None
 
     def close_presenter(self):
         self._close_this_presenter()
@@ -85,9 +85,14 @@ class ExpenseManagementPresenter(AbstractPresenter):
 
     def __add_new_expense_to_table(self, result_data: dict):
         new_expense = result_data[ExpenseFormPresenter.NEW_EXPENSE_RESULT_DATA]
-        self.__add_expense_to_table(new_expense)
-        self.get_view().sort_table_rows()
-        self.get_view().resize_table_columns_to_contents()
+
+        if self.__expense_filter is None or self.__is_it_match_filter_values(new_expense):
+            self.__add_expense_to_table(new_expense)
+            self.get_view().sort_table_rows()
+            self.get_view().resize_table_columns_to_contents()
+
+    def __is_it_match_filter_values(self, expense: Expense) -> bool:
+        return self.__expense_filter is not None and self.__expense_filter.is_it_match(expense)
 
     def open_expense_form_presenter_to_update_expense(self):
         intent = Intent(ExpenseFormPresenter)
@@ -107,9 +112,14 @@ class ExpenseManagementPresenter(AbstractPresenter):
     def __update_expense_on_table(self, result_data: dict):
         row = self.get_view().get_selected_row_index()
         updated_expense = result_data[ExpenseFormPresenter.UPDATED_EXPENSE_RESULT_DATA]
-        self.__set_table_row_by_expense(row, updated_expense)
-        self.get_view().sort_table_rows()
-        self.get_view().resize_table_columns_to_contents()
+
+        if self.__expense_filter is None or self.__is_it_match_filter_values(updated_expense):
+            self.__set_table_row_by_expense(row, updated_expense)
+            self.get_view().sort_table_rows()
+            self.get_view().resize_table_columns_to_contents()
+
+        elif not self.__is_it_match_filter_values(updated_expense):
+            self.get_view().delete_selected_rows_from_table()
 
     def execute_thread_to_delete_selected_expenses(self):
         if self.get_view().ask_user_to_confirm_deleting_expenses():
