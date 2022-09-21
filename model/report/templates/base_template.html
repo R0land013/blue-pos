@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock title %}</title>
+
+    <style>
+        table{
+            border-collapse: collapse;
+            border:solid 1px black;
+        }
+        td, th{
+            border-collapse: collapse;
+            text-align: center;
+            vertical-align: middle;
+            padding: 5px;
+            border:solid 1px black;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <h1>{% block report_name %}{% endblock %}</h1>
+
+    {% block date_block %}{% endblock %}
+
+
+    <h3>Cantidad de ventas: {{ sale_quantity }} </h3>
+
+    <h3>Dinero adquirido: {{ total_collected_money }} CUP </h3>
+
+    <h3>Costo total de productos: -{{ total_cost }} CUP </h3>
+
+    <h3>Ganancias: {{ total_profit }} CUP </h3>
+
+    <h3>Gastos: -{{ total_expense }} CUP </h3>
+
+    <h3>Ganancia neta: {{ net_profit }} </h3>
+
+    <table>
+        {% block table %}{% endblock %}
+    </table>
+</body>
+
+</html>
