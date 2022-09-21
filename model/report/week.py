@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from functools import reduce
 
 from jinja2 import Template, Environment, PackageLoader, select_autoescape
 
@@ -34,17 +35,28 @@ class WeekSaleReport(AbstractSaleReport):
         return week_day_date + timedelta(days=6 - week_day_date.weekday())
 
     def get_report_as_html(self) -> str:
-        sales = self.get_sales()
-        total_profit = calculate_total_profit(sales)
-        total_collected_money = calculate_collected_money(sales)
+        final_date = date.today() if self._final_date > date.today() else self._final_date
+
+        report_statistics = self.get_report_statistics()
+        total_collected_money = report_statistics.paid_money()
+        total_cost = report_statistics.cost_money()
+        total_profit = report_statistics.profit_money()
+        total_expense = report_statistics.total_expenses()
+        net_profit = report_statistics.net_profit()
+
+        sales_grouped = self.get_sales_grouped_by_product()
+        sale_quantity = reduce(lambda quantity, group: quantity + group.sale_quantity, sales_grouped, 0)
 
         template = self.get_template()
-        return template.render(monday_date=self._initial_date,
-                               sunday_date=self._final_date,
-                               sale_quantity=len(sales),
-                               sales=sales,
-                               total_profit=total_profit,
-                               total_collected_money=total_collected_money)
+        return template.render(initial_date=self._initial_date,
+                               final_date=self._final_date,
+                               sale_quantity=sale_quantity,
+                               total_collected_money=total_collected_money.amount,
+                               total_cost=total_cost.amount,
+                               total_profit=total_profit.amount,
+                               total_expense=total_expense.amount,
+                               net_profit=net_profit.amount,
+                               sale_groups=sales_grouped)
 
     def get_template(self) -> Template:
         env = Environment(

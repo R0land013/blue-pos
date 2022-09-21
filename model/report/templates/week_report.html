@@ -1,55 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Reporte Semanal</title>
+{% extends "grouped_sales_template.html" %}
 
-    <style>
-            table{
-                border-collapse: collapse;
-                border:solid 1px black;
-            }
-            td, th{
-                border-collapse: collapse;
-                text-align: center;
-                vertical-align: middle;
-                padding: 5px;
-                border:solid 1px black;
-            }
-        </style>
+{% block report_name %}
+    Reporte Semanal de Ventas
+{% endblock %}
 
-</head>
-
-<body>
-    <h1>Reporte Semanal de Ventas</h1>
-    <h2>Fecha inicial: {{ monday_date.day }}-{{ monday_date.month }}-{{ monday_date.year }}</h2>
-    <h2>Fecha final: {{ sunday_date.day }}-{{ sunday_date.month }}-{{ sunday_date.year }}</h2>
-
-    <h3>Cantidad de ventas: {{ sale_quantity }}</h3>
-    <h3>Dinero Recolectado: {{ total_collected_money }}</h3>
-    <h3>Ganancias Totales: {{ total_profit }}</h3>
-
-    <table>
-        <thead>
-        <th>Id. Venta</th>
-        <th>Producto</th>
-        <th>Id. Producto</th>
-        <th>Precio</th>
-        <th>Ganancia</th>
-        <th>Fecha</th>
-        </thead>
-        <tbody>
-        {% for a_sale in sales %}
-        <tr>
-            <td>{{ a_sale.id }}</td>
-            <td>{{ a_sale.product.name }}</td>
-            <td>{{ a_sale.product_id }}</td>
-            <td>{{ a_sale.price }}</td>
-            <td>{{ a_sale.profit }}</td>
-            <td>{{ a_sale.date }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</body>
-
-</html>
+{% block date_block %}
+    <h2>Fecha inicial: {{ initial_date.day }}-{{ initial_date.month }}-{{ initial_date.year }}</h2>
+    <h2>Fecha final: {{ final_date.day }}-{{ final_date.month }}-{{ final_date.year }}</h2>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base_template.html" %}
+
+{% block table %}
+    <thead>
+        <th>Id. Producto</th>
+        <th>Nombre del producto</th>
+        <th>Cantidad de ventas</th>
+        <th>Dinero obtenido(CUP)</th>
+        <th>Costo total(CUP)</th>
+        <th>Ganancia total(CUP)</th>
+    </thead>
+    <tbody>
+    {% for sale_group in sale_groups %}
+    <tr>
+        <td>{{ sale_group.product_id }}</td>
+        <td>{{ sale_group.product_name }}</td>
+        <td>{{ sale_group.sale_quantity }}</td>
+        <td>{{ sale_group.acquired_money }}</td>
+        <td>{{ sale_group.total_cost }}</td>
+        <td>{{ sale_group.total_profit }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+{% endblock %}
