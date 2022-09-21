@@ -1,6 +1,9 @@
 from datetime import date
 from functools import reduce
 from typing import List
+
+from jinja2 import Template, Environment, PackageLoader, select_autoescape
+
 from model.entity.models import Expense, Sale
 from model.entity.sales_grouped_by_product import SalesGroupedByProduct
 from model.report.statistics import ReportStatistic
@@ -48,6 +51,27 @@ class AbstractSaleReport:
     def get_report_as_html(self) -> str:
         raise NotImplementedError()
 
+    def _construct_sales_grouped_report_as_html(self, template_name: str, **kwargs) -> str:
+        report_statistics = self.get_report_statistics()
+        total_collected_money = report_statistics.paid_money()
+        total_cost = report_statistics.cost_money()
+        total_profit = report_statistics.profit_money()
+        total_expense = report_statistics.total_expenses()
+        net_profit = report_statistics.net_profit()
+
+        sales_grouped = self.get_sales_grouped_by_product()
+        sale_quantity = reduce(lambda quantity, group: quantity + group.sale_quantity, sales_grouped, 0)
+
+        template = self.get_template(template_name)
+        return template.render(sale_quantity=sale_quantity,
+                               total_collected_money=total_collected_money.amount,
+                               total_cost=total_cost.amount,
+                               total_profit=total_profit.amount,
+                               total_expense=total_expense.amount,
+                               net_profit=net_profit.amount,
+                               sale_groups=sales_grouped,
+                               **kwargs)
+
     def get_report_statistics(self) -> ReportStatistic:
         sales_grouped = self.get_sales_grouped_by_product()
 
@@ -64,3 +88,10 @@ class AbstractSaleReport:
                                cost_money=cost_money, total_expenses=total_expense,
                                initial_date=self._initial_date,
                                final_date=self._final_date)
+
+    def get_template(self, template_name: str) -> Template:
+        env = Environment(
+            loader=PackageLoader('model.report'),
+            autoescape=select_autoescape()
+        )
+        return env.get_template(template_name)
