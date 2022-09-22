@@ -28,6 +28,7 @@ class CustomSaleReportPresenter(AbstractPresenter):
         self.thread.when_started.connect(self.__disable_gui_and_show_loading_products_message)
         self.thread.when_finished.connect(self.__fill_product_table)
         self.thread.when_finished.connect(self.__set_all_gui_available_and_hide_state_bar)
+        self.thread.when_finished.connect(lambda: self.get_view().show_green_toast_message('Se incluyeron todos los productos'))
         self.thread.start()
 
     def __load_all_products(self, thread: PresenterThreadWorker):

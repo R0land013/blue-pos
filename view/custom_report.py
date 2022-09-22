@@ -7,9 +7,10 @@ from PyQt5.uic import loadUi
 
 from view.util.table_columns import QIntegerTableItem
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
+from view.util.toast import ToastView
 
 
-class CustomSaleReportView(QFrame):
+class CustomSaleReportView(QFrame, ToastView):
 
     SALE_ID_REPORT_COLUMN = 'Id. de Venta'
     PAID_REPORT_COLUMN = 'Pagado'
