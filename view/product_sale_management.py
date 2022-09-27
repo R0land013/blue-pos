@@ -4,11 +4,12 @@ from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QMessageBox,
     QPushButton
 from PyQt5.uic import loadUi
 
+from view.util.loading import LoadingView
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
 
 
-class ProductSaleManagementView(QFrame):
+class ProductSaleManagementView(QFrame, LoadingView):
 
     SALE_ID_COLUMN = 0
     PAYMENT_COLUMN = 1

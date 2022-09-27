@@ -57,9 +57,12 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def __execute_thread_to_fill_table(self):
         self.thread = PresenterThreadWorker(self.__load_product_sales)
-        self.thread.when_started.connect(self.__disable_gui_and_show_loading_sales_message)
+        self.thread.when_started.connect(lambda: self.get_view().show_loading_with_message('Cargando'))
+
         self.thread.when_finished.connect(self.__fill_table)
         self.thread.when_finished.connect(self.__set_available_gui_and_show_no_message)
+        self.thread.when_finished.connect(lambda: self.get_view().hide_loading_animation())
+
         self.thread.start()
 
     def __load_product_sales(self, thread: PresenterThreadWorker):
@@ -106,13 +109,14 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
             self.thread = PresenterThreadWorker(self.__undo_selected_sales)
 
-            self.thread.when_started.connect(self.__disable_gui_and_show_undoing_sales_message)
+            self.thread.when_started.connect(lambda: self.get_view().show_loading_with_message('Eliminando'))
             self.thread.when_finished.connect(self.get_view().delete_selected_sales_from_table)
             self.thread.when_finished.connect(self.__update_available_product_quantity_on_gui)
             self.thread.when_finished.connect(
                 self.__set_sell_button_availability_depending_on_remaining_product_quantity)
             self.thread.when_finished.connect(self.get_view().resize_table_columns_to_contents)
             self.thread.when_finished.connect(self.__set_available_gui_and_show_no_message)
+            self.thread.when_finished.connect(self.get_view().hide_loading_animation)
             self.thread.start()
 
     def __disable_gui_and_show_undoing_sales_message(self):
