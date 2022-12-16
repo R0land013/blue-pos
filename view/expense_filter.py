@@ -2,7 +2,7 @@ from datetime import date
 
 from PyQt5.QtCore import Qt, QDate
 from PyQt5.QtWidgets import QFrame
-from qtpy.uic import loadUi
+from PyQt5.uic import loadUi
 
 
 class ExpenseFilterView(QFrame):

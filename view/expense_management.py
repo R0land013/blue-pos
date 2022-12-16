@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFrame, QToolBar, QHBoxLayout, QTableWidget, QTableWidgetItem, QMessageBox, QPushButton
-from qtpy.uic import loadUi
+from PyQt5.uic import loadUi
 
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 from view.util.text_tool_button import ToolButtonWithTextAndIcon

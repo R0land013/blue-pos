@@ -2,7 +2,7 @@ from datetime import date
 
 from PyQt5.QtCore import QDate
 from PyQt5.QtWidgets import QFrame, QMessageBox
-from qtpy.uic import loadUi
+from PyQt5.uic import loadUi
 
 
 class ExpenseFormView(QFrame):

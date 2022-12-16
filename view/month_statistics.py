@@ -4,7 +4,7 @@ from PyQt5.QtCore import QDate
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFrame, QToolBar, QHBoxLayout
 from pyqtgraph import PlotWidget, mkPen, AxisItem, PlotCurveItem, ScatterPlotItem, mkBrush
-from qtpy.uic import loadUi
+from PyQt5.uic import loadUi
 
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
 
