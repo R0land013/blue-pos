@@ -1,9 +1,9 @@
-from decimal import Decimal
-
 from PyQt5.QtWidgets import QFrame, QMessageBox
 from PyQt5.uic import loadUi
-
 from model.util.monetary_types import CUPMoney
+from model.entity.models import PRODUCT_DESCRIPTION_MAX_LENGTH, PRODUCT_NAME_MAX_LENGTH
+from view.util.plain_text_edit import PlainTextEdit
+from PyQt5.QtCore import Qt
 
 
 class ProductView(QFrame):
@@ -12,11 +12,17 @@ class ProductView(QFrame):
         super().__init__()
         self.__presenter = presenter
 
+        self.description_text_edit: PlainTextEdit = None
+
         self.__setup_gui()
 
     def __setup_gui(self):
         loadUi('./view/ui/product_form.ui', self)
+        
         self.__setup_price_and_cost_spin_boxes()
+        self.name_line_edit.setMaxLength(PRODUCT_NAME_MAX_LENGTH)
+        self.__add_description_field()
+        
         self.__wire_up_gui_connections()
 
     def __setup_price_and_cost_spin_boxes(self):
@@ -32,6 +38,14 @@ class ProductView(QFrame):
             self.profit_value_label.setStyleSheet('color: red;')
         else:
             self.profit_value_label.setStyleSheet('color: black;')
+
+    def __add_description_field(self):
+        layout = self.description_frame.layout()
+        self.description_text_edit = PlainTextEdit(self.description_frame)
+        self.description_text_edit.set_maximum_length(PRODUCT_DESCRIPTION_MAX_LENGTH)
+        self.description_text_edit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+        
+        layout.addWidget(self.description_text_edit)
 
     def __wire_up_gui_connections(self):
         self.save_button.clicked.connect(self.__presenter.save_product)

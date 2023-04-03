@@ -1,8 +1,10 @@
 from datetime import date
-
 from PyQt5.QtCore import QDate
 from PyQt5.QtWidgets import QFrame, QMessageBox
 from PyQt5.uic import loadUi
+from view.util.plain_text_edit import PlainTextEdit
+from PyQt5.QtCore import Qt
+from model.entity.models import EXPENSE_DESCRIPTION_MAX_LENGTH, EXPENSE_NAME_MAX_LENGTH
 
 
 class ExpenseFormView(QFrame):
@@ -10,13 +12,26 @@ class ExpenseFormView(QFrame):
     def __init__(self, presenter):
         super().__init__()
         self.__presenter = presenter
+        self.description_plain_text_edit: PlainTextEdit = None
 
         self.__setup_gui()
 
     def __setup_gui(self):
         loadUi('./view/ui/expense_form.ui', self)
+        
+        self.name_line_edit.setMaxLength(EXPENSE_NAME_MAX_LENGTH)
+        self.__add_description_field()
         self.__setup_date_edit()
+        
         self.__setup_gui_connections()
+
+    def __add_description_field(self):
+        layout = self.description_frame.layout()
+        self.description_plain_text_edit = PlainTextEdit(self.description_frame)
+        self.description_plain_text_edit.set_maximum_length(EXPENSE_DESCRIPTION_MAX_LENGTH)
+        self.description_plain_text_edit.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+        
+        layout.addWidget(self.description_plain_text_edit)
 
     def __setup_date_edit(self):
         self.date_edit.setMaximumDate(QDate.currentDate())

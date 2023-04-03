@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>617</width>
+    <width>656</width>
     <height>359</height>
    </rect>
   </property>
@@ -158,7 +158,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QFrame" name="frame_4">
+       <widget class="QFrame" name="description_frame">
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
@@ -172,9 +172,6 @@
             <string>Descripción</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <widget class="QPlainTextEdit" name="description_plain_text_edit"/>
          </item>
         </layout>
        </widget>

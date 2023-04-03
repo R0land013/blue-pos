@@ -9,6 +9,8 @@ from datetime import date
 
 Base = declarative_base()
 
+PRODUCT_DESCRIPTION_MAX_LENGTH = 300
+PRODUCT_NAME_MAX_LENGTH = 80
 
 class Product(Base):
 
@@ -27,8 +29,8 @@ class Product(Base):
 
     __tablename__ = 'products'
     id = Column(Integer, primary_key=True)
-    name = Column(String(length=80), nullable=False, unique=True)
-    description = Column(String(length=300), nullable=True, default='')
+    name = Column(String(length=PRODUCT_NAME_MAX_LENGTH), nullable=False, unique=True)
+    description = Column(String(length=PRODUCT_DESCRIPTION_MAX_LENGTH), nullable=True, default='')
     price = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
     cost = Column(MoneyColumn(), nullable=False, default=CUPMoney('1.00'))
     quantity = Column(Integer, nullable=False, default=0)
@@ -69,6 +71,9 @@ class Sale(Base):
         return self.price - self.cost
 
 
+EXPENSE_NAME_MAX_LENGTH = 100
+EXPENSE_DESCRIPTION_MAX_LENGTH = 600
+
 class Expense(Base):
 
     def __repr__(self):
@@ -84,8 +89,8 @@ class Expense(Base):
 
     __tablename__ = 'expenses'
     id = Column(Integer, primary_key=True)
-    name = Column(String(length=100), nullable=False)
-    description = Column(String(length=600), nullable=True, default='')
+    name = Column(String(length=EXPENSE_NAME_MAX_LENGTH), nullable=False)
+    description = Column(String(length=EXPENSE_DESCRIPTION_MAX_LENGTH), nullable=True, default='')
     spent_money = Column(MoneyColumn(), nullable=False, default=CUPMoney('-1.00'))
     date = Column(Date, nullable=False, default=date.today())
 
