@@ -33,7 +33,7 @@ class CustomReportVisualizationPresenter(AbstractPresenter):
         self.__product_id_list = self._get_intent_data()[self.PRODUCT_ID_LIST_DATA]
         self.__name = self._get_intent_data()[self.REPORT_NAME_DATA]
         self.__description = self._get_intent_data()[self.REPORT_DESCRIPTION_DATA]
-        self.__report: CustomSaleReport = None
+        self.__custom_report: CustomSaleReport = None
         self.__sale_groups: List[SalesGroupedByProduct] = []
         self.__expenses: List[Expense] = []
         self.__report_statistic: ReportStatistic = None
@@ -61,7 +61,7 @@ class CustomReportVisualizationPresenter(AbstractPresenter):
         self.thread.start()
 
     def __load_all_report_data(self, thread: PresenterThreadWorker):
-        self.__report= CustomSaleReport(initial_date=self.__initial_date,
+        self.__custom_report = CustomSaleReport(initial_date=self.__initial_date,
                                         final_date=self.__final_date,
                                         product_id_list=self.__product_id_list,
                                         name=self.__name,
@@ -69,9 +69,9 @@ class CustomReportVisualizationPresenter(AbstractPresenter):
                                         sale_repository=self.__sale_repo,
                                         expense_repo=self.__expense_repo,
                                         grouped_sales_repo=self.__sale_group_repo)
-        self.__sale_groups = self.__report.get_sales_grouped_by_product()
-        self.__expenses = self.__report.get_expenses()
-        self.__report_statistic = self.__report.get_report_statistics()
+        self.__sale_groups = self.__custom_report.get_sales_grouped_by_product()
+        self.__expenses = self.__custom_report.get_expenses()
+        self.__report_statistic = self.__custom_report.get_report_statistics()
 
     def __disable_gui_and_show_creating_report_message(self):
         self.get_view().disable_all_gui(True)
