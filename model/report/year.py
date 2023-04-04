@@ -27,20 +27,6 @@ class YearSaleReport(AbstractSaleReport):
                          expense_repo=expense_repo)
 
     def get_report_as_html(self) -> str:
-        sales = self.get_sales()
-        total_profit = calculate_total_profit(sales)
-        total_collected_money = calculate_collected_money(sales)
+        return self._construct_sales_grouped_report_as_html('year_report.html',
+                                                            year_date=self._initial_date)
 
-        template = self.get_template()
-        return template.render(date=self._initial_date,
-                               sale_quantity=len(sales),
-                               sales=sales,
-                               total_profit=total_profit,
-                               total_collected_money=total_collected_money)
-
-    def get_template(self) -> Template:
-        env = Environment(
-            loader=PackageLoader('model.report'),
-            autoescape=select_autoescape()
-        )
-        return env.get_template('year_report.html')

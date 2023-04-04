@@ -1,53 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Reporte Anual {{date.year}}</title>
 
-    <style>
-            table{
-                border-collapse: collapse;
-                border:solid 1px black;
-            }
-            td, th{
-                border-collapse: collapse;
-                text-align: center;
-                vertical-align: middle;
-                padding: 5px;
-                border:solid 1px black;
-            }
-        </style>
-</head>
-<body>
-    <h1>Reporte Anual de Ventas</h1>
-    <h2>Año: {{ date.year }}</h2>
+{% extends "grouped_sales_template.html" %}
 
-    <h3>Cantidad de ventas: {{ sale_quantity }}</h3>
-    <h3>Dinero Recolectado: {{ total_collected_money }}</h3>
-    <h3>Ganancias Totales: {{ total_profit }}</h3>
-
-
-    <table>
-        <thead>
-            <th>Id. Venta</th>
-            <th>Producto</th>
-            <th>Id. Producto</th>
-            <th>Precio</th>
-            <th>Ganancia por unidad</th>
-            <th>Fecha</th>
-        </thead>
-            <tbody>
-            {% for a_sale in sales %}
-                <tr>
-                    <td>{{ a_sale.id }}</td>
-                    <td>{{ a_sale.product.name }}</td>
-                    <td>{{ a_sale.product_id }}</td>
-                    <td>{{ a_sale.price }}</td>
-                    <td>{{ a_sale.profit }}</td>
-                    <td>{{ a_sale.date }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-    </table>
-</body>
-</html>
+{% block report_name %}
+    Reporte Anual {{ year_date.year }}
+{% endblock %}
