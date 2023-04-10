@@ -34,14 +34,14 @@ class ToolButtonWithTextAndIcon(QFrame):
         self.__image_label.setMaximumSize(30, 30)
         self.__label.setStyleSheet(
             """
-            font: 8pt;
+            font: 10pt;
             padding: 0;
             """)
 
     def setDisabled(self, disabled: bool):
         # Se resetean los estilos
         self.setStyleSheet('')
-        self.__label.setStyleSheet('font: 8pt;')
+        self.__label.setStyleSheet('font: 10pt;')
         super().setDisabled(disabled)
 
     def mouseReleaseEvent(self, mouse_event: QMouseEvent):
@@ -57,7 +57,7 @@ class ToolButtonWithTextAndIcon(QFrame):
                 """)
             self.__label.setStyleSheet(
                 """
-                font: 8pt;
+                font: 10pt;
                 background-color: #CCE9FF;
                 """)
 
@@ -68,7 +68,7 @@ class ToolButtonWithTextAndIcon(QFrame):
             """)
         self.__label.setStyleSheet(
             """
-            font: 8pt;
+            font: 10pt;
             background-color: white;
             """)
 
@@ -84,6 +84,6 @@ class ToolButtonWithTextAndIcon(QFrame):
             """)
         self.__label.setStyleSheet(
             """
-            font: 8pt;
+            font: 10pt;
             background-color: #B0D3FF;
             """)

@@ -229,14 +229,7 @@
          <cursorShape>PointingHandCursor</cursorShape>
         </property>
         <property name="styleSheet">
-         <string notr="true">
-QPushButton{
-	background-color: #4DB32B;
-}
-
-QWidget:hover{
-	background-color: #59E52D;
-}</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Aplicar Selección</string>
