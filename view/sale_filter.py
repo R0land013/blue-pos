@@ -85,6 +85,15 @@ class SaleFilterView(QFrame):
             year=q_date.year()
         )
 
+    def set_initial_date(self, initial_date: date):
+        if initial_date is None: return
+        
+        self.initial_date_edit.setDate(QDate(
+            initial_date.year,
+            initial_date.month,
+            initial_date.day
+        ))
+
     def get_final_date(self) -> date:
         if not self.final_sale_date_check_box.isChecked():
             return None
@@ -95,3 +104,24 @@ class SaleFilterView(QFrame):
             month=q_date.month(),
             year=q_date.year()
         )
+    
+    def set_final_date(self, final_date: date):
+        if final_date is None: return
+        
+        self.final_date_edit.setDate(QDate(
+            final_date.year,
+            final_date.month,
+            final_date.day
+        ))
+
+    def set_initial_date_check_box_checked(self, checked: bool):
+        if checked:
+            self.initial_sale_date_check_box.setCheckState(Qt.Checked)
+        else:
+            self.initial_sale_date_check_box.setCheckState(Qt.Unchecked)
+    
+    def set_final_date_check_box_checked(self, checked: bool):
+        if checked:
+            self.final_sale_date_check_box.setCheckState(Qt.Checked)
+        else:
+            self.final_sale_date_check_box.setCheckState(Qt.Unchecked)

@@ -35,7 +35,10 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def open_filter_presenter(self):
         intent = Intent(SaleFilterPresenter)
-        data = {SaleFilterPresenter.FILTER_BY_PRODUCT_ID_LIST_DATA: [self.__product.id]}
+        data = {
+            SaleFilterPresenter.FILTER_BY_PRODUCT_ID_LIST_DATA: [self.__product.id],
+            SaleFilterPresenter.APPLIED_FILTER: self.__applied_sale_filter
+        }
         intent.set_data(data)
 
         intent.use_new_window(True)
