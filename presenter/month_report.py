@@ -14,6 +14,7 @@ from model.repository.factory import RepositoryFactory
 from presenter.expenses_visualization import ExpensesVisualizationPresenter
 from presenter.util.thread_worker import PresenterThreadWorker
 from view.month_report import MonthSaleReportView
+from model.report.generators import DirectoryPermissionError
 
 
 class MonthSaleReportPresenter(AbstractPresenter):
@@ -102,17 +103,25 @@ class MonthSaleReportPresenter(AbstractPresenter):
         self.thread = PresenterThreadWorker(self.__export_report_to_specified_path)
         self.thread.when_started.connect(self.__disable_gui_and_show_exporting_message)
         self.thread.when_finished.connect(self.__set_available_gui_and_show_no_state_bar_message)
+        self.thread.error_found.connect(self.__handle_export_report_errors)
         self.thread.start()
 
     def __export_report_to_specified_path(self, thread: PresenterThreadWorker):
-        if 'pdf' in self.__file_type:
-            generate_pdf_file(Path(self.__path), self.__month_report)
-        elif 'html' in self.__file_type:
-            generate_html_file(Path(self.__path), self.__month_report)
+        try:
+            if 'pdf' in self.__file_type:
+                generate_pdf_file(Path(self.__path), self.__month_report)
+            elif 'html' in self.__file_type:
+                generate_html_file(Path(self.__path), self.__month_report)
+        except DirectoryPermissionError as error:
+            thread.error_found.emit(error)
 
     def __disable_gui_and_show_exporting_message(self):
         self.get_view().set_disabled_view_except_status_bar(True)
         self.get_view().set_state_bar_message('Exportando reporte...')
+
+    def __handle_export_report_errors(self, error):
+        if isinstance(error, DirectoryPermissionError):
+            self.get_view().show_error_message('No se puede exportar el reporte hacia la carpeta seleccionada.')
 
     def open_expenses_visualization_presenter(self):
         intent = Intent(ExpensesVisualizationPresenter)

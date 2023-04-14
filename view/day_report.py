@@ -9,9 +9,9 @@ from money import Money
 
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
+from view.util.error_view import ErrorView
 
-
-class DaySaleReportView(QFrame):
+class DaySaleReportView(QFrame, ErrorView):
 
     SALE_ID_COLUMN = 0
     PRODUCT_NAME_COLUMN = 1

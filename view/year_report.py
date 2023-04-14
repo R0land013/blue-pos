@@ -10,9 +10,9 @@ from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 import os
 
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
+from view.util.error_view import ErrorView
 
-
-class YearSaleReportView(QFrame):
+class YearSaleReportView(QFrame, ErrorView):
 
     PRODUCT_ID_COLUMN = 0
     PRODUCT_NAME_COLUMN = 1
