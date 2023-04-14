@@ -90,6 +90,7 @@ class ProductSaleManagementView(QFrame, LoadingView):
         self.undo_sale_button.clicked.connect(self.__presenter.undo_selected_sales)
         self.edit_sale_button.clicked.connect(self.__presenter.open_presenter_to_edit_sale)
         self.sale_table.itemSelectionChanged.connect(self.__disable_buttons_depending_on_table_selection)
+        self.sale_table.itemDoubleClicked.connect(self.__presenter.open_presenter_to_edit_sale)
         self.sale_table.itemSelectionChanged.connect(self.__set_selected_row_quantity_on_label)
         self.filter_button.clicked.connect(self.__presenter.open_filter_presenter)
         self.delete_filter_button.clicked.connect(self.__presenter.execute_thread_to_delete_applied_filter)
