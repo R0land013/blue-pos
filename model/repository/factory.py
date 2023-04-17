@@ -4,11 +4,20 @@ from model.repository.product import ProductRepository
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from sqlalchemy.pool import NullPool
-
+import os
+from pathlib import Path
 from model.repository.sale import SaleRepository
 from model.repository.sales_grouped_by_product import SalesGroupedByProductRepository
 
-DB_URL = 'sqlite:///data.db?check_same_thread=False'
+
+__BLUE_POS_FOLDER_PATH = Path(os.path.join(str(Path.home()), '.blue-pos/'))
+
+if not __BLUE_POS_FOLDER_PATH.exists():
+    __BLUE_POS_FOLDER_PATH.mkdir()
+
+__BLUE_POS_DB_PATH = str(os.path.join(str(__BLUE_POS_FOLDER_PATH), 'data.db'))
+
+DB_URL = f'sqlite:///{__BLUE_POS_DB_PATH}?check_same_thread=False'
 
 
 class RepositoryFactory:
