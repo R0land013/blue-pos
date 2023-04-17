@@ -15,6 +15,7 @@ from presenter.week_report import WeekSaleReportPresenter
 from presenter.year_report import YearSaleReportPresenter
 from presenter.year_statistics import YearStatisticsPresenter
 from view.main import MainView
+from model.repository.factory import RepositoryFactory
 
 
 class MainPresenter(AbstractPresenter):
@@ -38,6 +39,9 @@ class MainPresenter(AbstractPresenter):
         with open('./view/style/blue.qss', 'r') as f:
             style = f.read()
             QApplication.instance().setStyleSheet(style)
+
+    def on_window_closing(self):
+        RepositoryFactory.close_session()
 
     def get_default_window_title(self) -> str:
         return 'Blue POS'
