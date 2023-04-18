@@ -60,11 +60,10 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
     def __execute_thread_to_fill_table(self):
         self.thread = PresenterThreadWorker(self.__load_product_sales)
-        self.thread.when_started.connect(lambda: self.get_view().show_loading_with_message('Cargando'))
+        self.thread.when_started.connect(self.__disable_gui_and_show_loading_sales_message)
 
         self.thread.when_finished.connect(self.__fill_table)
         self.thread.when_finished.connect(self.__set_available_gui_and_show_no_message)
-        self.thread.when_finished.connect(lambda: self.get_view().hide_loading_animation())
 
         self.thread.start()
 
@@ -112,14 +111,16 @@ class ProductSaleManagementPresenter(AbstractPresenter):
 
             self.thread = PresenterThreadWorker(self.__undo_selected_sales)
 
-            self.thread.when_started.connect(lambda: self.get_view().show_loading_with_message('Eliminando'))
+            self.thread.when_started.connect(self.__disable_gui_and_show_undoing_sales_message)
             self.thread.when_finished.connect(self.get_view().delete_selected_sales_from_table)
             self.thread.when_finished.connect(self.__update_available_product_quantity_on_gui)
             self.thread.when_finished.connect(
                 self.__set_sell_button_availability_depending_on_remaining_product_quantity)
             self.thread.when_finished.connect(self.get_view().resize_table_columns_to_contents)
             self.thread.when_finished.connect(self.__set_available_gui_and_show_no_message)
-            self.thread.when_finished.connect(self.get_view().hide_loading_animation)
+            self.thread.when_finished.connect(
+                lambda: self.get_view().show_success_toast_message('Venta deshecha')
+            )
             self.thread.start()
 
     def __disable_gui_and_show_undoing_sales_message(self):
@@ -178,6 +179,7 @@ class ProductSaleManagementPresenter(AbstractPresenter):
             self.__set_available_gui_and_show_no_message()
             self.get_view().resize_table_columns_to_contents()
             self.get_view().sort_table_rows()
+        self.get_view().show_success_toast_message('Venta completada')
 
     def __are_sales_matching_sale_filter_values(self, sales: list) -> bool:
         a_sale: Sale = sales[0]
@@ -196,6 +198,8 @@ class ProductSaleManagementPresenter(AbstractPresenter):
             self.get_view().sort_table_rows()
         elif not self.__are_sales_matching_sale_filter_values([updated_sale]):
             self.get_view().delete_selected_sales_from_table()
+        
+        self.get_view().show_success_toast_message('Venta actualizada')
 
     def open_presenter_to_edit_sale(self):
         data = {EditSalePresenter.SALE: self.__get_selected_sale()}
@@ -223,6 +227,10 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self.thread.when_finished.connect(self.get_view().resize_table_columns_to_contents)
         self.thread.when_finished.connect(
             self.__set_gui_available_and_show_filtered_sales_message)
+        self.thread.when_finished.connect(
+            lambda: self.get_view().show_info_toast_message('Filtro aplicado')
+        )
+        
         self.thread.start()
 
     def __load_sale_using_filter(self, thread: PresenterThreadWorker):
@@ -255,6 +263,9 @@ class ProductSaleManagementPresenter(AbstractPresenter):
         self.thread.when_finished.connect(self.__set_delete_filter_button_disabled)
         self.thread.when_finished.connect(self.__show_no_filter_applied_message)
         self.thread.when_finished.connect(self.__set_gui_available_and_show_no_message)
+        self.thread.when_finished.connect(
+            lambda: self.get_view().show_info_toast_message('Filtro quitado')
+        )
         self.thread.start()
 
     def __set_delete_filter_button_disabled(self):

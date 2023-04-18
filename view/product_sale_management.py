@@ -3,13 +3,12 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem, QMessageBox, QToolBar, QHBoxLayout, \
     QPushButton
 from PyQt5.uic import loadUi
-
-from view.util.loading import LoadingView
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
+from view.util.toast import ToastView
 
 
-class ProductSaleManagementView(QFrame, LoadingView):
+class ProductSaleManagementView(QFrame, ToastView):
 
     SALE_ID_COLUMN = 0
     PAYMENT_COLUMN = 1
@@ -170,7 +169,7 @@ class ProductSaleManagementView(QFrame, LoadingView):
         self.main_content_frame.setDisabled(disable)
 
     def set_available_product_quantity(self, quantity: int):
-        self.quantity_value_label.setText(str(quantity))
+        self.quantity_value_label.setText(f'Cantidad Disponible: <b>{quantity}</b>')
 
     def ask_user_to_confirm_undo_sales(self) -> bool:
         quantity = self.__get_selected_sale_quantity()
@@ -178,7 +177,10 @@ class ProductSaleManagementView(QFrame, LoadingView):
 
         message_box = QMessageBox(self.window())
         message_box.setIcon(QMessageBox.Question)
-        message_box.setText('¿Seguro que desea deshacer {} {}?'.format(quantity, sale_word))
+        message_box.setText(
+            '¿Seguro que desea deshacer {} {}?\n\n'.format(quantity, sale_word) +
+            'Esto se repondrá en la cantidad disponible del producto.'
+            )
         message_box.setWindowTitle('Blue POS - Deshacer {}'.format(sale_word))
 
         undo_button = QPushButton(f'Deshacer {sale_word}')
@@ -237,5 +239,5 @@ class ProductSaleManagementView(QFrame, LoadingView):
         self.sale_table.clearSelection()
         self.__disable_buttons_depending_on_table_selection()
 
-    def set_product_name(self, name: str):
-        self.product_name_label.setText(name)
+    def set_product_name(self, product_name: str):
+        self.product_name_label.setText(f'Ventas de <b>{product_name}</b>')
