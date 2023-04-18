@@ -101,6 +101,8 @@ class ProductManagementPresenter(AbstractPresenter):
             self.thread.when_finished.connect(self.get_view().delete_selected_products_from_table)
             self.thread.when_finished.connect(self.__set_available_gui_and_show_no_message)
             self.thread.when_finished.connect(self.get_view().resize_table_columns_to_contents)
+            self.thread.when_finished.connect(
+                lambda: self.get_view().show_success_toast_message('Eliminación completada'))
             self.thread.start()
 
     def __product_deletion(self, thread: PresenterThreadWorker):
@@ -141,12 +143,14 @@ class ProductManagementPresenter(AbstractPresenter):
         new_product = result_data[ProductPresenter.NEW_PRODUCT]
         self.__add_product_to_table(new_product)
         self.get_view().resize_table_columns_to_contents()
+        self.get_view().show_success_toast_message('Producto creado')
 
     def __update_product_on_table(self, result_data: dict):
         updated_product = result_data[ProductPresenter.UPDATED_PRODUCT]
         row = self.get_view().get_selected_row_index()
         self.__set_table_row_by_product(row, updated_product)
         self.get_view().resize_table_columns_to_contents()
+        self.get_view().show_success_toast_message('Producto actualizado')
 
     def __update_product_quantity_on_table(self, result_data: dict):
         new_product_quantity = result_data[ProductSaleManagementPresenter.REMAINING_PRODUCT_QUANTITY]
