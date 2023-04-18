@@ -5,9 +5,10 @@ from PyQt5.uic import loadUi
 
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
+from view.util.toast import ToastView
 
 
-class ExpenseManagementView(QFrame):
+class ExpenseManagementView(QFrame, ToastView):
 
     ID_COLUMN = 0
     NAME_COLUMN = 1

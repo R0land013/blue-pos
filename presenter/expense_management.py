@@ -90,6 +90,8 @@ class ExpenseManagementPresenter(AbstractPresenter):
             self.__add_expense_to_table(new_expense)
             self.get_view().sort_table_rows()
             self.get_view().resize_table_columns_to_contents()
+        
+        self.get_view().show_success_toast_message('Nuevo gasto creado')
 
     def __is_it_match_filter_values(self, expense: Expense) -> bool:
         return self.__expense_filter is not None and self.__expense_filter.is_it_match(expense)
@@ -121,6 +123,8 @@ class ExpenseManagementPresenter(AbstractPresenter):
         elif not self.__is_it_match_filter_values(updated_expense):
             self.get_view().delete_selected_rows_from_table()
 
+        self.get_view().show_success_toast_message('Gasto actualizado')
+
     def execute_thread_to_delete_selected_expenses(self):
         if self.get_view().ask_user_to_confirm_deleting_expenses():
             self.__selected_ids = self.get_view().get_all_selected_expense_ids()
@@ -132,6 +136,8 @@ class ExpenseManagementPresenter(AbstractPresenter):
             self.thread.when_finished.connect(lambda: self.get_view().delete_selected_rows_from_table())
             self.thread.when_finished.connect(lambda: self.get_view().disable_all_gui(False))
             self.thread.when_finished.connect(lambda: self.get_view().set_status_bar_message(''))
+            self.thread.when_finished.connect(
+                lambda: self.get_view().show_success_toast_message('Eliminación completada'))
 
             self.thread.start()
 
@@ -160,6 +166,8 @@ class ExpenseManagementPresenter(AbstractPresenter):
         self.thread.when_finished.connect(lambda: self.get_view().set_status_bar_message(''))
         self.thread.when_finished.connect(lambda: self.get_view().disable_all_gui(False))
         self.thread.when_finished.connect(lambda: self.get_view().set_delete_filter_disabled(False))
+        self.thread.when_finished.connect(lambda: self.get_view().show_info_toast_message('Filtro aplicado'))
+
 
         self.thread.start()
 
@@ -180,6 +188,7 @@ class ExpenseManagementPresenter(AbstractPresenter):
         self.thread.when_finished.connect(lambda: self.get_view().set_status_bar_message(''))
         self.thread.when_finished.connect(lambda: self.get_view().disable_all_gui(False))
         self.thread.when_finished.connect(lambda: self.get_view().set_delete_filter_disabled(True))
+        self.thread.when_finished.connect(lambda: self.get_view().show_info_toast_message('Filtro quitado'))
 
         self.thread.start()
 
