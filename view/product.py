@@ -75,13 +75,13 @@ class ProductView(QFrame):
         self.id_value_label.setText(str(product_id))
 
     def get_name(self) -> str:
-        return self.name_line_edit.text()
+        return self.name_line_edit.text().strip()
 
     def set_name(self, name: str):
         self.name_line_edit.setText(name)
 
     def get_description(self) -> str:
-        return self.description_text_edit.document().toRawText()
+        return self.description_text_edit.document().toRawText().strip()
 
     def set_description(self, description: str):
         self.description_text_edit.insertPlainText(description)
