@@ -15,9 +15,9 @@
         <td>{{ sale_group.product_id }}</td>
         <td>{{ sale_group.product_name }}</td>
         <td>{{ sale_group.sale_quantity }}</td>
-        <td>{{ sale_group.acquired_money }}</td>
-        <td>{{ sale_group.total_cost }}</td>
-        <td>{{ sale_group.total_profit }}</td>
+        <td>{{ sale_group.acquired_money.amount }}</td>
+        <td>{{ sale_group.total_cost.amount }}</td>
+        <td>{{ sale_group.total_profit.amount }}</td>
     </tr>
     {% endfor %}
     </tbody>
