@@ -10,9 +10,10 @@ from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 import os
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
 from view.util.error_view import ErrorView
+from view.util.toast import ToastView
 
 
-class CustomReportVisualizationView(QFrame, ErrorView):
+class CustomReportVisualizationView(QFrame, ErrorView, ToastView):
 
     PRODUCT_ID_COLUMN = 0
     PRODUCT_NAME_COLUMN = 1

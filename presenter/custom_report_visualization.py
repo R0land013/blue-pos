@@ -59,6 +59,9 @@ class CustomReportVisualizationPresenter(AbstractPresenter):
 
         self.thread.when_finished.connect(lambda: self.get_view().set_state_bar_hidden(True))
         self.thread.when_finished.connect(lambda: self.get_view().disable_all_gui(False))
+        self.thread.when_finished.connect(
+            lambda: self.get_view().show_info_toast_message('Reporte creado')
+        )
         self.thread.start()
 
     def __load_all_report_data(self, thread: PresenterThreadWorker):
@@ -136,6 +139,9 @@ class CustomReportVisualizationPresenter(AbstractPresenter):
         self.thread.when_started.connect(self.__disable_gui_and_show_exporting_message)
         self.thread.when_finished.connect(lambda: self.get_view().set_state_bar_hidden(True))
         self.thread.when_finished.connect(lambda: self.get_view().disable_all_gui(False))
+        self.thread.finished_without_error.connect(
+            lambda: self.get_view().show_success_toast_message('Reporte exportado')
+        )
         self.thread.error_found.connect(self.__handle_export_report_errors)
         self.thread.start()
 
@@ -145,6 +151,8 @@ class CustomReportVisualizationPresenter(AbstractPresenter):
                 generate_pdf_file(Path(self.__path), self.__custom_report)
             elif 'html' in self.__file_type:
                 generate_html_file(Path(self.__path), self.__custom_report)
+
+            thread.finished_without_error.emit()
         except DirectoryPermissionError as error:
             thread.error_found.emit(error)
 

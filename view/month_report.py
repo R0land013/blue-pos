@@ -10,8 +10,9 @@ import os
 
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
 from view.util.error_view import ErrorView
+from view.util.toast import ToastView
 
-class MonthSaleReportView(QFrame, ErrorView):
+class MonthSaleReportView(QFrame, ErrorView, ToastView):
 
     PRODUCT_ID_COLUMN = 0
     PRODUCT_NAME_COLUMN = 1

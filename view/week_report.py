@@ -10,10 +10,11 @@ from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
 from view.util.week_selector import QWeekCalendarSelectorWidget
 from view.util.error_view import ErrorView
+from view.util.toast import ToastView
 import os
 
 
-class WeekSaleReportView(QFrame, ErrorView):
+class WeekSaleReportView(QFrame, ErrorView, ToastView):
 
     PRODUCT_ID_COLUMN = 0
     PRODUCT_NAME_COLUMN = 1
