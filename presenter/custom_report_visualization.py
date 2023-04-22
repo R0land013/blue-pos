@@ -117,7 +117,9 @@ class CustomReportVisualizationPresenter(AbstractPresenter):
     def ask_user_to_export_report(self):
         suggested_filename = self.__suggested_report_filename_using_date()
         self.__path, self.__file_type = self.get_view().ask_user_to_save_report_as(suggested_filename)
-        self.__execute_thread_to_generate_report_file()
+        
+        if self.__path or self.__file_type:
+            self.__execute_thread_to_generate_report_file()
 
     def __suggested_report_filename_using_date(self) -> str:
         initial_date = self.__custom_report.get_report_statistics().initial_date()
