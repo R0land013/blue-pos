@@ -1,10 +1,9 @@
 from datetime import date
-
 from PyQt5.QtCore import QDate
 from PyQt5.QtWidgets import QFrame, QMessageBox
 from PyQt5.uic import loadUi
-
 from model.util.monetary_types import CUPMoney
+from view.util.cup_spin_box import CUPSpinBox
 
 
 class EditSaleView(QFrame):
@@ -12,6 +11,9 @@ class EditSaleView(QFrame):
     def __init__(self, presenter):
         super().__init__()
         self.__presenter = presenter
+
+        self.paid_money_spin_box: CUPSpinBox = None
+        self.cost_money_spin_box: CUPSpinBox = None
 
         self.set_up_gui()
 
@@ -22,6 +24,11 @@ class EditSaleView(QFrame):
         self.wire_up_gui_connections()
 
     def __setup_price_and_profit_spin_boxes(self):
+        self.paid_money_spin_box = CUPSpinBox(minimum=0.01, maximum=10000000.00, value=10.00)
+        self.cost_money_spin_box = CUPSpinBox(minimum=0.00, maximum=10000000.00, value=10.00)
+        self.grid_form_frame.layout().addWidget(self.paid_money_spin_box, 3, 1)
+        self.grid_form_frame.layout().addWidget(self.cost_money_spin_box, 4, 1)
+        
         self.paid_money_spin_box.valueChanged.connect(self.__update_profit_label)
         self.cost_money_spin_box.valueChanged.connect(self.__update_profit_label)
 

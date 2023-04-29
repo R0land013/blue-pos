@@ -5,6 +5,7 @@ from PyQt5.uic import loadUi
 from view.util.plain_text_edit import PlainTextEdit
 from PyQt5.QtCore import Qt
 from model.entity.models import EXPENSE_DESCRIPTION_MAX_LENGTH, EXPENSE_NAME_MAX_LENGTH
+from view.util.cup_spin_box import CUPSpinBox
 
 
 class ExpenseFormView(QFrame):
@@ -13,6 +14,7 @@ class ExpenseFormView(QFrame):
         super().__init__()
         self.__presenter = presenter
         self.description_plain_text_edit: PlainTextEdit = None
+        self.spent_money_spin_box: CUPSpinBox = None
 
         self.__setup_gui()
 
@@ -21,9 +23,14 @@ class ExpenseFormView(QFrame):
         
         self.name_line_edit.setMaxLength(EXPENSE_NAME_MAX_LENGTH)
         self.__add_description_field()
+        self.__add_spent_money_field()
         self.__setup_date_edit()
         
         self.__setup_gui_connections()
+
+    def __add_spent_money_field(self):
+        self.spent_money_spin_box = CUPSpinBox(minimum=0.01, maximum=10000000.00, value=10.00)
+        self.grid_frame_form.layout().addWidget(self.spent_money_spin_box, 2, 1)
 
     def __add_description_field(self):
         layout = self.description_frame.layout()

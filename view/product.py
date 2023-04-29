@@ -4,6 +4,7 @@ from model.util.monetary_types import CUPMoney
 from model.entity.models import PRODUCT_DESCRIPTION_MAX_LENGTH, PRODUCT_NAME_MAX_LENGTH
 from view.util.plain_text_edit import PlainTextEdit
 from PyQt5.QtCore import Qt
+from view.util.cup_spin_box import CUPSpinBox
 
 
 class ProductView(QFrame):
@@ -13,6 +14,8 @@ class ProductView(QFrame):
         self.__presenter = presenter
 
         self.description_text_edit: PlainTextEdit = None
+        self.price_spin_box: CUPSpinBox = None
+        self.cost_spin_box: CUPSpinBox = None
 
         self.__setup_gui()
 
@@ -26,6 +29,10 @@ class ProductView(QFrame):
         self.__wire_up_gui_connections()
 
     def __setup_price_and_cost_spin_boxes(self):
+        self.price_spin_box = CUPSpinBox(minimum=0.010000, maximum=10000000.00, value=10.00)
+        self.cost_spin_box = CUPSpinBox(minimum=0.000000, maximum=10000000, value=0.00)
+        self.grid_form_frame.layout().addWidget(self.price_spin_box, 2, 1)
+        self.grid_form_frame.layout().addWidget(self.cost_spin_box, 3, 1)
         self.price_spin_box.valueChanged.connect(self.__set_profit_label_depending_on_price_and_cost)
         self.cost_spin_box.valueChanged.connect(self.__set_profit_label_depending_on_price_and_cost)
 

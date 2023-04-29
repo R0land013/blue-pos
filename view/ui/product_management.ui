@@ -52,6 +52,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>&lt;b&gt;Listado de Productos&lt;/b&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QFrame" name="frame">
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>

@@ -42,7 +42,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QFrame" name="frame">
+       <widget class="QFrame" name="grid_form_frame">
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
@@ -60,22 +60,6 @@
           <widget class="QLabel" name="label_5">
            <property name="text">
             <string>Fecha de Venta</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QDoubleSpinBox" name="cost_money_spin_box">
-           <property name="suffix">
-            <string> CUP</string>
-           </property>
-           <property name="maximum">
-            <double>10000000000.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -111,25 +95,6 @@
           <widget class="QDateEdit" name="sale_date_edit">
            <property name="calendarPopup">
             <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QDoubleSpinBox" name="paid_money_spin_box">
-           <property name="suffix">
-            <string> CUP</string>
-           </property>
-           <property name="minimum">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>10000000000.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>1.000000000000000</double>
            </property>
           </widget>
          </item>

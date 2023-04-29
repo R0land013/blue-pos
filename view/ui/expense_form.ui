@@ -36,7 +36,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QFrame" name="frame_3">
+       <widget class="QFrame" name="grid_frame_form">
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
@@ -102,25 +102,6 @@
            </property>
            <property name="text">
             <string>Id. Gasto:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QDoubleSpinBox" name="spent_money_spin_box">
-           <property name="suffix">
-            <string> CUP</string>
-           </property>
-           <property name="minimum">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>100000000000000000.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="value">
-            <double>10.000000000000000</double>
            </property>
           </widget>
          </item>

@@ -57,7 +57,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QFrame" name="frame">
+          <widget class="QFrame" name="grid_form_frame">
            <property name="frameShape">
             <enum>QFrame::NoFrame</enum>
            </property>
@@ -118,22 +118,6 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="price_spin_box">
-              <property name="suffix">
-               <string> CUP</string>
-              </property>
-              <property name="minimum">
-               <double>0.010000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>1000000.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>1.000000000000000</double>
-              </property>
-             </widget>
-            </item>
             <item row="5" column="0">
              <widget class="QLabel" name="label_9">
               <property name="text">
@@ -158,16 +142,6 @@
              <widget class="QLabel" name="label">
               <property name="text">
                <string>Nombre</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QDoubleSpinBox" name="cost_spin_box">
-              <property name="suffix">
-               <string> CUP</string>
-              </property>
-              <property name="maximum">
-               <double>1000000000000000000.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -300,7 +274,6 @@
  </widget>
  <tabstops>
   <tabstop>name_line_edit</tabstop>
-  <tabstop>price_spin_box</tabstop>
   <tabstop>quantity_spin_box</tabstop>
   <tabstop>save_button</tabstop>
   <tabstop>cancel_button</tabstop>
