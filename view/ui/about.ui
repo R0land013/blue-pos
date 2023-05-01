@@ -46,7 +46,7 @@
         <x>0</x>
         <y>0</y>
         <width>660</width>
-        <height>879</height>
+        <height>921</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -94,6 +94,21 @@ font: 28pt;</string>
             </property>
             <property name="text">
              <string>Blue POS</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_14">
+            <property name="styleSheet">
+             <string notr="true">font-family: Arial;
+font-weight: bold;
+font: 18pt;</string>
+            </property>
+            <property name="text">
+             <string>v1.0.0</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -299,9 +314,9 @@ font-weight: bold;
 font: 13pt;</string>
             </property>
             <property name="text">
-             <string>&lt;a href=&quot;mailto:rolandorio06@nauta.cu&quot;
+             <string>&lt;a href=&quot;mailto:blueposapp@gmail.com&quot;
 style=&quot;text-decoration: none; color: rgb(27, 88, 241);&quot;&gt;
-rolandorio06@nauta.cu
+blueposapp@gmail.com
 &lt;/a&gt;</string>
             </property>
             <property name="openExternalLinks">
