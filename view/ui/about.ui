@@ -447,7 +447,7 @@ font: 13pt;</string>
             </property>
             <property name="text">
              <string>&lt;b&gt;Agradecimientos a&lt;/b&gt; &lt;br/&gt;
-Javier Alejandro Gonzáles Casellas (&lt;a href=&quot;https://github.com/JalexCode&quot; style=&quot;text-decoration: none; color: rgb(27, 88, 241);&quot;&gt;Jalex Code&lt;/a&gt;)</string>
+Javier Alejandro González Casellas (&lt;a href=&quot;https://github.com/JalexCode&quot; style=&quot;text-decoration: none; color: rgb(27, 88, 241);&quot;&gt;Jalex Code&lt;/a&gt;)</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
