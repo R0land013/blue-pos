@@ -12,6 +12,7 @@ from view.util.week_selector import QWeekCalendarSelectorWidget
 from view.util.error_view import ErrorView
 from view.util.toast import ToastView
 import os
+from util.resources_path import resource_path
 
 
 class WeekSaleReportView(QFrame, ErrorView, ToastView):
@@ -32,7 +33,7 @@ class WeekSaleReportView(QFrame, ErrorView, ToastView):
         self.__setup_gui()
 
     def __setup_gui(self):
-        loadUi('./view/ui/week_sale_report.ui', self)
+        loadUi(resource_path('view/ui/week_sale_report.ui'), self)
         self.__setup_tool_bar()
         self.__setup_week_calendar_selector()
         self.__setup_table()
@@ -50,7 +51,7 @@ class WeekSaleReportView(QFrame, ErrorView, ToastView):
 
     def set_up_tool_buttons(self):
         self.back_button = ToolButtonWithTextAndIcon('Atrás')
-        self.back_button.set_icon(QPixmap('./view/ui/images/back.png'))
+        self.back_button.set_icon(QPixmap(resource_path('view/ui/images/back.png')))
 
     def __setup_week_calendar_selector(self):
         self.__week_calendar_selector = QWeekCalendarSelectorWidget()

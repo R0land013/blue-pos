@@ -6,6 +6,7 @@ from view.util.plain_text_edit import PlainTextEdit
 from PyQt5.QtCore import Qt
 from model.entity.models import EXPENSE_DESCRIPTION_MAX_LENGTH, EXPENSE_NAME_MAX_LENGTH
 from view.util.cup_spin_box import CUPSpinBox
+from util.resources_path import resource_path
 
 
 class ExpenseFormView(QFrame):
@@ -19,7 +20,7 @@ class ExpenseFormView(QFrame):
         self.__setup_gui()
 
     def __setup_gui(self):
-        loadUi('./view/ui/expense_form.ui', self)
+        loadUi(resource_path('view/ui/expense_form.ui'), self)
         
         self.name_line_edit.setMaxLength(EXPENSE_NAME_MAX_LENGTH)
         self.__add_description_field()

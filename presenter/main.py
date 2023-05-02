@@ -16,6 +16,7 @@ from presenter.year_report import YearSaleReportPresenter
 from presenter.year_statistics import YearStatisticsPresenter
 from view.main import MainView
 from model.repository.factory import RepositoryFactory
+from view.style.blue import BLUE_STYLE
 
 
 class MainPresenter(AbstractPresenter):
@@ -36,9 +37,7 @@ class MainPresenter(AbstractPresenter):
 
     @staticmethod
     def __set_app_style():
-        with open('./view/style/blue.qss', 'r') as f:
-            style = f.read()
-            QApplication.instance().setStyleSheet(style)
+        QApplication.instance().setStyleSheet(BLUE_STYLE)
 
     def on_window_closing(self):
         RepositoryFactory.close_session()

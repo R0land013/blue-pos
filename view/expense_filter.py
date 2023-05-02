@@ -3,6 +3,7 @@ from datetime import date
 from PyQt5.QtCore import Qt, QDate
 from PyQt5.QtWidgets import QFrame
 from PyQt5.uic import loadUi
+from util.resources_path import resource_path
 
 
 class ExpenseFilterView(QFrame):
@@ -14,7 +15,7 @@ class ExpenseFilterView(QFrame):
         self.__setup_gui()
 
     def __setup_gui(self):
-        loadUi('./view/ui/expense_filter.ui', self)
+        loadUi(resource_path('view/ui/expense_filter.ui'), self)
         self.__setup_date_fields()
         self.__setup_gui_connections()
 

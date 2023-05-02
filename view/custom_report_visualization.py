@@ -11,6 +11,7 @@ import os
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
 from view.util.error_view import ErrorView
 from view.util.toast import ToastView
+from util.resources_path import resource_path
 
 
 class CustomReportVisualizationView(QFrame, ErrorView, ToastView):
@@ -31,7 +32,7 @@ class CustomReportVisualizationView(QFrame, ErrorView, ToastView):
         self.__setup_gui()
 
     def __setup_gui(self):
-        loadUi('./view/ui/custom_report_visualization.ui', self)
+        loadUi(resource_path('view/ui/custom_report_visualization.ui'), self)
         self.__setup_tool_bar()
         self.__setup_table()
         self.__wire_up_gui_connections()
@@ -47,7 +48,7 @@ class CustomReportVisualizationView(QFrame, ErrorView, ToastView):
 
     def set_up_tool_buttons(self):
         self.back_button = ToolButtonWithTextAndIcon('Atrás')
-        self.back_button.set_icon(QPixmap('./view/ui/images/back.png'))
+        self.back_button.set_icon(QPixmap(resource_path('view/ui/images/back.png')))
 
     def __setup_table(self):
         self.sale_group_table.setColumnCount(6)

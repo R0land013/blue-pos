@@ -6,4 +6,3 @@ Jinja2==3.1.2
 xhtml2pdf==0.2.7
 easy-mvp==0.2.0
 pyqtgraph==0.12.4
-pyqt-toast==0.0.15

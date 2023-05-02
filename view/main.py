@@ -3,8 +3,8 @@ from PyQt5.QtCore import QSize, QPropertyAnimation, QPoint, QSequentialAnimation
 from PyQt5.QtGui import QMouseEvent, QPaintEvent
 from PyQt5.QtWidgets import QFrame, QApplication
 from PyQt5.uic import loadUi
-
 from view.util.animations import GoForwardAndReturnAnimation
+from util.resources_path import resource_path
 
 
 class MainView(QFrame):
@@ -28,7 +28,7 @@ class MainView(QFrame):
         self.__selected_page_index = 1
 
     def __set_up_gui(self):
-        loadUi('./view/ui/main.ui', self)
+        loadUi(resource_path('view/ui/main.ui'), self)
         self.wire_up_gui_connections()
 
     def wire_up_gui_connections(self):

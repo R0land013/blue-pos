@@ -11,6 +11,8 @@ from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
 from view.util.error_view import ErrorView
 from view.util.toast import ToastView
+from util.resources_path import resource_path
+
 
 class DaySaleReportView(QFrame, ErrorView, ToastView):
 
@@ -30,7 +32,7 @@ class DaySaleReportView(QFrame, ErrorView, ToastView):
         self.__setup_gui()
 
     def __setup_gui(self):
-        loadUi('./view/ui/day_sale_report.ui', self)
+        loadUi(resource_path('view/ui/day_sale_report.ui'), self)
         self.__setup_tool_bar()
         self.__set_up_table_format()
         self.__set_up_date_edit()
@@ -48,7 +50,7 @@ class DaySaleReportView(QFrame, ErrorView, ToastView):
 
     def set_up_tool_buttons(self):
         self.back_button = ToolButtonWithTextAndIcon('Atrás')
-        self.back_button.set_icon(QPixmap('./view/ui/images/back.png'))
+        self.back_button.set_icon(QPixmap(resource_path('view/ui/images/back.png')))
 
     def __set_up_table_format(self):
         self.sale_group_table.setColumnCount(6)
