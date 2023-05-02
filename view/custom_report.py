@@ -8,6 +8,7 @@ from PyQt5.uic import loadUi
 from view.util.table_columns import QIntegerTableItem
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
 from view.util.toast import ToastView
+from util.resources_path import resource_path
 
 
 class CustomSaleReportView(QFrame, ToastView):
@@ -27,7 +28,7 @@ class CustomSaleReportView(QFrame, ToastView):
         self.__setup_gui()
 
     def __setup_gui(self):
-        loadUi('./view/ui/custom_sale_report.ui', self)
+        loadUi(resource_path('view/ui/custom_sale_report.ui'), self)
         self.__setup_tool_bar()
         self.__setup_date_edit()
         self.__setup_product_table()
@@ -46,7 +47,7 @@ class CustomSaleReportView(QFrame, ToastView):
 
     def set_up_tool_buttons(self):
         self.back_button = ToolButtonWithTextAndIcon('Atrás')
-        self.back_button.set_icon(QPixmap('./view/ui/images/back.png'))
+        self.back_button.set_icon(QPixmap(resource_path('view/ui/images/back.png')))
 
     def __setup_date_edit(self):
         self.initial_date_edit.setDate(QDate.currentDate())

@@ -5,6 +5,7 @@ from PyQt5.uic import loadUi
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
 from view.util.toast import ToastView
+from util.resources_path import resource_path
 
 
 class ProductManagementView(QFrame, ToastView):
@@ -20,7 +21,7 @@ class ProductManagementView(QFrame, ToastView):
         super().__init__()
         self.__presenter = presenter
 
-        loadUi('./view/ui/product_management.ui', self)
+        loadUi(resource_path('view/ui/product_management.ui'), self)
         self.__prepare_gui()
 
     def __prepare_gui(self):
@@ -68,19 +69,19 @@ class ProductManagementView(QFrame, ToastView):
 
     def set_up_tool_buttons(self):
         self.back_button = ToolButtonWithTextAndIcon('Atrás')
-        self.back_button.set_icon(QPixmap('./view/ui/images/back.png'))
+        self.back_button.set_icon(QPixmap(resource_path('view/ui/images/back.png')))
 
         self.new_button = ToolButtonWithTextAndIcon('Añadir')
-        self.new_button.set_icon(QPixmap('./view/ui/images/new.png'))
+        self.new_button.set_icon(QPixmap(resource_path('view/ui/images/new.png')))
 
         self.edit_button = ToolButtonWithTextAndIcon('Editar')
-        self.edit_button.set_icon(QPixmap('./view/ui/images/edit.png'))
+        self.edit_button.set_icon(QPixmap(resource_path('view/ui/images/edit.png')))
 
         self.delete_button = ToolButtonWithTextAndIcon('Eliminar')
-        self.delete_button.set_icon(QPixmap('./view/ui/images/delete.png'))
+        self.delete_button.set_icon(QPixmap(resource_path('view/ui/images/delete.png')))
 
         self.sell_button = ToolButtonWithTextAndIcon('Ventas')
-        self.sell_button.set_icon(QPixmap('./view/ui/images/sale.png'))
+        self.sell_button.set_icon(QPixmap(resource_path('view/ui/images/sale.png')))
 
     def __wire_up_gui_connections(self):
         self.back_button.clicked.connect(self.__presenter.return_to_main)

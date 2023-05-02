@@ -6,6 +6,7 @@ from PyQt5.uic import loadUi
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
 from view.util.toast import ToastView
+from util.resources_path import resource_path
 
 
 class ProductSaleManagementView(QFrame, ToastView):
@@ -25,7 +26,7 @@ class ProductSaleManagementView(QFrame, ToastView):
         self.set_up_gui()
 
     def set_up_gui(self):
-        loadUi('./view/ui/product_sale_management.ui', self)
+        loadUi(resource_path('view/ui/product_sale_management.ui'), self)
         self.__setup_tool_bar()
         self.__set_table_format()
         self.__wire_up_connections()
@@ -52,22 +53,22 @@ class ProductSaleManagementView(QFrame, ToastView):
 
     def __define_tool_bar_buttons(self):
         self.back_button = ToolButtonWithTextAndIcon('Atrás')
-        self.back_button.set_icon(QPixmap('./view/ui/images/back.png'))
+        self.back_button.set_icon(QPixmap(resource_path('view/ui/images/back.png')))
 
         self.sell_button = ToolButtonWithTextAndIcon('Vender')
-        self.sell_button.set_icon(QPixmap('./view/ui/images/make_sale.png'))
+        self.sell_button.set_icon(QPixmap(resource_path('view/ui/images/make_sale.png')))
 
         self.undo_sale_button = ToolButtonWithTextAndIcon('Deshacer')
-        self.undo_sale_button.set_icon(QPixmap('./view/ui/images/undo_sale.png'))
+        self.undo_sale_button.set_icon(QPixmap(resource_path('view/ui/images/undo_sale.png')))
 
         self.edit_sale_button = ToolButtonWithTextAndIcon('Editar')
-        self.edit_sale_button.set_icon(QPixmap('./view/ui/images/edit.png'))
+        self.edit_sale_button.set_icon(QPixmap(resource_path('view/ui/images/edit.png')))
 
         self.filter_button = ToolButtonWithTextAndIcon('Filtrar')
-        self.filter_button.set_icon(QPixmap('./view/ui/images/filter.png'))
+        self.filter_button.set_icon(QPixmap(resource_path('view/ui/images/filter.png')))
 
         self.delete_filter_button = ToolButtonWithTextAndIcon('Quitar filtro')
-        self.delete_filter_button.set_icon(QPixmap('./view/ui/images/delete_filter.png'))
+        self.delete_filter_button.set_icon(QPixmap(resource_path('view/ui/images/delete_filter.png')))
 
     def __set_table_format(self):
         self.sale_table.setColumnCount(5)

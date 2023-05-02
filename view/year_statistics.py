@@ -7,6 +7,7 @@ from PyQt5.uic import loadUi
 from pyqtgraph import PlotWidget, PlotItem, AxisItem, ScatterPlotItem, PlotCurveItem, mkPen, mkBrush
 
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
+from util.resources_path import resource_path
 
 
 class YearStatisticsView(QFrame):
@@ -23,7 +24,7 @@ class YearStatisticsView(QFrame):
         self.__setup_gui()
 
     def __setup_gui(self):
-        loadUi('./view/ui/year_statistics.ui', self)
+        loadUi(resource_path('view/ui/year_statistics.ui'), self)
         self.__setup_tool_bar()
         self.__setup_date_edit()
         self.__setup_combo_box()
@@ -38,7 +39,7 @@ class YearStatisticsView(QFrame):
         self.tool_bar_frame.layout().setMenuBar(self.tool_bar)
 
         self.back_button = ToolButtonWithTextAndIcon('Atrás')
-        self.back_button.set_icon(QPixmap('./view/ui/images/back.png'))
+        self.back_button.set_icon(QPixmap(resource_path('view/ui/images/back.png')))
         self.tool_bar.addWidget(self.back_button)
 
     def __setup_date_edit(self):

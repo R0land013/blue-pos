@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QFrame, QMessageBox
 from PyQt5.uic import loadUi
 from model.util.monetary_types import CUPMoney
 from view.util.cup_spin_box import CUPSpinBox
+from util.resources_path import resource_path
 
 
 class EditSaleView(QFrame):
@@ -18,7 +19,7 @@ class EditSaleView(QFrame):
         self.set_up_gui()
 
     def set_up_gui(self):
-        loadUi('./view/ui/edit_sale_form.ui', self)
+        loadUi(resource_path('view/ui/edit_sale_form.ui'), self)
         self.__setup_price_and_profit_spin_boxes()
         self.sale_date_edit.setMaximumDate(QDate.currentDate())
         self.wire_up_gui_connections()

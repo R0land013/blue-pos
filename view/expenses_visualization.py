@@ -4,8 +4,8 @@ from PyQt5.QtCore import QItemSelection, Qt
 from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem
 from PyQt5.uic import loadUi
 from money import Money
-
 from view.util.table_columns import QCUPMoneyTableItem, QIntegerTableItem
+from util.resources_path import resource_path
 
 
 class ExpensesVisualizationView(QFrame):
@@ -24,7 +24,7 @@ class ExpensesVisualizationView(QFrame):
         self.__setup_gui()
 
     def __setup_gui(self):
-        loadUi('./view/ui/expenses_visualization.ui', self)
+        loadUi(resource_path('view/ui/expenses_visualization.ui'), self)
         self.__setup_table()
 
         self.__setup_gui_connections()

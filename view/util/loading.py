@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt, QPropertyAnimation, QAbstractAnimation, QPoint, QEvent
 from PyQt5.QtGui import QMovie, QFont
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QGraphicsOpacityEffect
+from util.resources_path import resource_path
 
 
 class LoadingAnimation(QWidget):
@@ -17,7 +18,7 @@ class LoadingAnimation(QWidget):
         self.installEventFilter(self)
 
     def __setup_view(self):
-        self.__loading_movie = QMovie('./view/ui/images/loading.gif')
+        self.__loading_movie = QMovie(resource_path('view/ui/images/loading.gif'))
         self.__movie_label = QLabel()
         self.__movie_label.setObjectName('movie_label')
         self.__movie_label.setMovie(self.__loading_movie)

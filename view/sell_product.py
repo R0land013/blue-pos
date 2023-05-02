@@ -3,6 +3,7 @@ from datetime import date
 from PyQt5.QtCore import QDate
 from PyQt5.QtWidgets import QFrame
 from PyQt5.uic import loadUi
+from util.resources_path import resource_path
 
 
 class MakeSaleView(QFrame):
@@ -14,7 +15,7 @@ class MakeSaleView(QFrame):
         self.__set_up_gui()
 
     def __set_up_gui(self):
-        loadUi('./view/ui/make_sale_form.ui', self)
+        loadUi(resource_path('view/ui/make_sale_form.ui'), self)
         self.__setup_date_edit()
         self.__wire_up_gui_connections()
 

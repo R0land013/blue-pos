@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QFrame
 from PyQt5.uic import loadUi
+from util.resources_path import resource_path
 
 
 class AboutView(QFrame):
@@ -11,7 +12,7 @@ class AboutView(QFrame):
         self.__setup_gui()
 
     def __setup_gui(self):
-        loadUi('./view/ui/about.ui', self)
+        loadUi(resource_path('view/ui/about.ui'), self)
         self.__wire_up_connections()
 
     def __wire_up_connections(self):

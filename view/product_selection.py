@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QFrame, QTableWidget, QTableWidgetItem
 from PyQt5.uic import loadUi
-
 from view.util.table_columns import QIntegerTableItem
+from util.resources_path import resource_path
 
 
 class ProductSelectionView(QFrame):
@@ -16,7 +16,7 @@ class ProductSelectionView(QFrame):
         self.__setup_gui()
 
     def __setup_gui(self):
-        loadUi('./view/ui/product_selection.ui', self)
+        loadUi(resource_path('view/ui/product_selection.ui'), self)
         self.__setup_product_tables()
         self.send_to_selected_button.setDisabled(True)
         self.send_to_remaining_button.setDisabled(True)

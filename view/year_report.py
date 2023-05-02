@@ -12,6 +12,7 @@ import os
 from view.util.text_tool_button import ToolButtonWithTextAndIcon
 from view.util.error_view import ErrorView
 from view.util.toast import ToastView
+from util.resources_path import resource_path
 
 class YearSaleReportView(QFrame, ErrorView, ToastView):
 
@@ -31,7 +32,7 @@ class YearSaleReportView(QFrame, ErrorView, ToastView):
         self.__setup_gui()
 
     def __setup_gui(self):
-        loadUi('./view/ui/year_sale_report.ui', self)
+        loadUi(resource_path('view/ui/year_sale_report.ui'), self)
         self.__setup_tool_bar()
         self.__setup_table()
         self.__setup_date_edit()
@@ -48,7 +49,7 @@ class YearSaleReportView(QFrame, ErrorView, ToastView):
 
     def set_up_tool_buttons(self):
         self.back_button = ToolButtonWithTextAndIcon('Atrás')
-        self.back_button.set_icon(QPixmap('./view/ui/images/back.png'))
+        self.back_button.set_icon(QPixmap(resource_path('view/ui/images/back.png')))
 
     def __setup_table(self):
         self.sale_group_table.setColumnCount(6)

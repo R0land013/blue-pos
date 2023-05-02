@@ -2,6 +2,7 @@ from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtWidgets import QFrame
 from PyQt5.uic import loadUi
 from datetime import date
+from util.resources_path import resource_path
 
 
 class SaleFilterView(QFrame):
@@ -13,7 +14,7 @@ class SaleFilterView(QFrame):
         self.__set_up_gui()
 
     def __set_up_gui(self):
-        loadUi('./view/ui/sale_filter.ui', self)
+        loadUi(resource_path('view/ui/sale_filter.ui'), self)
         self.__setup_date_fields()
         self._wire_up_gui_connections()
 
