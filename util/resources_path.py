@@ -1,4 +1,5 @@
 import sys, os
+from pathlib import Path
 
 def resource_path(relative_path):
     """
@@ -13,4 +14,6 @@ def resource_path(relative_path):
     except Exception as e:
         base_path = os.path.abspath(".")
 
-    return os.path.join(base_path, relative_path)
+    native_relative_path = str(Path(relative_path))
+    full_path = os.path.join(base_path, native_relative_path)
+    return full_path.replace('\\', '/')

@@ -83,7 +83,7 @@ QSpinBox::up-button, QDoubleSpinBox::up-button, QDateEdit::up-button{{
     width: 16px;
     height: 16px;
     background-color: blue;
-    image: url({resource_path("view/ui/images/up_arrow.png")});
+    image: url("{resource_path("view/ui/images/up_arrow.png")}");
     margin-right: 0.5em;
 }}
 
@@ -94,26 +94,26 @@ QSpinBox::down-button, QDoubleSpinBox::down-button, QDateEdit::down-button{{
 
     width: 16px;
     height: 16px;
-    image: url({resource_path("view/ui/images/down_arrow.png")});
+    image: url("{resource_path("view/ui/images/down_arrow.png")}");
     margin-right: 0.5em;
 }}
 
 QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover, QDateEdit::up-button:hover {{
-    image: url({resource_path("view/ui/images/hovered_up_arrow.png")});
+    image: url("{resource_path("view/ui/images/hovered_up_arrow.png")}");
 }}
 
 QSpinBox::up-button:pressed, QDoubleSpinBox::up-button:pressed, QDateEdit::up-button:pressed {{
-    image: url({resource_path("view/ui/images/pressed_up_arrow.png")});
+    image: url("{resource_path("view/ui/images/pressed_up_arrow.png")}");
 }}
 
 QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover, QDateEdit::down-button:hover,
 QDateEdit::drop-down:hover, QComboBox::drop-down:hover {{
-    image: url({resource_path("view/ui/images/hovered_down_arrow.png")});
+    image: url("{resource_path("view/ui/images/hovered_down_arrow.png")}");
 }}
 
 QSpinBox::down-button:pressed, QDoubleSpinBox::down-button:pressed, QDateEdit::down-button:pressed,
 QDateEdit::drop-down:pressed, QComboBox::drop-down:pressed{{
-    image: url({resource_path("view/ui/images/pressed_down_arrow.png")});
+    image: url("{resource_path("view/ui/images/pressed_down_arrow.png")}");
 }}
 
 QSpinBox:disabled, QDoubleSpinBox:disabled, QDateEdit:disabled, QComboBox:disabled,
@@ -125,12 +125,12 @@ QLineEdit:disabled, QPlainTextEdit:disabled{{
 
 QSpinBox::down-button:disabled, QDoubleSpinBox::down-button:disabled, QDateEdit::down-button:disabled,
 QDateEdit::drop-down:disabled, QComboBox::drop-down:disabled{{
-    image: url({resource_path("view/ui/images/disabled_down_arrow.png")});
+    image: url("{resource_path("view/ui/images/disabled_down_arrow.png")}");
 }}
 
 QSpinBox::up-button:disabled, QDoubleSpinBox::up-button:disabled, QDateEdit::up-button:disabled,
 QDateEdit::drop-up:disabled{{
-    image: url({resource_path("view/ui/images/disabled_up_arrow.png")});
+    image: url("{resource_path("view/ui/images/disabled_up_arrow.png")}");
 }}
 
 QComboBox::drop-down, QDateEdit::drop-down{{
@@ -140,7 +140,7 @@ QComboBox::drop-down, QDateEdit::drop-down{{
 
     width: 28px;
     height: 28px;
-    image: url({resource_path("view/ui/images/down_arrow.png")});
+    image: url("{resource_path("view/ui/images/down_arrow.png")}");
     margin-right: 0.3em;
     margin-left: 0;
 }}
@@ -172,11 +172,11 @@ QCheckBox::indicator {{
 
 
 QCheckBox::indicator:unchecked {{
-    image: url({resource_path("view/ui/images/unchecked.png")});
+    image: url("{resource_path("view/ui/images/unchecked.png")}");
 }}
 
 QCheckBox::indicator:checked {{
-    image: url({resource_path("view/ui/images/checked.png")});
+    image: url("{resource_path("view/ui/images/checked.png")}");
 }}
 /***************************************************************************/
 
@@ -192,11 +192,11 @@ QRadioButton::indicator {{
 }}
 
 QRadioButton::indicator::unchecked {{
-    image: url({resource_path("view/ui/images/unchecked_radio.png")});
+    image: url("{resource_path("view/ui/images/unchecked_radio.png")}");
 }}
 
 QRadioButton::indicator::checked {{
-    image: url({resource_path("view/ui/images/checked_radio.png")});
+    image: url("{resource_path("view/ui/images/checked_radio.png")}");
 }}
 
 QRadioButton{{
