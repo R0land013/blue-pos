@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>679</width>
-    <height>819</height>
+    <height>818</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,9 +44,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>660</width>
-        <height>921</height>
+        <y>-281</y>
+        <width>656</width>
+        <height>1039</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -461,8 +461,16 @@ font-weight: bold;
 font: 13pt;</string>
             </property>
             <property name="text">
-             <string>&lt;b&gt;Agradecimientos a&lt;/b&gt; &lt;br/&gt;
-Javier Alejandro González Casellas (&lt;a href=&quot;https://github.com/JalexCode&quot; style=&quot;text-decoration: none; color: rgb(27, 88, 241);&quot;&gt;Jalex Code&lt;/a&gt;)</string>
+             <string>&lt;html&gt;
+&lt;head/&gt;
+&lt;body&gt;
+	&lt;p&gt;
+	&lt;span style=&quot; font-weight:600;&quot;&gt;
+		Agradecimientos a
+	&lt;/span&gt;
+	&lt;br/&gt;A mi familia&lt;/p&gt;
+	&lt;p&gt;Javier Alejandro González Casellas (&lt;a href=&quot;https://github.com/JalexCode&quot;&gt;&lt;span style=&quot;text-decoration: none; color:#1b58f1;&quot;&gt;Jalex Code&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;
+	&lt;p&gt;&lt;a href=&quot;https://www.facebook.com/cecamaguey/?locale=es_LA&quot;&gt;&lt;span style=&quot;text-decoration: none; color:#1b58f1;&quot;&gt;Proyecto Cuba Emprende Camagüey&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -476,6 +484,28 @@ Javier Alejandro González Casellas (&lt;a href=&quot;https://github.com/JalexCo
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_15">
+         <property name="styleSheet">
+          <string notr="true">color: black;
+font-family: Arial;
+font-weight: bold;
+font: 13pt;</string>
+         </property>
+         <property name="text">
+          <string>&lt;span &gt;&lt;a href=&quot;https://es.wikipedia.org/wiki/Un_punto_azul_p%C3%A1lido&quot; style=&quot;text-decoration: none; color:#1b58f1;&quot;&gt;... en esa mota de polvo suspendida en un rayo de sol...&lt;/a&gt;&lt;/span&gt;</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::TextBrowserInteraction</set>
+         </property>
         </widget>
        </item>
       </layout>
