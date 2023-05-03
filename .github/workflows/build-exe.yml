@@ -1,0 +1,22 @@
+name: Build-Windows-Executable
+run-name: Building Windows Executable
+on:
+  push:
+    tags:
+      - v**
+jobs:
+  Build-Executable:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v3
+      - run: pip install pyinstaller
+      - run: pip install -r requirements.txt
+      - run: pyinstaller main.py -F --windowed --add-data ".\view\ui\*.ui;.\view\ui" --add-data ".\view\ui\images\*.png;.\view\ui\images" --add-data ".\view\style\*.qss;.\view\style" --icon=".\view\ui\images\bluepos.png" --add-data ".\model\report\templates\*.html;.\model\report\templates" --collect-all reportlab.graphics.barcode --name "Blue POS v1.0.0"
+
+      - uses: xresloader/upload-to-github-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: ".\\dist\\*.exe"
+          tags: true
+          draft: false
