@@ -95,6 +95,39 @@ tus redes sociales, para que más personas se beneficien.
 Si eres desarrolador puedes crear issues con problemas que hayas encontrado, o puedes abrir PR para arreglar errores
 o para añadir otras funciones al programa.
 
+### Ejecutar la app
+
+Esta app es multiplataforma. Ha sido probada en Windows y Linux. Para ejecutar la app sólo es necesario tener instalada
+la versión de **Python** **3.7.4** o superior. Antes de ejecutar por primera vez Blue POS es recomendable actualizar la versión de **pip**:
+
+```
+#Para Windows
+python -m pip install --upgrade pip
+
+#Para Linux
+python3 -m pip install --upgrade pip
+```
+
+Luego se debe instalar las dependencias del proyecto:
+
+```
+#Para Windows
+python -m pip install -r requirements.txt
+
+#Para Linux
+python3 -m pip install -r requirements.txt
+```
+
+Después se puede ejecutar la app sin ningún problema.
+
+```
+#Para Windows
+python main.py
+
+#Para Linux
+python3 main.py
+```
+
 ### Ejecutar tests
 
 Para ejecutar los tests:
