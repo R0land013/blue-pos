@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import create_engine, select
-from model.entity.models import Product, Sale, Expense
+from model.entity.models import Product, Sale, Expense, BusinessCurrency
 from pathlib import Path
 
 
@@ -132,3 +132,21 @@ def insert_expenses_in_database(expenses: list) -> list:
         session.add_all(expenses)
         session.commit()
         return expenses
+
+
+def insert_business_currency_and_return_it(business_currency: BusinessCurrency):
+    with create_test_session() as session:
+        session.add(business_currency)
+        session.commit()
+        return business_currency
+
+
+def delete_all_business_currency_from_database():
+    with create_test_session() as session:
+        session.query(BusinessCurrency).delete()
+        session.commit()
+
+
+def get_all_business_from_database() -> list:
+    with create_test_session() as session:
+        return session.query(BusinessCurrency).all()

@@ -94,3 +94,16 @@ class Expense(Base):
     spent_money = Column(MoneyColumn(), nullable=False, default=CUPMoney('-1.00'))
     date = Column(Date, nullable=False, default=date.today())
 
+
+class BusinessCurrency(Base):
+    __tablename__ = 'business_currency'
+
+    def __str__(self):
+        return self.__repr__()
+    
+    def __repr__(self):
+        return f'BusinessCurrency(id: {self.id}, currency_code: {self.currency_code})'
+    
+    id = Column(Integer, primary_key=True)
+    currency_code = Column(String(3), nullable=False)
+

@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 from model.repository.sale import SaleRepository
 from model.repository.sales_grouped_by_product import SalesGroupedByProductRepository
+from model.repository.business_currency import BusinessCurrencyRepository
 
 
 __BLUE_POS_FOLDER_PATH = Path(os.path.join(str(Path.home()), '.blue-pos/'))
@@ -28,6 +29,7 @@ class RepositoryFactory:
     __sales_grouped_by_product_repository = None
     __expense_repository = None
     __economic_summary_repository = None
+    __business_currency_repository = None
     __engine = None
 
     @staticmethod
@@ -85,6 +87,17 @@ class RepositoryFactory:
                 RepositoryFactory.__session)
 
         return RepositoryFactory.__economic_summary_repository
+    
+    @staticmethod
+    def get_business_currency_repository(url: str = DB_URL) -> BusinessCurrencyRepository: 
+        RepositoryFactory.__create_session_if_necessary(url)
+
+        if RepositoryFactory.__business_currency_repository is None:
+            RepositoryFactory.__business_currency_repository = BusinessCurrencyRepository(
+                RepositoryFactory.__session)
+
+        return RepositoryFactory.__business_currency_repository
+
 
     @staticmethod
     def close_session():
